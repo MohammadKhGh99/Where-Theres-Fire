@@ -2,17 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FireFighter : MonoBehaviour
+public class WaterMan : MonoBehaviour
 {
-    [SerializeField] private int speed;
+    [SerializeField] private float speed;
     
     private Transform _t;
     private Vector2 _moveDirection;
     private Rigidbody2D _rb;
-    private float _rightAngle = 90;
-    private float _leftAngle = -90;
-    private float _upAngle = 180;
-    private float _downAngle = 0;
+
     private float _chosenAngle;
     private Vector3 _currentAngle;
 
@@ -39,33 +36,33 @@ public class FireFighter : MonoBehaviour
         
         if (Input.GetKey(_right))
         {
-            _moveDirection = speed * Vector3.right;
-            _chosenAngle = _rightAngle;
+            _moveDirection = Vector3.right;
+            _chosenAngle = GameManager.RightAngle;
             // _rb.MovePosition((_rb.position + _moveDirection * Time.fixedDeltaTime));
         }
         if (Input.GetKey(_left))
         {
-            _moveDirection = speed * Vector3.left;
-            _chosenAngle = _leftAngle;
+            _moveDirection =  Vector3.left;
+            _chosenAngle = GameManager.LeftAngle;
             // _rb.MovePosition((_rb.position + _moveDirection * Time.fixedDeltaTime));
         }
         if (Input.GetKey(_up))
         {
-            _moveDirection = speed * Vector3.up;
-            _chosenAngle = _upAngle;
+            _moveDirection = Vector3.up;
+            _chosenAngle = GameManager.UpAngle;
             // _rb.MovePosition((_rb.position + _moveDirection * Time.fixedDeltaTime));
         }
         if (Input.GetKey(_down))
         {
-            _moveDirection = speed * Vector3.down;
-            _chosenAngle = _downAngle;
+            _moveDirection = Vector3.down;
+            _chosenAngle = GameManager.DownAngle;
             // _rb.MovePosition((_rb.position + _moveDirection * Time.fixedDeltaTime));
         }
 
         _currentAngle = new Vector3(0, 0, Mathf.LerpAngle(_currentAngle.z, _chosenAngle, Time.fixedDeltaTime));
         _t.eulerAngles = _currentAngle;
         // _t.position += _moveDirection * Time.fixedDeltaTime;
-        _rb.MovePosition((_rb.position + _moveDirection * Time.fixedDeltaTime));
+        _rb.MovePosition((_rb.position + _moveDirection* (speed * Time.fixedDeltaTime)));
         _moveDirection = Vector3.zero;
         // _chosenAngle = _t.rotation.z;
     }
