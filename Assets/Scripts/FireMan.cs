@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class FireMan : MonoBehaviour
 {
+    // Gamemanager
     private Transform _t;
     private Rigidbody2D _rb;
 
@@ -13,30 +14,27 @@ public class FireMan : MonoBehaviour
     [SerializeField] private float movingSpeed;
     [SerializeField] private bool fourDirection;
     private Vector2 _moveDirection;
+    private Vector2 _lookAtDirection;
     
     // shooting fire
     private float _fireKeyHoldingTime = 0f;
     private bool _fireKeyDown = false;
     private float _cooldownToBomb = 0f;
     private bool _burningBuildingAnimationStarted = false;
-    
-    
-    
-    
-    
+
+
+    // controls changing
+    private const KeyCode Fire = KeyCode.Comma;
     private const KeyCode Right = KeyCode.D,
                           Left = KeyCode.A,
                           Up = KeyCode.W,
                           Down = KeyCode.S;
 
-    // private KeyCode _burnBuildingButton = KeyCode.Period;
-    private const KeyCode Fire = KeyCode.Comma;
-
     // Start is called before the first frame update
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
-        _moveDirection = Vector2.zero;
+        _lookAtDirection = Vector2.right;
     }
 
     private void Update()
@@ -44,18 +42,20 @@ public class FireMan : MonoBehaviour
         // *** Movement ***
         var xDirection = Input.GetAxis("Horizontal2");
         var yDirection = Input.GetAxis("Vertical2");
+        _moveDirection.x = xDirection;
+        _moveDirection.y = yDirection;
         
-        if (fourDirection)
-            _moveDirection = GameManager.UpdateMoveDirection(_moveDirection, xDirection, yDirection);
-        else
+        var snapping = fourDirection ? 90.0f : 45.0f;
+        if (_moveDirection.sqrMagnitude > 0)
         {
-            _moveDirection.x = xDirection;
-            _moveDirection.y = yDirection;
-            _moveDirection.Normalize();
+            var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
+            angle = Mathf.Round(angle / snapping) * snapping;
+            transform.rotation = Quaternion.AngleAxis( 90 + angle, Vector3.forward);
+            _moveDirection = Quaternion.AngleAxis( angle, Vector3.forward) * Vector3.right;
+            _lookAtDirection = _moveDirection;
         }
 
 
-        
         // *** shooting ability ***
         if (Input.GetKeyDown(Fire))
         {
@@ -95,20 +95,16 @@ public class FireMan : MonoBehaviour
             }
         }
         _cooldownToBomb = Mathf.Max(_cooldownToBomb - Time.deltaTime, 0f);
-        
-
-        
     }
 
-    IEnumerator  ThrowBomb()
+    private IEnumerator ThrowBomb()
     {
         var bomb = GameManager.Instance.BombPool.Get();
-        // var bombT = bomb.GetComponent<Transform>();
-        bomb.SetStartPosition(transform.position);
-        var bombDropPos = bomb.GetBombDropPos(_moveDirection);
-        yield return bomb.Shoot();
-        
+        yield return bomb.Shoot(transform.position, _lookAtDirection);
         // when we finish with the bomb, 
+        var bombDropPos = bomb.GetBombDropPos();
+
+        
 
     }
 

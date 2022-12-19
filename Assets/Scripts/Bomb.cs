@@ -7,51 +7,38 @@ public class Bomb : MonoBehaviour
     private Rigidbody2D _rb;
 
     // bomb ability
-    [SerializeField] private float bombTravelDistance;
-    [SerializeField] private float bombPower;
-    [SerializeField] private float timeToReachTarget;
-    private Vector3 _bombDropPos;
-
-
-    private Vector3 shadowStartPosition;
-    private Vector3 shadowStartScale;
-    private Transform _shadowT;
+    [SerializeField] private float bombTravelDistance;      // how many floats the bomb should travel
+    [SerializeField] private float timeToReachTarget;       // time to reach the target
+    [SerializeField] private float throwingAngel;       // time to reach the target
+    [SerializeField] private float bombPower;       // the effect the bomb will make
+    private Vector3 _startPos;
+    private Vector3 _targetPos;
     
-    private Vector3 startPosition;
-    private Vector3 startScale;
+    // Shadow vars
+    private Transform _shadowT;         //  shadow transform
+    private Vector3 _shadowStartScale;           //  the shadow scale started
 
-    private Vector3 throwingDirection;
-    private float throwStartTime;
+    // to make the bomb looks like its levitating up, (thrown in like 45 degrees)
+    private float _oscillationHeight;
 
-    private float oscillationHeight;
-    private float oscillationSpeed;
-    private float oscillationPhase;
-
-
-
+    // this how update works
+    private float _throwStartTime;
     private bool _hasBeenShot = false;
     private bool _reachedTarget = false;
     
     
-    // Start is called before the first frame update
-    void Start()
+    public void FakeStart()
     {
         _rb = GetComponent<Rigidbody2D>();
-
-        var tra = transform;
-        _shadowT = tra.Find("Shadow");
-        shadowStartPosition = _shadowT.transform.position;
-        shadowStartScale = _shadowT.transform.localScale;
-        startScale = tra.localScale;
+        _shadowT = transform.Find("Shadow");
     }
-    
     private void Update()
     {
         if (_hasBeenShot && !_reachedTarget)
         {
             // calculate time until we reach the actual time to reach target
-            float timePassed = Time.time - throwStartTime;
-            float throwProgress = timePassed / timeToReachTarget;
+            var timePassed = Time.time - _throwStartTime;
+            var throwProgress = timePassed / timeToReachTarget;
             if (throwProgress >= 1)
             {
                 _reachedTarget = true;
@@ -59,43 +46,43 @@ public class Bomb : MonoBehaviour
             }
             
             // get oscillation
-            oscillationPhase = (oscillationPhase + Time.deltaTime * oscillationSpeed) % 1;
-            
+            _oscillationHeight = Mathf.Tan(Mathf.Deg2Rad * throwingAngel) * bombTravelDistance / 2.0f;
+                
             // move position to target
-            Vector3 bombPosition = Vector3.Lerp(startPosition, _bombDropPos, throwProgress);
-            bombPosition.y += Mathf.Sin(oscillationPhase * Mathf.PI * 2) * oscillationHeight;
-            _rb.MovePosition(bombPosition);
-            
-            float bombScale = 1 + Mathf.Abs(Mathf.Sin(oscillationPhase * Mathf.PI * 2)) * 0.5f;
+            var bombPosition = Vector3.Lerp(_startPos, _targetPos, throwProgress);
+            var aboveGroundOscillation = Mathf.Sin(throwProgress * Mathf.PI) * _oscillationHeight;
+            bombPosition.y += aboveGroundOscillation;
+            // _rb.MovePosition(bombPosition);
+            transform.Translate(bombPosition);
+            _shadowT.localPosition += new Vector3(0,-1 * aboveGroundOscillation,0);
 
-            transform.localScale = Vector3.one * bombScale;
+            // var bombScale = 1 + Mathf.Abs(Mathf.Sin(_oscillationPhase * Mathf.PI * 2)) * 0.5f;
+            // transform.localScale = Vector3.one * bombScale;
 
             // Calculate the scale of the shadow based on the oscillation phase
-            float shadowScale = shadowStartScale.x + Mathf.Abs(Mathf.Sin(oscillationPhase * Mathf.PI * 2)) * 0.5f;
+            // float shadowScale = _shadowStartScale.x + Mathf.Abs(Mathf.Sin(_oscillationPhase * Mathf.PI * 2)) * 0.5f;
 
             // Set the scale of the shadow
-            _shadowT.transform.localScale = new Vector3(shadowScale, shadowStartScale.y, shadowScale);
+            // _shadowT.transform.localScale = new Vector3(shadowScale, _shadowStartScale.y, shadowScale);
         }
     }
-    
-    public void SetStartPosition(Vector3 position)
+
+    public Vector3 GetBombDropPos()
     {
-        startPosition = position;
-        transform.position = startPosition;
+        return _targetPos;
     }
     
-    public Vector3 GetBombDropPos(Vector3 throwDirection)
+    public IEnumerator Shoot(Vector3 position, Vector3 throwDirection)
     {
-        throwingDirection = throwDirection;
-        _bombDropPos = bombTravelDistance * throwDirection + transform.position;
-        return _bombDropPos;
-    }
-    
-    public IEnumerator Shoot()
-    {
-        _hasBeenShot = true;
-        throwStartTime = Time.time;
-        yield return new WaitUntil(() => _reachedTarget);
+        _startPos = position;
+        transform.position = _startPos;
+        _targetPos = bombTravelDistance * throwDirection + _startPos;
+        _shadowStartScale = _shadowT.transform.localScale;
         
+        _hasBeenShot = true;
+        _throwStartTime = Time.time;
+        
+        yield return new WaitUntil(() => _reachedTarget);
+        _reachedTarget = false;
     }
 }

@@ -65,6 +65,7 @@ public class GameManager : Singleton<GameManager>
     private static void GetBomb(Bomb bomb)
     {
         bomb.gameObject.SetActive(true);
+        bomb.FakeStart();
     }
     private static void ReturnBomb(Bomb bomb)
     {
