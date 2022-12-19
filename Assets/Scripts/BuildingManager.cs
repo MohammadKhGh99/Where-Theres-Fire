@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,6 +28,7 @@ public class BuildingManager : MonoBehaviour
     {
         if (status.Equals(BURNING))
         {
+            print(status);
             _timeToBurn -= Time.deltaTime;
             if (_timeToBurn <= 0)
             {
@@ -36,6 +38,7 @@ public class BuildingManager : MonoBehaviour
             }
         } else if (status.Equals(WATERING))
         {
+            print(WATERING);
             if (_timeToBurn < MaxBurningTime)
             {
                 _timeToBurn += Time.deltaTime;
@@ -49,5 +52,13 @@ public class BuildingManager : MonoBehaviour
     public void SetStatus(string newStatus)
     {
         status = newStatus;
+    }
+
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.collider.name.StartsWith("Fire"))
+        {
+            SetStatus(BURNING);
+        }
     }
 }
