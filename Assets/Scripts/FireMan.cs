@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.U2D;
 
 public class FireMan : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class FireMan : MonoBehaviour
     // movement
     [SerializeField] private float movingSpeed;
     [SerializeField] private bool fourDirection;
+    [SerializeField] private bool invisible;
     private Vector2 _moveDirection;
     private Vector2 _lookAtDirection;
     
@@ -21,7 +23,10 @@ public class FireMan : MonoBehaviour
     private bool _fireKeyDown = false;
     private float _cooldownToBomb = 0f;
     private bool _burningBuildingAnimationStarted = false;
-
+    private Sprite _mySprite;
+    private SpriteShapeRenderer _spriteRenderer;
+    private bool _shown;
+    private float _hideTime;
 
     // controls changing
     private const KeyCode Fire = KeyCode.Comma;
@@ -35,15 +40,38 @@ public class FireMan : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _lookAtDirection = Vector2.right;
+        _spriteRenderer = GetComponent<SpriteShapeRenderer>();
+        if (invisible)
+        {
+            _spriteRenderer.enabled = false;
+            // _mySprite = _spriteRenderer..sprite;
+            // _spriteRenderer.sprite = null;
+            _shown = false;
+            _hideTime = 4.0f;
+        }
     }
 
     private void Update()
     {   
+        // hide the character
+        if (_shown)
+        {
+            _hideTime -= Time.deltaTime;
+            if (_hideTime <= 0)
+            {
+                _hideTime = 4.0f;
+                _spriteRenderer.enabled = false;
+                // _spriteRenderer.sprite = null;
+                _shown = false;
+            }
+        }
+        
         // *** Movement ***
         var xDirection = Input.GetAxis("Horizontal2");
         var yDirection = Input.GetAxis("Vertical2");
         _moveDirection.x = xDirection;
         _moveDirection.y = yDirection;
+        
         
         var snapping = fourDirection ? 90.0f : 45.0f;
         if (_moveDirection.sqrMagnitude > 0)
@@ -69,9 +97,6 @@ public class FireMan : MonoBehaviour
                 Debug.Log("Bomb");
                 _cooldownToBomb = GameManager.BombCooldownTime;
                 StartCoroutine(ThrowBomb());
-
-
-
 
             }
 
@@ -112,5 +137,14 @@ public class FireMan : MonoBehaviour
     private void FixedUpdate()
     {
         _rb.MovePosition(_rb.position + _moveDirection * (movingSpeed * Time.fixedDeltaTime));
+    }
+
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.collider.name.StartsWith("Water"))
+        {
+            _spriteRenderer.enabled = true;
+            _shown = true;
+        }
     }
 }

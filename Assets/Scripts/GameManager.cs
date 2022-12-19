@@ -5,6 +5,24 @@ using UnityEngine.Pool;
 
 public class GameManager : Singleton<GameManager>
 {
+    [SerializeField] private GameObject housesParent;
+    [SerializeField] private bool controlHousesPos = true;
+
+    [SerializeField] private string[] housesPositions =
+    {
+        "-28.75,12.5", "-14.25,12.5", "0.25,12.5", "14.75,12.5", "29,12.5",
+        "-28.75,-0.5", "-14.25,-0.5", "0.25,-0.5", "14.75,-0.5", "29,-0.5", 
+        "-28.75,-13.5", "-14.25,-13.5", "0.25,-13.5", "14.75,-13.5", "29,-13.5"
+    };
+    
+    private string[] _housesPosBackUp =
+    {
+        "-28.75,12.5", "-14.25,12.5", "0.25,12.5", "14.75,12.5", "29,12.5",
+        "-28.75,-0.5", "-14.25,-0.5", "0.25,-0.5", "14.75,-0.5", "29,-0.5", 
+        "-28.75,-13.5", "-14.25,-13.5", "0.25,-13.5", "14.75,-13.5", "29,-13.5"
+    };
+    
+    
     // this is a declaration for the singleton, maybe it's not needed, keep it for now. (if made problem DELETE)
     protected GameManager(){}
     
@@ -54,7 +72,7 @@ public class GameManager : Singleton<GameManager>
     
     // bomb pool and functions
     public const float BombCooldownTime = 3f;
-    
+
     public ObjectPool<Bomb> BombPool =
         new (CreateBomb, GetBomb, ReturnBomb, DestroyBomb, false, 5, 7);
     private static Bomb CreateBomb()
@@ -79,6 +97,16 @@ public class GameManager : Singleton<GameManager>
 
     void Start()
     {
+        _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
+        for (int i = 0; i < _housesPosBackUp.Length; i++)
+        {
+            var temp = _housesPosBackUp[i].Split(',');
+            float x = float.Parse(temp[0]), y = float.Parse(temp[1]);
+            var curPos = new Vector3(x, y, 0);
+            Instantiate(Resources.Load("Building"), curPos, Quaternion.identity, housesParent.transform);
+            
+            
+        }
     }
 
     // Update is called once per frame
