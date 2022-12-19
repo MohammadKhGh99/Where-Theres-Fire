@@ -197,6 +197,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 407691464}
+  - component: {fileID: 407691465}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -221,6 +222,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &407691465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 407691463}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f71ff715f6467e4c8a0895c16b17502, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &447359811
 GameObject:
   m_ObjectHideFlags: 0
@@ -623,15 +636,35 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.5325967, y: 1.0161829}
-      - {x: -1.1903216, y: 1.0007793}
-      - {x: -2.170116, y: 0.96177036}
-      - {x: -2.3412507, y: 0.84823763}
-      - {x: -2.030649, y: -0.26532608}
-      - {x: -1.0861013, y: -1.0303575}
-      - {x: 1.1592367, y: -0.9819639}
-      - {x: 2.4489274, y: 0.5476043}
-      - {x: 2.2208128, y: 1.0418111}
+    - - {x: -1.000225, y: -1.25}
+      - {x: -1.1188178, y: -1.2244213}
+      - {x: -1.3885436, y: -1.114564}
+      - {x: -1.6036682, y: -0.9498428}
+      - {x: -1.9081733, y: -0.64586526}
+      - {x: -2.070627, y: -0.44757926}
+      - {x: -2.3539116, y: -0.021798603}
+      - {x: -2.4641333, y: 0.19576566}
+      - {x: -2.545496, y: 0.41263875}
+      - {x: -2.5889583, y: 0.6308825}
+      - {x: -2.5741858, y: 0.8558159}
+      - {x: -2.464436, y: 1.0689558}
+      - {x: -2.2578897, y: 1.2082032}
+      - {x: -2.0184798, y: 1.2493161}
+      - {x: 2.018362, y: 1.2493248}
+      - {x: 2.2575493, y: 1.2083654}
+      - {x: 2.4640565, y: 1.0693963}
+      - {x: 2.5741267, y: 0.8566334}
+      - {x: 2.5895038, y: 0.6318505}
+      - {x: 2.5329523, y: 0.37464565}
+      - {x: 2.465911, y: 0.19657594}
+      - {x: 2.2237046, y: -0.2372148}
+      - {x: 1.9113927, y: -0.6456635}
+      - {x: 1.5673921, y: -0.9850317}
+      - {x: 1.3903778, y: -1.1148466}
+      - {x: 1.2043858, y: -1.2097352}
+      - {x: 1.0262973, y: -1.248613}
+      - {x: -0.88808584, y: -1.2500892}
+      - {x: -1.000225, y: -1.25}
 --- !u!114 &1121103928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -644,7 +677,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a122ff33c77212343b7746d8ea36f5ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
+  movingSpeed: 35
+  fourDirection: 0
 --- !u!114 &1121103929
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -921,7 +955,7 @@ GameObject:
   - component: {fileID: 1401675191}
   - component: {fileID: 1401675195}
   m_Layer: 0
-  m_Name: FireFighter
+  m_Name: WaterMan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -934,14 +968,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1401675189}
-  m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 55, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1818901675}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!60 &1401675191
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -1008,7 +1042,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba78201ba8af8ac45b6a8b9c39bfbd4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 10
+  speed: 0
 --- !u!114 &1401675193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1203,7 +1237,7 @@ GameObject:
   - component: {fileID: 1864134492}
   - component: {fileID: 1864134493}
   m_Layer: 0
-  m_Name: Square
+  m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

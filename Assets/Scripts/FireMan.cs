@@ -19,7 +19,7 @@ public class FireMan : MonoBehaviour
     // shooting fire
     private float _fireKeyHoldingTime = 0f;
     private bool _fireKeyDown = false;
-    private float _cooldownToBomb = 0f;
+    private float _cooldownToMolotov = 0f;
     private bool _burningBuildingAnimationStarted = false;
 
 
@@ -63,12 +63,12 @@ public class FireMan : MonoBehaviour
         }
         else if (Input.GetKeyUp(Fire))
         {
-            if (_fireKeyHoldingTime < 0.2f && _cooldownToBomb <= 0f)
+            if (_fireKeyHoldingTime < 0.2f && _cooldownToMolotov <= 0f)
             {
                 // throwing a bomb of fire in the direction the player is looking at. (unless its a building then nothing)
-                Debug.Log("Bomb");
-                _cooldownToBomb = GameManager.BombCooldownTime;
-                StartCoroutine(ThrowBomb());
+                Debug.Log("Molotov");
+                _cooldownToMolotov = GameManager.MolotovCooldownTime;
+                StartCoroutine(ThrowMolotov());
 
 
 
@@ -90,19 +90,19 @@ public class FireMan : MonoBehaviour
             if (_fireKeyHoldingTime >= 5f)
             {
                 // the torch is thrown in the -building- and it will start to burn - stop animation also
-                Debug.Log("torch BRRRRR");
+                Debug.Log("FIIRREEE BRRRRR");
                 _fireKeyDown = false;
             }
         }
-        _cooldownToBomb = Mathf.Max(_cooldownToBomb - Time.deltaTime, 0f);
+        _cooldownToMolotov = Mathf.Max(_cooldownToMolotov - Time.deltaTime, 0f);
     }
 
-    private IEnumerator ThrowBomb()
+    private IEnumerator ThrowMolotov()
     {
-        var bomb = GameManager.Instance.BombPool.Get();
-        yield return bomb.Shoot(transform.position, _lookAtDirection);
+        var molotov = GameManager.instance.MolotovPool.Get();
+        yield return molotov.Shoot(transform.position, _lookAtDirection);
         // when we finish with the bomb, 
-        var bombDropPos = bomb.GetBombDropPos();
+        var molotovDropPos = molotov.GetMolotovDropPos();
 
         
 

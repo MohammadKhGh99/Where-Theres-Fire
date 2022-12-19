@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,12 @@ public class GameManager : Singleton<GameManager>
 {
     // this is a declaration for the singleton, maybe it's not needed, keep it for now. (if made problem DELETE)
     protected GameManager(){}
-    
+    public static GameManager instance;
+    private void Awake()
+    {
+        instance = this;
+    }
+
     // Constants:
     public const float RightAngle = 90;
     public const float LeftAngle = -90;
@@ -53,27 +59,27 @@ public class GameManager : Singleton<GameManager>
     }
     
     // bomb pool and functions
-    public const float BombCooldownTime = 3f;
+    public const float MolotovCooldownTime = 3f;
     
-    public ObjectPool<Bomb> BombPool =
-        new (CreateBomb, GetBomb, ReturnBomb, DestroyBomb, false, 5, 7);
-    private static Bomb CreateBomb()
+    public ObjectPool<Molotov> MolotovPool =
+        new (CreateMolotov, GetMolotov, ReturnMolotov, DestroyMolotov, false, 5, 7);
+    private static Molotov CreateMolotov()
     {
-        var bomb = Instantiate(Resources.Load("Bomb") as GameObject);
-        return bomb.GetComponent<Bomb>();
+        var molotov = Instantiate(Resources.Load("Molotov") as GameObject);
+        return molotov.GetComponent<Molotov>();
     }
-    private static void GetBomb(Bomb bomb)
+    private static void GetMolotov(Molotov molotov)
     {
-        bomb.gameObject.SetActive(true);
-        bomb.FakeStart();
+        molotov.gameObject.SetActive(true);
+        molotov.FakeStart();
     }
-    private static void ReturnBomb(Bomb bomb)
+    private static void ReturnMolotov(Molotov molotov)
     {
-        bomb.gameObject.SetActive(false);
+        molotov.gameObject.SetActive(false);
     }
-    private static void DestroyBomb(Bomb bomb)
+    private static void DestroyMolotov(Molotov molotov)
     {
-        Destroy(bomb);
+        Destroy(molotov);
     }
 
 
