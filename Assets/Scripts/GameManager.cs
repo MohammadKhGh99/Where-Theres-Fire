@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -14,7 +15,7 @@ public class GameManager : Singleton<GameManager>
     public const float DownAngle = 0;
     
     
-    // 
+    // static function for moving direction
     public static Vector2 UpdateMoveDirection(Vector2 oldDirection, float xDirection, float yDirection)
     {
         // change the direction of the movement depends on the input direction and the old direction
@@ -50,15 +51,33 @@ public class GameManager : Singleton<GameManager>
 
         return newDir;
     }
+    
+    // bomb pool and functions
+    public const float BombCooldownTime = 3f;
+    
+    public ObjectPool<Bomb> BombPool =
+        new (CreateBomb, GetBomb, ReturnBomb, DestroyBomb, false, 5, 7);
+    private static Bomb CreateBomb()
+    {
+        var bomb = Instantiate(Resources.Load("Bomb") as GameObject);
+        return bomb.GetComponent<Bomb>();
+    }
+    private static void GetBomb(Bomb bomb)
+    {
+        bomb.gameObject.SetActive(true);
+    }
+    private static void ReturnBomb(Bomb bomb)
+    {
+        bomb.gameObject.SetActive(false);
+    }
+    private static void DestroyBomb(Bomb bomb)
+    {
+        Destroy(bomb);
+    }
 
-    
-    
-    
-    
-    
+
     void Start()
     {
-        
     }
 
     // Update is called once per frame
