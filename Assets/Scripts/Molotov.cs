@@ -102,13 +102,13 @@ public class Molotov : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        print("Collision");
-        if (col.gameObject.name.StartsWith("Building"))
-        {
-            BuildingManager house = col.gameObject.GetComponent<BuildingManager>();
-            house.SetStatus("Burning");
-        }
-    }
+    // private void OnTriggerEnter2D(Collider2D col)
+    // {
+    //     print("Collision");
+    //     if (col.gameObject.name.StartsWith("Building"))
+    //     {
+    //         BuildingManager house = col.gameObject.GetComponent<BuildingManager>();
+    //         house.SetStatus("Burning");
+    //     }
+    // }
 }
