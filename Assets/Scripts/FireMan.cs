@@ -14,22 +14,24 @@ public class FireMan : MonoBehaviour
     // movement
     [SerializeField] private float movingSpeed;
     [SerializeField] private bool fourDirection;
-    [SerializeField] private bool invisible;
     private Vector2 _moveDirection;
     private Vector2 _lookAtDirection;
-    
+
     // shooting fire
     private float _fireKeyHoldingTime = 0f;
     private bool _fireKeyDown = false;
     private float _cooldownToMolotov = 0f;
     private bool _burningBuildingAnimationStarted = false;
+
+    // hiding ability 
+    [SerializeField] private bool invisible;
     private Sprite _mySprite;
     private SpriteShapeRenderer _spriteRenderer;
     private bool _shown;
     private float _hideTime;
 
     // controls changing
-    private const KeyCode Fire = KeyCode.Comma;
+    private const KeyCode Fire = KeyCode.T;
     private const KeyCode Right = KeyCode.D,
                           Left = KeyCode.A,
                           Up = KeyCode.W,
@@ -40,6 +42,7 @@ public class FireMan : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _lookAtDirection = Vector2.right;
+        
         _spriteRenderer = GetComponent<SpriteShapeRenderer>();
         if (invisible)
         {
@@ -52,26 +55,12 @@ public class FireMan : MonoBehaviour
     }
 
     private void Update()
-    {   
-        // hide the character
-        if (_shown)
-        {
-            _hideTime -= Time.deltaTime;
-            if (_hideTime <= 0)
-            {
-                _hideTime = 4.0f;
-                _spriteRenderer.enabled = false;
-                // _spriteRenderer.sprite = null;
-                _shown = false;
-            }
-        }
-        
+    {
         // *** Movement ***
         var xDirection = Input.GetAxis("Horizontal2");
         var yDirection = Input.GetAxis("Vertical2");
         _moveDirection.x = xDirection;
         _moveDirection.y = yDirection;
-        
         
         var snapping = fourDirection ? 90.0f : 45.0f;
         if (_moveDirection.sqrMagnitude > 0)
@@ -120,6 +109,19 @@ public class FireMan : MonoBehaviour
             }
         }
         _cooldownToMolotov = Mathf.Max(_cooldownToMolotov - Time.deltaTime, 0f);
+        
+        // *** Power-Up: hide the character ***
+        if (_shown)
+        {
+            _hideTime -= Time.deltaTime;
+            if (_hideTime <= 0)
+            {
+                _hideTime = 4.0f;
+                _spriteRenderer.enabled = false;
+                // _spriteRenderer.sprite = null;
+                _shown = false;
+            }
+        }
     }
 
     private IEnumerator ThrowMolotov()

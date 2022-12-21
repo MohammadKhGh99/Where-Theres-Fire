@@ -39,45 +39,8 @@ public class GameManager : Singleton<GameManager>
     public const float DownAngle = 0;
     
     
-    // static function for moving direction
-    public static Vector2 UpdateMoveDirection(Vector2 oldDirection, float xDirection, float yDirection)
-    {
-        // change the direction of the movement depends on the input direction and the old direction
-        // the direction will be -1,0,1 for x and y
 
-        var newDir = Vector2.zero;
-        // if moveDirection != zero, then we were moving to one of the directions:
-        if (oldDirection != Vector2.zero)
-        {
-            // we are moving in the X axis
-            if (oldDirection.x != 0)
-            {
-                newDir.x = xDirection;
-                // we continue moving in the x axis, else if we stopped moving in x axis, move toward y axis
-                newDir.y = xDirection != 0 ? 0 : yDirection;
-            }
-            // we are moving in the Y axis
-
-            else
-            {
-                newDir.y = yDirection;
-                // we continue moving in the y axis, else if we stopped moving in y axis, move toward x axis
-                newDir.x = yDirection != 0 ? 0 : xDirection;
-            }
-        }
-        // if moveDirection is zero, we need to choose a direction (i guess we should go with X first)
-        else
-        {
-            newDir.x = xDirection;
-            // we move in the x axis, else move toward y axis
-            newDir.y = xDirection != 0 ? 0 : yDirection;
-        }
-
-        return newDir;
-    }
-    
-    // bomb pool and functions
-
+    // molotov pool and functions
     public const float MolotovCooldownTime = 3f;
     
     public ObjectPool<Molotov> MolotovPool =
@@ -101,7 +64,32 @@ public class GameManager : Singleton<GameManager>
         Destroy(molotov);
     }
 
+    
+    // SplashBullet pool and functions
+    public const float SplashBulletCooldownTime = 3f;
+    
+    public ObjectPool<SplashBullet> SplashBulletPool =
+        new (CreateSplashBullet, GetSplashBullet, ReturnSplashBullet, DestroySplashBullet, false, 5, 7);
+    private static SplashBullet CreateSplashBullet()
+    {
+        var splashBullet = Instantiate(Resources.Load("SplashBullet") as GameObject);
+        return splashBullet.GetComponent<SplashBullet>();
+    }
+    private static void GetSplashBullet(SplashBullet splashBullet)
+    {
+        splashBullet.gameObject.SetActive(true);
+        splashBullet.FakeStart();
+    }
+    private static void ReturnSplashBullet(SplashBullet splashBullet)
+    {
+        splashBullet.gameObject.SetActive(false);
+    }
+    private static void DestroySplashBullet(SplashBullet splashBullet)
+    {
+        Destroy(splashBullet);
+    }
 
+    
     void Start()
     {
         _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
@@ -111,7 +99,6 @@ public class GameManager : Singleton<GameManager>
             float x = float.Parse(temp[0]), y = float.Parse(temp[1]);
             var curPos = new Vector3(x, y, 0);
             Instantiate(Resources.Load("Building"), curPos, Quaternion.identity, housesParent.transform);
-            
             
         }
     }
