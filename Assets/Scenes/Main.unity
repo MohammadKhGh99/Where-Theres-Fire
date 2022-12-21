@@ -486,7 +486,7 @@ GameObject:
   - component: {fileID: 447359812}
   - component: {fileID: 447359814}
   - component: {fileID: 447359813}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: RightWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -597,7 +597,7 @@ GameObject:
   - component: {fileID: 515158676}
   - component: {fileID: 515158678}
   - component: {fileID: 515158677}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: BottomWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1289,7 +1289,7 @@ GameObject:
   - component: {fileID: 1121103928}
   - component: {fileID: 1121103927}
   - component: {fileID: 1121103931}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: FireMan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1379,6 +1379,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movingSpeed: 35
   fourDirection: 0
+  distanceToBurnBuilding: 5
   invisible: 0
 --- !u!114 &1121103929
 MonoBehaviour:
@@ -1577,7 +1578,7 @@ GameObject:
   - component: {fileID: 1236331113}
   - component: {fileID: 1236331115}
   - component: {fileID: 1236331114}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: TopWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6671,7 +6672,7 @@ GameObject:
   - component: {fileID: 1401675192}
   - component: {fileID: 1401675191}
   - component: {fileID: 1401675195}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: WaterMan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7238,7 +7239,7 @@ GameObject:
   - component: {fileID: 1946292377}
   - component: {fileID: 1946292379}
   - component: {fileID: 1946292378}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: LeftWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}

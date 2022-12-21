@@ -14,6 +14,7 @@ public class FireMan : MonoBehaviour
     // movement
     [SerializeField] private float movingSpeed;
     [SerializeField] private bool fourDirection;
+    [SerializeField] private float distanceToBurnBuilding;
     private Vector2 _moveDirection;
     private Vector2 _lookAtDirection;
 
@@ -37,11 +38,16 @@ public class FireMan : MonoBehaviour
                           Up = KeyCode.W,
                           Down = KeyCode.S;
 
+    private RaycastHit2D hit;
+    private LayerMask _buildingsMask;
+
     // Start is called before the first frame update
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
         _lookAtDirection = Vector2.right;
+        _buildingsMask =  LayerMask.GetMask("Building");
+        hit = Physics2D.Raycast(transform.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
         
         _spriteRenderer = GetComponent<SpriteShapeRenderer>();
         if (invisible)
@@ -70,6 +76,9 @@ public class FireMan : MonoBehaviour
             transform.rotation = Quaternion.AngleAxis( 90 + angle, Vector3.forward);
             _moveDirection = Quaternion.AngleAxis( angle, Vector3.forward) * Vector3.right;
             _lookAtDirection = _moveDirection;
+            hit = Physics2D.Raycast(transform.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
+            print(hit.collider);
+            // hit = Physics2D.Raycast(transform.position, _lookAtDirection, distanceToBurnBuilding);
         }
 
 
@@ -143,7 +152,7 @@ public class FireMan : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.collider.name.StartsWith("Water"))
+        if (col.collider.name.StartsWith("Water") && invisible)
         {
             _spriteRenderer.enabled = true;
             _shown = true;

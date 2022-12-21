@@ -28,7 +28,7 @@ public class BuildingManager : MonoBehaviour
     {
         if (status.Equals(BURNING))
         {
-            print(status);
+            // print(status);
             _timeToBurn -= Time.deltaTime;
             if (_timeToBurn <= 0)
             {
@@ -38,7 +38,7 @@ public class BuildingManager : MonoBehaviour
             }
         } else if (status.Equals(WATERING))
         {
-            print(status);
+            // print(status);
             if (_timeToBurn < MaxBurningTime)
             {
                 _timeToBurn += Time.deltaTime;
