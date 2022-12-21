@@ -55,7 +55,9 @@ public class Molotov : MonoBehaviour
         _hasBeenShot = true;
         _throwStartTime = Time.time;
         yield return new WaitUntil(() => _reachedTarget);
-        _reachedTarget = false;
+        
+        // todo continue
+        
     }
     
     public Vector3 GetMolotovDropPos()
@@ -65,6 +67,7 @@ public class Molotov : MonoBehaviour
 
     void Update()
     {
+        // shooting molotov to target
         if (_hasBeenShot && !_reachedTarget)
         {
             // calculate time until we reach the actual time to reach target
