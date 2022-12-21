@@ -78,7 +78,6 @@ public class FireMan : MonoBehaviour
             _lookAtDirection = _moveDirection;
             hit = Physics2D.Raycast(transform.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
             print(hit.collider);
-            // hit = Physics2D.Raycast(transform.position, _lookAtDirection, distanceToBurnBuilding);
         }
 
 
