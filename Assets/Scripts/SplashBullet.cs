@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,7 +13,8 @@ public class SplashBullet : MonoBehaviour
     // important public variables for the throw
     [SerializeField] private float splashBulletTravelDistance;      // how many floats the bomb should travel
     [SerializeField] private float timeToReachTarget;       // time to reach the target
-    [SerializeField] private float splashBulletPower;    
+    [SerializeField] private float splashBulletPower;
+    [SerializeField] private float lifeTime = 5.0f;
     
     // important private variables for the throw
     private Vector2 _targetPos;
@@ -25,6 +27,7 @@ public class SplashBullet : MonoBehaviour
     public void FakeStart()
     {
         _t = GetComponent<Transform>();
+        // GetComponent<SpriteRenderer>().sprite = null;
         _startScale = _t.localScale;
     }
     
@@ -52,11 +55,16 @@ public class SplashBullet : MonoBehaviour
     {
         return _targetPos;
     }
+
+    public void Die()
+    {
+        gameObject.SetActive(false);
+    }
     
  
     void Update()
     {
-        // shooting molotov to target
+        // shooting water to target
         if (_hasBeenShot && !_reachedTarget)
         {
             // calculate time until we reach the actual time to reach target
@@ -71,6 +79,22 @@ public class SplashBullet : MonoBehaviour
 
             // move position to target
             _t.position = Vector3.Lerp(_startPos, _targetPos, throwProgress);
+        }
+    }
+    
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.gameObject.name.StartsWith("Building"))
+        {
+            col.GetComponent<BuildingManager>().SetStatus(GameManager.BURNING);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.name.StartsWith("Building"))
+        {
+            other.GetComponent<BuildingManager>().SetStatus(GameManager.WAS_BURNED);
         }
     }
 }

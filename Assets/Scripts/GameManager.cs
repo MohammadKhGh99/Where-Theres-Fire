@@ -1,11 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
 
 public class GameManager : Singleton<GameManager>
 {
+    [SerializeField] private TextMeshProUGUI timerText;
     [SerializeField] private GameObject housesParent;
     [SerializeField] private bool controlHousesPos = true;
 
@@ -37,6 +39,14 @@ public class GameManager : Singleton<GameManager>
     public const float LeftAngle = -90;
     public const float UpAngle = 180;
     public const float DownAngle = 0;
+    
+    public const string NORMAL = "Normal";
+    public const string BURNING = "Burning";
+    public const string BURNED = "Burned";
+    public const string WATERING = "Watering";
+    public const string WAS_BURNED = "Was Burned";
+
+    private float _currentSeconds = 0;
     
     
 
@@ -92,6 +102,7 @@ public class GameManager : Singleton<GameManager>
     
     void Start()
     {
+        timerText.text = "05:00";
         _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
         for (int i = 0; i < _housesPosBackUp.Length; i++)
         {
@@ -106,7 +117,16 @@ public class GameManager : Singleton<GameManager>
     // Update is called once per frame
     void Update()
     {
+        _currentSeconds += Time.deltaTime;
+        int minutes = ((int)(_currentSeconds / 60)) % 60;
+        int seconds = ((int)_currentSeconds) % 60;
+        minutes = 5 - minutes - 1;
+        seconds = 59 - seconds;
+        if (minutes == 1 && seconds == 0)
+            timerText.color = Color.red;
         
+        // Showing the elapsed time in game
+        timerText.text = $"{minutes:00}:{seconds:00}";
     }
     
     
