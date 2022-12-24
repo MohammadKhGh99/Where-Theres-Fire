@@ -152,9 +152,10 @@ public class FireMan : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.gameObject.name.StartsWith("Splash"))
+        if (col.gameObject.name.StartsWith("Splash") || col.gameObject.name.StartsWith("FirePlace"))
         {
             var curPos = _t.position;
+            // var splashPos = col.transform.position;
             if (curPos.x - 10 > -40)
                 _t.position += 10 * Vector3.left;
             else
@@ -165,7 +166,7 @@ public class FireMan : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        print(col.collider);
+        // print(col.collider);
         if (col.collider.name.StartsWith("Water") && invisible)
         {
             _spriteRenderer.enabled = true;

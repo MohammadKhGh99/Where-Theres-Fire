@@ -34,12 +34,14 @@ public class Molotov : MonoBehaviour
     private bool _hasBeenShot = false;
     private bool _reachedTarget = false;
     private GameObject _fireChild;
+    private SpriteRenderer _bottleSpriteRenderer;
     
     public void FakeStart()
     {
         _t = GetComponent<Transform>();
         _shadowT = _t.Find("Shadow");
         _bottleT = _t.Find("Bottle");
+        _bottleSpriteRenderer = _bottleT.GetComponent<SpriteRenderer>();
         _shadowScale = _shadowT.localScale;
         _bottleScale = _bottleT.localScale;
         _fireChild = _t.GetChild(2).gameObject;
@@ -78,8 +80,7 @@ public class Molotov : MonoBehaviour
             {
                 // we reached target!
                 _reachedTarget = true;
-                _fireChild.SetActive(true);
-                gameObject.SetActive(false);
+                StartCoroutine(FireLifeTime());
                 return;
             }
             
@@ -106,6 +107,14 @@ public class Molotov : MonoBehaviour
             _shadowT.localScale = shadowNewScale;
 
         }
+    }
+
+    private IEnumerator FireLifeTime()
+    {
+        _fireChild.SetActive(true);
+        _bottleSpriteRenderer.sprite = null;
+        yield return new WaitForSeconds(8);
+        gameObject.SetActive(false);
     }
 
     // private void OnTriggerEnter2D(Collider2D col)

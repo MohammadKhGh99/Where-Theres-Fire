@@ -42,8 +42,8 @@ public class SplashBullet : MonoBehaviour
         _targetPos = splashBulletTravelDistance * throwDirection + _startPos;
         
         // fix rotation
-        // var angle = Mathf.Atan2(throwDirection.y, throwDirection.x) * Mathf.Rad2Deg;
-        // _t.rotation = Quaternion.AngleAxis(angle -45 + 180, Vector3.forward);
+        var angle = Mathf.Atan2(throwDirection.y, throwDirection.x) * Mathf.Rad2Deg;
+        _t.rotation = Quaternion.AngleAxis(angle + 180, Vector3.forward);
         
         //  shoot now!
         _hasBeenShot = true;
@@ -81,8 +81,9 @@ public class SplashBullet : MonoBehaviour
             //     return;
             // }
             // print("Moved!");
+            
             // move position to target
-            _t.position += 2 * Vector3.left; // Vector3.Lerp(_startPos, new Vector3(-50, _startPos.y, 0), throwProgress);
+            _t.position = Vector3.Lerp(_t.position, _targetPos, throwProgress);
         }
 
         if (_reachedTarget && !_watering)

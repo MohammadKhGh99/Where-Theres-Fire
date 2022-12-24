@@ -99,7 +99,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfe71aa67921e534aac7a4f265f62f9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  splashBulletTravelDistance: 8
+  splashBulletTravelDistance: 80
   timeToReachTarget: 3
   splashBulletPower: 0
   lifeTime: 5

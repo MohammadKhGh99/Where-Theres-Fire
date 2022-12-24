@@ -169,14 +169,14 @@ public class WaterMan : MonoBehaviour
     {
         // print("splashing");
         var splash = GameManager.instance.SplashBulletPool.Get();
-        var main = _waterSplash.main;
-        main.duration = 1;
-        main.loop = false;
-        main.startLifetime = 10;
-        var shape = _waterSplash.shape;
-        shape.randomDirectionAmount = 0.1f;
-        _waterSplash.Play();
-        yield return splash.Shoot(_t.position + 5 * Vector3.left, _lookAtDirection);
+        // var main = _waterSplash.main;
+        // main.duration = 1;
+        // main.loop = false;
+        // main.startLifetime = 10;
+        // var shape = _waterSplash.shape;
+        // shape.randomDirectionAmount = 0.1f;
+        // _waterSplash.Play();
+        yield return splash.Shoot(_t.position, _lookAtDirection);
         // when we finish with the bomb, 
         var molotovDropPos = _splashBullet.GetSplashBulletDropPos();
 
@@ -190,5 +190,16 @@ public class WaterMan : MonoBehaviour
         _rb.MovePosition(_rb.position + _moveDirection * (movingSpeed * Time.fixedDeltaTime));
     }
 
-    
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.gameObject.name.StartsWith("FirePlace"))
+        {
+            var curPos = _t.position;
+            if (curPos.x + 10 < 40)
+                _t.position += 10 * Vector3.right;
+            else
+                _t.position += (40 - curPos.x) * Vector3.right;
+            // Destroy(col.gameObject);
+        }
+    }
 }

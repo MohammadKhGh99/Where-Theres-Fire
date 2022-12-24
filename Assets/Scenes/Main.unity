@@ -12313,17 +12313,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: -6012464075247603419, guid: 68c9467706c901e46bc1ce3ce96ccc93, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3797758237007220597, guid: 68c9467706c901e46bc1ce3ce96ccc93, type: 3}
       propertyPath: m_Name
       value: Molotov
       objectReference: {fileID: 0}
     - target: {fileID: 3797758237007220597, guid: 68c9467706c901e46bc1ce3ce96ccc93, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4941883979853208283, guid: 68c9467706c901e46bc1ce3ce96ccc93, type: 3}
       propertyPath: m_RootOrder
