@@ -46,18 +46,18 @@ public class WaterMan : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _t = GetComponent<Transform>();
         _lookAtDirection = Vector2.left;
+        
         _waterSplash = _t.GetChild(0).GetComponent<ParticleSystem>();
         _splashBullet = _t.GetChild(1).GetComponent<SplashBullet>();
         _splashBullet.FakeStart();
         _splashBullet.SetWatering(true);
         _buildingsMask =  LayerMask.GetMask("Building");
         
+        // todo - solve the problem that the 3 seconds here is almost the same as 5 seconds in buildings!!!
         waterCoolDownSlider.maxValue = 3.0f;
         waterCoolDownSlider.value = 0;
         _waterCoolSlideImage = waterCoolDownSlider.fillRect.GetComponent<Image>();
         
-        // var collision = _waterSplash.collision;
-        // collision.collidesWith = _buildingsMask;
         _hit = Physics2D.Raycast(_t.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
     }
 
@@ -68,9 +68,9 @@ public class WaterMan : MonoBehaviour
         var yDirection = Input.GetAxis("Vertical1");
         _moveDirection.x = xDirection;
         _moveDirection.y = yDirection;
-        _hit = Physics2D.Raycast(transform.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
+        _hit = Physics2D.Raycast(_t.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
         
-        if(!_fireKeyDown || _hit.collider.IsUnityNull())
+        if ((!_fireKeyDown || _hit.collider.IsUnityNull()) || (!_canWater && waterCoolDownSlider.value > 0))
             waterCoolDownSlider.value -= Time.deltaTime;
         
         var snapping = fourDirection ? 90.0f : 45.0f;
@@ -78,7 +78,7 @@ public class WaterMan : MonoBehaviour
         {
             var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
             angle = Mathf.Round(angle / snapping) * snapping;
-            transform.rotation = Quaternion.AngleAxis( 90 + angle, Vector3.forward);
+            _t.rotation = Quaternion.AngleAxis( 90 + angle, Vector3.forward);
             _moveDirection = Quaternion.AngleAxis( angle, Vector3.forward) * Vector3.right;
             _lookAtDirection = _moveDirection;
             
@@ -95,12 +95,12 @@ public class WaterMan : MonoBehaviour
             if (_fireKeyHoldingTime < 0.2f && _cooldownToWaterGun <= 0f)
             {
                 // throwing a short water splash in the direction the player is looking at. (unless its a building then nothing)
-                print("Water Splash");
+                // print("Water Splash");
                 _cooldownToWaterGun = GameManager.SplashBulletCooldownTime;
-                // StartCoroutine(ThrowSplashBullet());
-                // var main = _waterSplash.main; 
-                // main.startLifetime = hit.distance;
                 
+                // _splashBullet.SetWatering(false);
+                StartCoroutine(ThrowSplashBullet());
+
             }
 
             StopWatering();
@@ -113,8 +113,7 @@ public class WaterMan : MonoBehaviour
         if (_hit.collider.IsUnityNull())
             StopWatering();
 
-        if (!_canWater && waterCoolDownSlider.value > 0)
-            waterCoolDownSlider.value -= Time.deltaTime;
+        
         // print(_wateringCoolDown + " " + _fireKeyDown);
         
         // print(hit.collider);
@@ -126,8 +125,14 @@ public class WaterMan : MonoBehaviour
             _fireKeyHoldingTime += Time.deltaTime;
             if (_fireKeyHoldingTime >= 0.5f && !_burningBuildingAnimationStarted)
             {
-                print("Wateriiiing");
+                // print("Wateriiiing");
                 // start watering building animation 
+                var main = _waterSplash.main;
+                main.duration = 10;
+                main.loop = true;
+                main.startLifetime = 1;
+                var shape = _waterSplash.shape;
+                shape.randomDirectionAmount = 0.45f;
                 _waterSplash.Play();
                 _splashBullet.gameObject.SetActive(true);
                 _burningBuildingAnimationStarted = true;
@@ -135,7 +140,7 @@ public class WaterMan : MonoBehaviour
             if (_fireKeyHoldingTime >= 5f)
             {
                 // the torch is thrown in the -building- and it will start to burn - stop animation also
-                print("Water is everywhere! (5 sec)");
+                // print("Water is everywhere! (5 sec)");
                 StopWatering();
                 
                 StartCoroutine(WateringCoolDown());
@@ -164,16 +169,14 @@ public class WaterMan : MonoBehaviour
     {
         // print("splashing");
         var splash = GameManager.instance.SplashBulletPool.Get();
-        // _splashBullet.SetWatering(watering);
-        // if (watering)
-        // {
-        //     Transform temp = _splashBullet.transform; 
-        //     temp.SetParent(gameObject.transform);
-        //     temp.position = _t.position + 5 * Vector3.left;
-        //     
-        // }
-        
-        yield return splash.Shoot(transform.position, _lookAtDirection);
+        var main = _waterSplash.main;
+        main.duration = 1;
+        main.loop = false;
+        main.startLifetime = 10;
+        var shape = _waterSplash.shape;
+        shape.randomDirectionAmount = 0.1f;
+        _waterSplash.Play();
+        yield return splash.Shoot(_t.position + 5 * Vector3.left, _lookAtDirection);
         // when we finish with the bomb, 
         var molotovDropPos = _splashBullet.GetSplashBulletDropPos();
 

@@ -33,6 +33,7 @@ public class Molotov : MonoBehaviour
     private float _throwStartTime;
     private bool _hasBeenShot = false;
     private bool _reachedTarget = false;
+    private GameObject _fireChild;
     
     public void FakeStart()
     {
@@ -41,7 +42,7 @@ public class Molotov : MonoBehaviour
         _bottleT = _t.Find("Bottle");
         _shadowScale = _shadowT.localScale;
         _bottleScale = _bottleT.localScale;
-        
+        _fireChild = _t.GetChild(2).gameObject;
     }
     
     public IEnumerator Shoot(Vector3 position, Vector3 throwDirection)
@@ -77,6 +78,8 @@ public class Molotov : MonoBehaviour
             {
                 // we reached target!
                 _reachedTarget = true;
+                _fireChild.SetActive(true);
+                gameObject.SetActive(false);
                 return;
             }
             

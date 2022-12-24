@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   splashBulletTravelDistance: 8
-  timeToReachTarget: 0.1
+  timeToReachTarget: 3
   splashBulletPower: 0
   lifeTime: 5
 --- !u!50 &3824738090100082266

@@ -42,8 +42,8 @@ public class SplashBullet : MonoBehaviour
         _targetPos = splashBulletTravelDistance * throwDirection + _startPos;
         
         // fix rotation
-        var angle = Mathf.Atan2(throwDirection.y, throwDirection.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.AngleAxis(angle -45 + 180, Vector3.forward);
+        // var angle = Mathf.Atan2(throwDirection.y, throwDirection.x) * Mathf.Rad2Deg;
+        // _t.rotation = Quaternion.AngleAxis(angle -45 + 180, Vector3.forward);
         
         //  shoot now!
         _hasBeenShot = true;
@@ -74,28 +74,42 @@ public class SplashBullet : MonoBehaviour
             // calculate time until we reach the actual time to reach target
             var timePassed = Time.time - _throwStartTime;
             var throwProgress = timePassed / timeToReachTarget;
-            if (throwProgress >= 1)
-            {
-                // we reached target!
-                _reachedTarget = true;
-                return;
-            }
-            print("Moved!");
+            // if (throwProgress >= 1)
+            // {
+            //     // we reached target!
+            //     _reachedTarget = true;
+            //     return;
+            // }
+            // print("Moved!");
             // move position to target
-            _t.position = Vector3.Lerp(_startPos, _targetPos, throwProgress);
+            _t.position += 2 * Vector3.left; // Vector3.Lerp(_startPos, new Vector3(-50, _startPos.y, 0), throwProgress);
         }
+
+        if (_reachedTarget && !_watering)
+            _watering = true;
     }
 
     public void SetWatering(bool other)
     {
         _watering = other;
     }
-    
+
+    // private void OnCollisionEnter2D(Collision2D col)
+    // {
+    //     print(col.gameObject);
+    // }
+
     private void OnTriggerEnter2D(Collider2D col)
     {
+        // print(col.gameObject);
         if (col.gameObject.name.StartsWith("Building"))
         {
             col.GetComponent<BuildingManager>().SetStatus(GameManager.BURNING);
+        }
+
+        if (col.gameObject.name.EndsWith("Wall"))
+        {
+            Destroy(gameObject);
         }
     }
 

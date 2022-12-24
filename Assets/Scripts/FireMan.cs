@@ -45,9 +45,10 @@ public class FireMan : MonoBehaviour
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
+        _t = GetComponent<Transform>();
         _lookAtDirection = Vector2.right;
         _buildingsMask =  LayerMask.GetMask("Building");
-        hit = Physics2D.Raycast(transform.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
+        hit = Physics2D.Raycast(_t.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
         
         _spriteRenderer = GetComponent<SpriteShapeRenderer>();
         if (invisible)
@@ -73,10 +74,10 @@ public class FireMan : MonoBehaviour
         {
             var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
             angle = Mathf.Round(angle / snapping) * snapping;
-            transform.rotation = Quaternion.AngleAxis( 90 + angle, Vector3.forward);
+            _t.rotation = Quaternion.AngleAxis( 90 + angle, Vector3.forward);
             _moveDirection = Quaternion.AngleAxis( angle, Vector3.forward) * Vector3.right;
             _lookAtDirection = _moveDirection;
-            hit = Physics2D.Raycast(transform.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
+            hit = Physics2D.Raycast(_t.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
             print(hit.collider);
         }
 
@@ -135,7 +136,7 @@ public class FireMan : MonoBehaviour
     private IEnumerator ThrowMolotov()
     {
         var molotov = GameManager.instance.MolotovPool.Get();
-        yield return molotov.Shoot(transform.position, _lookAtDirection);
+        yield return molotov.Shoot(_t.position, _lookAtDirection);
         // when we finish with the bomb, 
         var molotovDropPos = molotov.GetMolotovDropPos();
 
@@ -149,8 +150,22 @@ public class FireMan : MonoBehaviour
         _rb.MovePosition(_rb.position + _moveDirection * (movingSpeed * Time.fixedDeltaTime));
     }
 
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.gameObject.name.StartsWith("Splash"))
+        {
+            var curPos = _t.position;
+            if (curPos.x - 10 > -40)
+                _t.position += 10 * Vector3.left;
+            else
+                _t.position += (-40 - curPos.x) * Vector3.right;
+            Destroy(col.gameObject);
+        }
+    }
+
     private void OnCollisionEnter2D(Collision2D col)
     {
+        print(col.collider);
         if (col.collider.name.StartsWith("Water") && invisible)
         {
             _spriteRenderer.enabled = true;
