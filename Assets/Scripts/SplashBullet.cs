@@ -23,12 +23,14 @@ public class SplashBullet : MonoBehaviour
     private float _throwStartTime;
     private bool _hasBeenShot = false;
     private bool _reachedTarget = false;
+    private bool _watering;
     
     public void FakeStart()
     {
         _t = GetComponent<Transform>();
         // GetComponent<SpriteRenderer>().sprite = null;
         _startScale = _t.localScale;
+        _watering = false;
     }
     
     
@@ -65,7 +67,9 @@ public class SplashBullet : MonoBehaviour
     void Update()
     {
         // shooting water to target
-        if (_hasBeenShot && !_reachedTarget)
+        if (_watering)
+            _t.localPosition = Vector3.down * 8;
+        if (_hasBeenShot && !_reachedTarget && !_watering)
         {
             // calculate time until we reach the actual time to reach target
             var timePassed = Time.time - _throwStartTime;
@@ -76,10 +80,15 @@ public class SplashBullet : MonoBehaviour
                 _reachedTarget = true;
                 return;
             }
-
+            print("Moved!");
             // move position to target
             _t.position = Vector3.Lerp(_startPos, _targetPos, throwProgress);
         }
+    }
+
+    public void SetWatering(bool other)
+    {
+        _watering = other;
     }
     
     private void OnTriggerEnter2D(Collider2D col)

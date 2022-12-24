@@ -9,12 +9,15 @@ public class BuildingManager : MonoBehaviour
     [SerializeField] private string status = "Normal";
     [SerializeField] private float healthBar = 5.0f;
     [SerializeField] private Slider healthBarObj;
+    [SerializeField] private Color fullBarColor;
+    [SerializeField] private Color emptyBarColor;
     
 
     private const float MaxBurningTime = 5.0f;
     private float _timeToBurn = MaxBurningTime;
     private SpriteRenderer _spriteRenderer;
     private Color _initialColor;
+    private Image _healthBarSlideImage;
     
     // Start is called before the first frame update
     void Start()
@@ -26,6 +29,8 @@ public class BuildingManager : MonoBehaviour
         // healthBarObj = GetComponent<Slider>();
         healthBarObj.maxValue = MaxBurningTime;
         healthBarObj.value = MaxBurningTime;
+        _healthBarSlideImage = healthBarObj.fillRect.GetComponent<Image>();
+        // _healthBarSlideImage.color = fullBarColor;
     }
 
     // Update is called once per frame
@@ -35,10 +40,16 @@ public class BuildingManager : MonoBehaviour
         {
             case GameManager.BURNING when _timeToBurn > 0:
             {
-                print(status);
+                // print(status);
                 // healthBar -= Time.deltaTime;
                 healthBarObj.value -= Time.deltaTime;
-                print(healthBar);
+                // Color color = _healthBarSlideImage.material.color; 
+                // color.r = 1 - (_timeToBurn / MaxBurningTime);
+                // color.g = _timeToBurn / MaxBurningTime;
+                // _healthBarSlideImage.material.color = color;
+                
+                // _healthBarSlideImage.color = Color.Lerp(_healthBarSlideImage.color, fullBarColor, Time.deltaTime / _timeToBurn);
+                // print(healthBar);
                 // print(status);
                 // StartCoroutine(ChangeEngineColour());
                 _spriteRenderer.material.color = Color.Lerp(_spriteRenderer.material.color, Color.black, Time.deltaTime / _timeToBurn);
@@ -70,16 +81,16 @@ public class BuildingManager : MonoBehaviour
         }
     }
     
-    private IEnumerator ChangeEngineColour()
-    {
-        float tick = 0f;
-        while (_spriteRenderer.material.color != Color.black)
-        {
-            tick += Time.deltaTime * 2;
-            _spriteRenderer.material.color = Color.Lerp(_spriteRenderer.material.color, Color.black, Time.deltaTime / _timeToBurn);
-            yield return null;
-        }
-    }
+    // private IEnumerator ChangeEngineColour()
+    // {
+    //     float tick = 0f;
+    //     while (_spriteRenderer.material.color != Color.black)
+    //     {
+    //         tick += Time.deltaTime * 2;
+    //         _spriteRenderer.material.color = Color.Lerp(_spriteRenderer.material.color, Color.black, Time.deltaTime / _timeToBurn);
+    //         yield return null;
+    //     }
+    // }
 
     public void SetStatus(string newStatus)
     {

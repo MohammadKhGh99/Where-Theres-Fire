@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class WaterMan : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class WaterMan : MonoBehaviour
     [SerializeField] private float movingSpeed;
     [SerializeField] private bool fourDirection;
     [SerializeField] private float distanceToBurnBuilding = 5;
+    [SerializeField] private Slider waterCoolDownSlider;
     private Vector2 _moveDirection;
     private Vector2 _lookAtDirection;
     
@@ -31,9 +33,11 @@ public class WaterMan : MonoBehaviour
                           Down = KeyCode.DownArrow;
 
     private ParticleSystem _waterSplash;
-    private RaycastHit2D hit;
+    private RaycastHit2D _hit;
     private LayerMask _buildingsMask;
     private SplashBullet _splashBullet;
+    private Image _waterCoolSlideImage;
+    private bool _canWater = true;
 
 
     // Start is called before the first frame update
@@ -43,11 +47,18 @@ public class WaterMan : MonoBehaviour
         _t = GetComponent<Transform>();
         _lookAtDirection = Vector2.left;
         _waterSplash = _t.GetChild(0).GetComponent<ParticleSystem>();
+        _splashBullet = _t.GetChild(1).GetComponent<SplashBullet>();
+        _splashBullet.FakeStart();
+        _splashBullet.SetWatering(true);
         _buildingsMask =  LayerMask.GetMask("Building");
+        
+        waterCoolDownSlider.maxValue = 3.0f;
+        waterCoolDownSlider.value = 0;
+        _waterCoolSlideImage = waterCoolDownSlider.fillRect.GetComponent<Image>();
         
         // var collision = _waterSplash.collision;
         // collision.collidesWith = _buildingsMask;
-        hit = Physics2D.Raycast(_t.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
+        _hit = Physics2D.Raycast(_t.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
     }
 
     private void Update()
@@ -57,7 +68,10 @@ public class WaterMan : MonoBehaviour
         var yDirection = Input.GetAxis("Vertical1");
         _moveDirection.x = xDirection;
         _moveDirection.y = yDirection;
-        hit = Physics2D.Raycast(transform.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
+        _hit = Physics2D.Raycast(transform.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
+        
+        if(!_fireKeyDown || _hit.collider.IsUnityNull())
+            waterCoolDownSlider.value -= Time.deltaTime;
         
         var snapping = fourDirection ? 90.0f : 45.0f;
         if (_moveDirection.sqrMagnitude > 0)
@@ -68,7 +82,7 @@ public class WaterMan : MonoBehaviour
             _moveDirection = Quaternion.AngleAxis( angle, Vector3.forward) * Vector3.right;
             _lookAtDirection = _moveDirection;
             
-            print(hit.collider);
+            // print(hit.collider);
         }
         
         // *** shooting ability ***
@@ -81,54 +95,85 @@ public class WaterMan : MonoBehaviour
             if (_fireKeyHoldingTime < 0.2f && _cooldownToWaterGun <= 0f)
             {
                 // throwing a short water splash in the direction the player is looking at. (unless its a building then nothing)
-                Debug.Log("Water Splash");
+                print("Water Splash");
                 _cooldownToWaterGun = GameManager.SplashBulletCooldownTime;
-                StartCoroutine(ThrowSplashBullet());
+                // StartCoroutine(ThrowSplashBullet());
                 // var main = _waterSplash.main; 
                 // main.startLifetime = hit.distance;
                 
             }
 
-            _splashBullet.Die();
-            _waterSplash.Stop();
+            StopWatering();
+            // _splashBullet.gameObject.SetActive(false);
             _fireKeyHoldingTime = 0f;
             _fireKeyDown = false;
             _burningBuildingAnimationStarted = false;
         }
+
+        if (_hit.collider.IsUnityNull())
+            StopWatering();
+
+        if (!_canWater && waterCoolDownSlider.value > 0)
+            waterCoolDownSlider.value -= Time.deltaTime;
+        // print(_wateringCoolDown + " " + _fireKeyDown);
         
-        if (_fireKeyDown)
+        // print(hit.collider);
+        if (_fireKeyDown && _canWater && !_hit.collider.IsUnityNull())
         {
+            if (_burningBuildingAnimationStarted && waterCoolDownSlider.value < 3.0f)
+                waterCoolDownSlider.value += Time.deltaTime;
+            // _wateringCoolDown -= Time.deltaTime;
             _fireKeyHoldingTime += Time.deltaTime;
-            // print("Time: " + _fireKeyHoldingTime);
             if (_fireKeyHoldingTime >= 0.5f && !_burningBuildingAnimationStarted)
             {
+                print("Wateriiiing");
                 // start watering building animation 
-                // var main = _waterSplash.main;
-                // main.startLifetime = 1;
-                // print("Testing: " + hit.collider);
-                // if (hit.collider.name.StartsWith("Building"))
-                //     main.startLifetime = hit.distance / 2;
                 _waterSplash.Play();
-                StartCoroutine(ThrowSplashBullet());
+                _splashBullet.gameObject.SetActive(true);
                 _burningBuildingAnimationStarted = true;
             }
             if (_fireKeyHoldingTime >= 5f)
             {
                 // the torch is thrown in the -building- and it will start to burn - stop animation also
-                Debug.Log("Water is everywhere! (5 sec)");
+                print("Water is everywhere! (5 sec)");
+                StopWatering();
                 
+                StartCoroutine(WateringCoolDown());
                 _fireKeyDown = false;
+                _burningBuildingAnimationStarted = false;
             }
         }
         _cooldownToWaterGun = Mathf.Max(_cooldownToWaterGun - Time.deltaTime, 0f);
         
     }
+
+    private void StopWatering()
+    {
+        _waterSplash.Stop();
+        _splashBullet.Die();
+    }
+
+    private IEnumerator WateringCoolDown()
+    {
+        _canWater = false;
+        yield return new WaitForSeconds(3);
+        _canWater = true;
+    }
     
     private IEnumerator ThrowSplashBullet()
     {
-        _splashBullet = GameManager.instance.SplashBulletPool.Get();
+        // print("splashing");
+        var splash = GameManager.instance.SplashBulletPool.Get();
+        // _splashBullet.SetWatering(watering);
+        // if (watering)
+        // {
+        //     Transform temp = _splashBullet.transform; 
+        //     temp.SetParent(gameObject.transform);
+        //     temp.position = _t.position + 5 * Vector3.left;
+        //     
+        // }
         
-        yield return _splashBullet.Shoot(transform.position - 3 * Vector3.right, _lookAtDirection);
+        yield return splash.Shoot(transform.position, _lookAtDirection);
         // when we finish with the bomb, 
         var molotovDropPos = _splashBullet.GetSplashBulletDropPos();
 

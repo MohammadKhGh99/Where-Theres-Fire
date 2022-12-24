@@ -8,6 +8,7 @@ using UnityEngine.Pool;
 public class GameManager : Singleton<GameManager>
 {
     [SerializeField] private TextMeshProUGUI timerText;
+    // [SerializeField] private GameObject splashWaterParent;
     [SerializeField] private GameObject housesParent;
     [SerializeField] private bool controlHousesPos = true;
 
@@ -47,6 +48,8 @@ public class GameManager : Singleton<GameManager>
     public const string WAS_BURNED = "Was Burned";
 
     private float _currentSeconds = 0;
+
+    // public static Canvas healthBarParent;
     
     
 
@@ -79,29 +82,31 @@ public class GameManager : Singleton<GameManager>
     public const float SplashBulletCooldownTime = 3f;
     
     public ObjectPool<SplashBullet> SplashBulletPool =
-        new (CreateSplashBullet, GetSplashBullet, ReturnSplashBullet, DestroySplashBullet, false, 5, 7);
+        new (CreateSplashBullet, OnGetSplashBullet, OnReleaseSplashBullet, OnDestroySplashBullet, false, 5, 7);
     private static SplashBullet CreateSplashBullet()
     {
-        var splashBullet = Instantiate(Resources.Load("SplashBullet") as GameObject);
+        var splashBullet = Instantiate(Resources.Load("SplashBullet")) as GameObject;
         return splashBullet.GetComponent<SplashBullet>();
     }
-    private static void GetSplashBullet(SplashBullet splashBullet)
+    private static void OnGetSplashBullet(SplashBullet splashBullet)
     {
         splashBullet.gameObject.SetActive(true);
         splashBullet.FakeStart();
     }
-    private static void ReturnSplashBullet(SplashBullet splashBullet)
+    private static void OnReleaseSplashBullet(SplashBullet splashBullet)
     {
         splashBullet.gameObject.SetActive(false);
     }
-    private static void DestroySplashBullet(SplashBullet splashBullet)
+    private static void OnDestroySplashBullet(SplashBullet splashBullet)
     {
-        Destroy(splashBullet);
+        Destroy(splashBullet.gameObject);
     }
 
     
     void Start()
     {
+        // healthBarParent = transform.GetChild(0).GetComponentInChildren<Canvas>();
+        // print(healthBarParent);
         timerText.text = "05:00";
         _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
         for (int i = 0; i < _housesPosBackUp.Length; i++)
