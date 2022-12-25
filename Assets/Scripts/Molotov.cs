@@ -30,7 +30,7 @@ public class Molotov : MonoBehaviour
     private float _oscillationHeight;
     
     // flags for update of the throw
-    private float _throwStartTime;
+    private float _throwPassedTime;
     private bool _hasBeenShot = false;
     private bool _reachedTarget = false;
     private GameObject _fireChild;
@@ -56,13 +56,14 @@ public class Molotov : MonoBehaviour
 
         //  shoot now!
         _hasBeenShot = true;
-        _throwStartTime = Time.time;
+        _throwPassedTime = 0f;
         yield return new WaitUntil(() => _reachedTarget);
-        
+        StartCoroutine(FireLifeTime());
+
         // todo continue
         
     }
-    
+
     public Vector3 GetMolotovDropPos()
     {
         return _targetPos;
@@ -74,13 +75,12 @@ public class Molotov : MonoBehaviour
         if (_hasBeenShot && !_reachedTarget)
         {
             // calculate time until we reach the actual time to reach target
-            var timePassed = Time.time - _throwStartTime;
-            var throwProgress = timePassed / timeToReachTarget;
+            var throwProgress = _throwPassedTime / timeToReachTarget;
+            _throwPassedTime += Time.fixedDeltaTime;
             if (throwProgress >= 1)
             {
                 // we reached target!
                 _reachedTarget = true;
-                StartCoroutine(FireLifeTime());
                 return;
             }
             
@@ -116,14 +116,5 @@ public class Molotov : MonoBehaviour
         yield return new WaitForSeconds(8);
         gameObject.SetActive(false);
     }
-
-    // private void OnTriggerEnter2D(Collider2D col)
-    // {
-    //     print("Collision");
-    //     if (col.gameObject.name.StartsWith("Building"))
-    //     {
-    //         BuildingManager house = col.gameObject.GetComponent<BuildingManager>();
-    //         house.SetStatus("Burning");
-    //     }
-    // }
+    
 }

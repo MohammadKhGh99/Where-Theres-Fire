@@ -11,9 +11,9 @@ public class SplashBullet : MonoBehaviour
     private Vector2 _startScale;
     
     // important public variables for the throw
-    [SerializeField] private float splashBulletTravelDistance;      // how many floats the bomb should travel
-    [SerializeField] private float timeToReachTarget;       // time to reach the target
-    [SerializeField] private float splashBulletPower;
+    [SerializeField] private float splashBulletTravelDistance;      // how many floats the water stream should travel
+    [SerializeField] private float timeToReachTarget;               // time to reach the target
+    [SerializeField] private float splashBulletPower;               // the force it will slap the player with
     [SerializeField] private float lifeTime = 5.0f;
     
     // important private variables for the throw

@@ -9,8 +9,8 @@ public class BuildingManager : MonoBehaviour
     [SerializeField] private string status = "Normal";
     [SerializeField] private float healthBar = 5.0f;
     [SerializeField] private Slider healthBarObj;
-    [SerializeField] private Color fullBarColor;
-    [SerializeField] private Color emptyBarColor;
+    // [SerializeField] private Color fullBarColor;
+    // [SerializeField] private Color emptyBarColor;
     
 
     private const float MaxBurningTime = 5.0f;

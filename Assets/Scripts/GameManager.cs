@@ -7,18 +7,23 @@ using UnityEngine.Pool;
 
 public class GameManager : Singleton<GameManager>
 {
-    [SerializeField] private TextMeshProUGUI timerText;
-    // [SerializeField] private GameObject splashWaterParent;
-    [SerializeField] private GameObject housesParent;
+    
+    // *** Time of the Game variables **** ///
+    [SerializeField] private TextMeshProUGUI timerText;         // timer counting down until the game is over
+    [SerializeField] private float gameTimeInSeconds;         // the game time in seconds
+    private const float DEFAULT_GAME_TIME = 5.0f * 60.0f;       // 5 Minutes
+    private float _gameTimer;
+    
+    
+    //  **** Housing.. ****
+    [SerializeField] private GameObject housesParent;           // where to store the houses Parent
     [SerializeField] private bool controlHousesPos = true;
-
     [SerializeField] private string[] housesPositions =
     {
         "-28.75,12.5", "-14.25,12.5", "0.25,12.5", "14.75,12.5", "29,12.5",
         "-28.75,-0.5", "-14.25,-0.5", "0.25,-0.5", "14.75,-0.5", "29,-0.5", 
         "-28.75,-13.5", "-14.25,-13.5", "0.25,-13.5", "14.75,-13.5", "29,-13.5"
     };
-    
     private string[] _housesPosBackUp =
     {
         "-28.75,12.5", "-14.25,12.5", "0.25,12.5", "14.75,12.5", "29,12.5",
@@ -28,33 +33,31 @@ public class GameManager : Singleton<GameManager>
     
     
     // this is a declaration for the singleton, maybe it's not needed, keep it for now. (if made problem DELETE)
-    protected GameManager(){}
     public static GameManager instance;
     private void Awake()
     {
         instance = this;
     }
 
-    // Constants:
-    public const float RightAngle = 90;
-    public const float LeftAngle = -90;
-    public const float UpAngle = 180;
-    public const float DownAngle = 0;
     
+    //  *** Constants ***:
+    // buildingStatus
     public const string NORMAL = "Normal";
     public const string BURNING = "Burning";
     public const string BURNED = "Burned";
     public const string WATERING = "Watering";
     public const string WAS_BURNED = "Was Burned";
 
-    private float _currentSeconds = 0;
+
+    // Building mask
+    public LayerMask BuildingsMask { get; private set; }
 
     // public static Canvas healthBarParent;
     
     
 
-    // molotov pool and functions
-    public const float MolotovCooldownTime = 3f;
+    // **** "Molotov" pool and functions ****
+    public const float MolotovCooldownTime = 0f;
     
     public ObjectPool<Molotov> MolotovPool =
         new (CreateMolotov, GetMolotov, ReturnMolotov, DestroyMolotov, false, 5, 7);
@@ -78,9 +81,9 @@ public class GameManager : Singleton<GameManager>
     }
 
     
-    // SplashBullet pool and functions
-    public const float SplashBulletCooldownTime = 3f;
-    
+    // **** "SplashBullet" pool and functions ****
+    public const float SplashBulletCooldownTime = 0f;
+
     public ObjectPool<SplashBullet> SplashBulletPool =
         new (CreateSplashBullet, OnGetSplashBullet, OnReleaseSplashBullet, OnDestroySplashBullet, false, 5, 7);
     private static SplashBullet CreateSplashBullet()
@@ -103,11 +106,35 @@ public class GameManager : Singleton<GameManager>
     }
 
     
+    // **** "WaterSquare" pool and functions ****
+    public ObjectPool<WaterSquare> WaterSquarePool =
+        new (CreateWaterSquare, OnGetWaterSquare, OnReleaseWaterSquare, OnDestroyWaterSquare, false, 15, 20);
+    private static WaterSquare CreateWaterSquare()
+    {
+        var waterSquare = Instantiate(Resources.Load("WaterSquare")) as GameObject;
+        return waterSquare.GetComponent<WaterSquare>();
+    }
+    private static void OnGetWaterSquare(WaterSquare waterSquare)
+    {
+        waterSquare.FakeStart();
+    }
+    private static void OnReleaseWaterSquare(WaterSquare waterSquare)
+    {
+        waterSquare.FakeRelease();
+    }
+    private static void OnDestroyWaterSquare(WaterSquare waterSquare)
+    {
+        Destroy(waterSquare.gameObject);
+    }
+    
     void Start()
     {
-        // healthBarParent = transform.GetChild(0).GetComponentInChildren<Canvas>();
-        // print(healthBarParent);
-        timerText.text = "05:00";
+        // ** set the game timer **//
+        _gameTimer = gameTimeInSeconds != 0 ? gameTimeInSeconds : DEFAULT_GAME_TIME;
+        
+        
+        BuildingsMask =  LayerMask.GetMask("Building");
+
         _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
         for (int i = 0; i < _housesPosBackUp.Length; i++)
         {
@@ -122,6 +149,15 @@ public class GameManager : Singleton<GameManager>
     // Update is called once per frame
     void Update()
     {
+        UpdateTheTimeOfTheGame();
+    }
+
+    // timer countdown
+    private float _currentSeconds = 0;
+    private void UpdateTheTimeOfTheGame()
+    {
+        // counter to end of game 
+        // todo: IT doesn't stop.
         _currentSeconds += Time.deltaTime;
         int minutes = ((int)(_currentSeconds / 60)) % 60;
         int seconds = ((int)_currentSeconds) % 60;
@@ -129,10 +165,9 @@ public class GameManager : Singleton<GameManager>
         seconds = 59 - seconds;
         if (minutes == 1 && seconds == 0)
             timerText.color = Color.red;
-        
+
         // Showing the elapsed time in game
         timerText.text = $"{minutes:00}:{seconds:00}";
     }
-    
     
 }
