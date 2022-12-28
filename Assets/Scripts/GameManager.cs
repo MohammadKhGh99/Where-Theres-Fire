@@ -43,9 +43,6 @@ public class GameManager : Singleton<GameManager>
     // the game is running or not
     public static bool IsGameRunning;
     
-    // **** PARENTS ****
-    public GameObject extinguisherWaterStream;
-    public GameObject shotWaterStream;
     
     // this is a declaration for the singleton, maybe it's not needed, keep it for now. 
 

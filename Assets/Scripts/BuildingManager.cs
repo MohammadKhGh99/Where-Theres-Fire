@@ -96,18 +96,6 @@ public class BuildingManager : MonoBehaviour
     {
         status = newStatus;
     }
-
-    // private void OnCollisionEnter2D(Collision2D col)
-    // {
-    //     print(col.collider);
-    //     if (col.collider.name.StartsWith("FirePlace"))
-    //     {
-    //         SetStatus(GameManager.BURNING);
-    //     }
-    //     // if (col.collider.name.StartsWith("Water"))
-    //     // {
-    //     //     SetStatus(GameManager.WATERING);
-    //     // }
-    // }
+    
  
 }

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2246694295596606062}
   m_Layer: 0
   m_Name: FireMolotov
-  m_TagString: Untagged
+  m_TagString: FireMolotov
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -116,3 +116,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetScale: 4
   timeToEnlarge: 0.5
+  timeToReduce: 0.1

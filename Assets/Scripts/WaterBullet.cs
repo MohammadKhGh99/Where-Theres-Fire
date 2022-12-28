@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -8,6 +9,9 @@ public class WaterBullet : MonoBehaviour
     // components
     private Transform _t;
     private BoxCollider2D _boxCollider;
+    
+    // shooting force
+    [SerializeField] private float waterBulletPower = 100f;
     
     // speed of stream
     [SerializeField] private float bulletSpeed = 5f;
@@ -190,5 +194,47 @@ public class WaterBullet : MonoBehaviour
         // reset flags!
         _hasPositioned = false;
         gameObject.SetActive(false);
+    }
+
+    private void OnTriggerEnter2D(Collider2D col)
+    {
+        print("there is trigger");
+        if (col.name.StartsWith("Building"))
+        {
+            print("*BUILDING* is trigger");
+            // we want it to burn
+        }
+        else if (col.CompareTag("FireMolotov"))
+        {
+            print("*FireMolotov* is trigger");
+
+            col.GetComponent<FireMolotov>().Extinguish();
+        }
+        else if (!col.attachedRigidbody.IsUnityNull())
+        {
+            print("*anyRIGIDBODY* is trigger");
+            col.attachedRigidbody.AddForce(_direction * waterBulletPower * bulletSpeed, ForceMode2D.Force);
+        }
+    }
+    
+    private void OnTriggerStay2D(Collider2D col)
+    {
+        print("there is trigger");
+        if (col.name.StartsWith("Building"))
+        {
+            print("*BUILDING* is trigger");
+            // we want it to burn
+        }
+        else if (col.CompareTag("FireMolotov"))
+        {
+            print("*FireMolotov* is trigger");
+
+            col.GetComponent<FireMolotov>().Extinguish();
+        }
+        else if (!col.attachedRigidbody.IsUnityNull())
+        {
+            print("*anyRIGIDBODY* is trigger");
+            col.attachedRigidbody.AddForce(_direction * waterBulletPower * bulletSpeed, ForceMode2D.Force);
+        }
     }
 }

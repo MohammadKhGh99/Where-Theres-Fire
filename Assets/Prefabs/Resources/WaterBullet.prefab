@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 9022764363112588603}
   - component: {fileID: 9022764363112588602}
   - component: {fileID: 9022764363112588605}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: WaterBullet
-  m_TagString: Untagged
+  m_TagString: WaterBullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,7 +98,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4188e2ed010e04a4a938e6a2e4f06996, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  waterBulletPower: 100
   bulletSpeed: 15
+  bulletDistance: 15
   bulletLifeTime: 3
   currentStatus: 0
 --- !u!61 &9022764363112588605
