@@ -31,8 +31,16 @@ public class GameManager : Singleton<GameManager>
         "-28.75,-13.5", "-14.25,-13.5", "0.25,-13.5", "14.75,-13.5", "29,-13.5"
     };
     
+    // **** PARENTS ****
+    public GameObject extinguisherWaterStream;
+    public GameObject shotWaterStream;
     
-    // this is a declaration for the singleton, maybe it's not needed, keep it for now. (if made problem DELETE)
+    
+    
+    
+    
+    
+    // this is a declaration for the singleton, maybe it's not needed, keep it for now. 
     public static GameManager instance;
     private void Awake()
     {
@@ -47,12 +55,15 @@ public class GameManager : Singleton<GameManager>
     public const string BURNED = "Burned";
     public const string WATERING = "Watering";
     public const string WAS_BURNED = "Was Burned";
-
-
+    
+    // WaterBullet Stasuses
+    public enum WaterBulletStatus
+    {
+        Start, Enlarge, Shoot, Decrease, Done
+    }
+    
     // Building mask
     public LayerMask BuildingsMask { get; private set; }
-
-    // public static Canvas healthBarParent;
     
     
 
@@ -79,52 +90,52 @@ public class GameManager : Singleton<GameManager>
     {
         Destroy(molotov);
     }
-
     
-    // **** "SplashBullet" pool and functions ****
-    public const float SplashBulletCooldownTime = 0f;
-
-    public ObjectPool<SplashBullet> SplashBulletPool =
-        new (CreateSplashBullet, OnGetSplashBullet, OnReleaseSplashBullet, OnDestroySplashBullet, false, 5, 7);
-    private static SplashBullet CreateSplashBullet()
-    {
-        var splashBullet = Instantiate(Resources.Load("SplashBullet")) as GameObject;
-        return splashBullet.GetComponent<SplashBullet>();
-    }
-    private static void OnGetSplashBullet(SplashBullet splashBullet)
-    {
-        splashBullet.gameObject.SetActive(true);
-        splashBullet.FakeStart();
-    }
-    private static void OnReleaseSplashBullet(SplashBullet splashBullet)
-    {
-        splashBullet.gameObject.SetActive(false);
-    }
-    private static void OnDestroySplashBullet(SplashBullet splashBullet)
-    {
-        Destroy(splashBullet.gameObject);
-    }
-
     
-    // **** "WaterSquare" pool and functions ****
-    public ObjectPool<WaterSquare> WaterSquarePool =
-        new (CreateWaterSquare, OnGetWaterSquare, OnReleaseWaterSquare, OnDestroyWaterSquare, false, 15, 20);
-    private static WaterSquare CreateWaterSquare()
+    // **** "WaterBullet" pool and functions ****
+    public ObjectPool<WaterBullet> WaterBulletPool =
+        new (CreateWaterBullet, OnGetWaterBullet, OnReleaseWaterBullet, OnDestroyWaterBullet, false, 15, 20);
+    private static WaterBullet CreateWaterBullet()
     {
-        var waterSquare = Instantiate(Resources.Load("WaterSquare")) as GameObject;
-        return waterSquare.GetComponent<WaterSquare>();
+        var waterBullet = Instantiate(Resources.Load("WaterBullet")) as GameObject;
+        var script = waterBullet.GetComponent<WaterBullet>();
+        script.currentStatus = WaterBulletStatus.Start;
+        return script;
+
     }
-    private static void OnGetWaterSquare(WaterSquare waterSquare)
+    private static void OnGetWaterBullet(WaterBullet waterBullet)
     {
-        waterSquare.FakeStart();
+        waterBullet.FakeStart();
     }
-    private static void OnReleaseWaterSquare(WaterSquare waterSquare)
+    private static void OnReleaseWaterBullet(WaterBullet waterBullet)
     {
-        waterSquare.FakeRelease();
+        waterBullet.FakeRelease();
     }
-    private static void OnDestroyWaterSquare(WaterSquare waterSquare)
+    private static void OnDestroyWaterBullet(WaterBullet waterBullet)
     {
-        Destroy(waterSquare.gameObject);
+        Destroy(waterBullet.gameObject);
+    }
+    
+    
+    // **** "FireMolotov" pool and functions ****
+    public ObjectPool<FireMolotov> FireMolotovPool =
+        new (CreateFireMolotov, OnGetFireMolotov, OnReleaseFireMolotov, OnDestroyFireMolotov, false, 15, 20);
+    private static FireMolotov CreateFireMolotov()
+    {
+        var fireMolotov = Instantiate(Resources.Load("FireMolotov")) as GameObject;
+        return fireMolotov.GetComponent<FireMolotov>();
+    }
+    private static void OnGetFireMolotov(FireMolotov fireMolotov)
+    {
+        fireMolotov.FakeStart();
+    }
+    private static void OnReleaseFireMolotov(FireMolotov fireMolotov)
+    {
+        fireMolotov.FakeRelease();
+    }
+    private static void OnDestroyFireMolotov(FireMolotov fireMolotov)
+    {
+        Destroy(fireMolotov.gameObject);
     }
     
     void Start()
