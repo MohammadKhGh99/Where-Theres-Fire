@@ -31,10 +31,6 @@ public class GameManager : Singleton<GameManager>
         "-28.75,-13.5", "-14.25,-13.5", "0.25,-13.5", "14.75,-13.5", "29,-13.5"
     };
     
-    // **** PARENTS ****
-    public GameObject extinguisherWaterStream;
-    public GameObject shotWaterStream;
-    
     
     
     
