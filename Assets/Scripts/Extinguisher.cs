@@ -24,6 +24,9 @@ public class Extinguisher : MonoBehaviour
     
     // controls changing
     private const KeyCode Extinguish = KeyCode.Period;
+    
+    // ** water particle
+    private ParticleSystem _waterSplash;
 
 
     // Start is called before the first frame update
@@ -32,6 +35,7 @@ public class Extinguisher : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _t = GetComponent<Transform>();
         _waterGun = GetComponent<WaterGun>();
+        _waterSplash = _t.GetChild(0).GetComponent<ParticleSystem>();
         _lookAtDirection = Vector2.left;
     }
 
@@ -66,6 +70,7 @@ public class Extinguisher : MonoBehaviour
             _waterKeyHoldingTime += Time.deltaTime;
             // TODO: here we spray particles as long as we keep pressing the button
             // PARTICLE!
+            _waterSplash.Play();
             _waterGun.EnlargeWaterStream(_t.position, _lookAtDirection, waterGunLocalPos.position);
         }
         
@@ -79,6 +84,7 @@ public class Extinguisher : MonoBehaviour
         }
         else if (Input.GetKeyUp(Extinguish))    // we stopped clicking the button
         {
+            _waterSplash.Stop();
             _waterGun.ShootWaterStream();
             _waterKeyHoldingTime = 0f;
             _waterKeyDown = false;

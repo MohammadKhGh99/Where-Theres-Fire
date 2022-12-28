@@ -230,18 +230,18 @@ public class GameManager : Singleton<GameManager>
         }
 
         // ** to start the game press any key to start
-        if (Input.anyKeyDown && !IsGameRunning)
-        {
-            InitializeGame();
-            StartCoroutine(FadeOut(_imageStartGame));
-            IsGameRunning = true;
-        }
+        // if (Input.anyKeyDown && !IsGameRunning)
+        // {
+        //     InitializeGame();
+        //     StartCoroutine(FadeOut(_imageStartGame));
+        //     IsGameRunning = true;
+        // }
 
-        if (NumBurnedBuildings >= 1 && IsGameRunning)
-        {
-            StartCoroutine(FadeIn(_imageFireWon));
-            IsGameRunning = false;
-        }
+        // if (NumBurnedBuildings >= 1 && IsGameRunning)
+        // {
+        //     StartCoroutine(FadeIn(_imageFireWon));
+        //     IsGameRunning = false;
+        // }
         
         
     }
