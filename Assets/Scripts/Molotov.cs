@@ -33,7 +33,6 @@ public class Molotov : MonoBehaviour
     private float _throwPassedTime;
     private bool _hasBeenShot = false;
     private bool _reachedTarget = false;
-    private GameObject _fireChild;
     private SpriteRenderer _bottleSpriteRenderer;
     
     public void FakeStart()
@@ -44,7 +43,6 @@ public class Molotov : MonoBehaviour
         _bottleSpriteRenderer = _bottleT.GetComponent<SpriteRenderer>();
         _shadowScale = _shadowT.localScale;
         _bottleScale = _bottleT.localScale;
-        _fireChild = _t.GetChild(2).gameObject;
     }
     
     public IEnumerator Shoot(Vector3 position, Vector3 throwDirection)
@@ -56,9 +54,10 @@ public class Molotov : MonoBehaviour
 
         //  shoot now!
         _hasBeenShot = true;
+        _reachedTarget = false;
         _throwPassedTime = 0f;
         yield return new WaitUntil(() => _reachedTarget);
-        StartCoroutine(FireLifeTime());
+        // StartCoroutine(FireLifeTime());
 
         // todo continue
         
@@ -66,6 +65,8 @@ public class Molotov : MonoBehaviour
 
     public Vector3 GetMolotovDropPos()
     {
+        // var j = _t.TransformPoint(_targetPos);
+        // return j;
         return _targetPos;
     }
 
@@ -113,7 +114,7 @@ public class Molotov : MonoBehaviour
 
     private IEnumerator FireLifeTime()
     {
-        _fireChild.SetActive(true);
+        // _fireChild.SetActive(true);
         _bottleSpriteRenderer.sprite = null;
         yield return new WaitForSeconds(8);
         gameObject.SetActive(false);

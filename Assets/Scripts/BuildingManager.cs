@@ -18,10 +18,12 @@ public class BuildingManager : MonoBehaviour
     private SpriteRenderer _spriteRenderer;
     private Color _initialColor;
     private Image _healthBarSlideImage;
-    
+    private Transform _t;
+
     // Start is called before the first frame update
     void Start()
     {
+        _t = transform;
         _timeToBurn = MaxBurningTime;
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _initialColor = _spriteRenderer.color;
@@ -83,17 +85,12 @@ public class BuildingManager : MonoBehaviour
                 break;
         }
     }
+
+    public Vector2 GetBuildingPos()
+    {
+        return _t.position;
+    }
     
-    // private IEnumerator ChangeEngineColour()
-    // {
-    //     float tick = 0f;
-    //     while (_spriteRenderer.material.color != Color.black)
-    //     {
-    //         tick += Time.deltaTime * 2;
-    //         _spriteRenderer.material.color = Color.Lerp(_spriteRenderer.material.color, Color.black, Time.deltaTime / _timeToBurn);
-    //         yield return null;
-    //     }
-    // }
 
     public void SetStatus(string newStatus)
     {

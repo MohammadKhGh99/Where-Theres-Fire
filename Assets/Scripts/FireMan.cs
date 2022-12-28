@@ -7,6 +7,10 @@ using UnityEngine.U2D;
 
 public class FireMan : MonoBehaviour
 {
+    //for testing
+    [SerializeField] private Transform circle;
+    
+    
     // Gamemanager
     private Transform _t;
     private Rigidbody2D _rb;
@@ -14,7 +18,6 @@ public class FireMan : MonoBehaviour
     // movement
     [SerializeField] private float movingSpeed;
     [SerializeField] private bool fourDirection;
-    [SerializeField] private float distanceToBurnBuilding;
     private Vector2 _moveDirection;
     private Vector2 _lookAtDirection;
 
@@ -49,11 +52,8 @@ public class FireMan : MonoBehaviour
         _t = GetComponent<Transform>();
         _startPosition = _t.position;
         _lookAtDirection = Vector2.right;
-        
-        _buildingsMask =  LayerMask.GetMask("Building");
-        _hit = Physics2D.Raycast(_startPosition, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
-        
         _spriteRenderer = GetComponent<SpriteShapeRenderer>();
+        
         if (invisible)
         {
             _spriteRenderer.enabled = false;
@@ -82,8 +82,6 @@ public class FireMan : MonoBehaviour
             _t.rotation = Quaternion.AngleAxis( 90 + angle, Vector3.forward);
             _moveDirection = Quaternion.AngleAxis( angle, Vector3.forward) * Vector3.right;
             _lookAtDirection = _moveDirection;
-            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
-            print(_hit.collider);
         }
 
 
@@ -97,10 +95,8 @@ public class FireMan : MonoBehaviour
             if (_fireKeyHoldingTime < 0.2f && _cooldownToMolotov <= 0f)
             {
                 // throwing a bomb of fire in the direction the player is looking at. (unless its a building then nothing)
-                Debug.Log("Molotov");
                 _cooldownToMolotov = GameManager.MolotovCooldownTime;
                 StartCoroutine(ThrowMolotov());
-
             }
 
             _fireKeyHoldingTime = 0f;
@@ -149,9 +145,36 @@ public class FireMan : MonoBehaviour
         yield return molotov.Shoot(_t.position, _lookAtDirection);
         // when we finish with the bomb, 
         var molotovDropPos = molotov.GetMolotovDropPos();
+        GameManager.instance.MolotovPool.Release(molotov);
+        StartCoroutine(StartFire(molotovDropPos));
 
+
+    }
+
+    private IEnumerator StartFire(Vector3 molotovDropPos)
+    {
+        var checkWhereDropCollider2D = Physics2D.OverlapPoint(molotovDropPos, layerMask: GameManager.instance.BuildingsMask);
+        // var checkWhereDrop = Physics2D.CircleCast(molotovDropPos, 0.5f, Vector2.up,
+        //     distance:  Mathf.Infinity, layerMask: GameManager.instance.BuildingsMask);
+
+        circle.position = molotovDropPos;
         
+        if (checkWhereDropCollider2D.IsUnityNull())
+        {
+            // we will drop the molotovFire on street
+        }
+        else
+        {
+            // we will drop molotov fire at Building
+            var building = checkWhereDropCollider2D.GetComponent<BuildingManager>();
+            molotovDropPos = building.GetBuildingPos();
+            building.SetStatus(GameManager.BURNING);
+        }
 
+        var molotovFire = GameManager.instance.FireMolotovPool.Get();
+        molotovFire.Burn(molotovDropPos);
+        
+        yield break;
     }
 
     // Update is called once per frame
@@ -159,7 +182,10 @@ public class FireMan : MonoBehaviour
     {
         _rb.MovePosition(_rb.position + _moveDirection * (movingSpeed * Time.fixedDeltaTime));
     }
-
+    
+    
+    
+    
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.gameObject.name.StartsWith("Splash") || col.gameObject.name.StartsWith("FirePlace"))
