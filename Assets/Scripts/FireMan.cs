@@ -38,17 +38,20 @@ public class FireMan : MonoBehaviour
                           Up = KeyCode.W,
                           Down = KeyCode.S;
 
-    private RaycastHit2D hit;
+    private RaycastHit2D _hit;
     private LayerMask _buildingsMask;
+    private Vector3 _startPosition;
 
     // Start is called before the first frame update
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
         _t = GetComponent<Transform>();
+        _startPosition = _t.position;
         _lookAtDirection = Vector2.right;
+        
         _buildingsMask =  LayerMask.GetMask("Building");
-        hit = Physics2D.Raycast(_t.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
+        _hit = Physics2D.Raycast(_startPosition, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
         
         _spriteRenderer = GetComponent<SpriteShapeRenderer>();
         if (invisible)
@@ -63,6 +66,8 @@ public class FireMan : MonoBehaviour
 
     private void Update()
     {
+        if (!GameManager.IsGameRunning)
+            return;
         // *** Movement ***
         var xDirection = Input.GetAxis("Horizontal2");
         var yDirection = Input.GetAxis("Vertical2");
@@ -77,8 +82,8 @@ public class FireMan : MonoBehaviour
             _t.rotation = Quaternion.AngleAxis( 90 + angle, Vector3.forward);
             _moveDirection = Quaternion.AngleAxis( angle, Vector3.forward) * Vector3.right;
             _lookAtDirection = _moveDirection;
-            hit = Physics2D.Raycast(_t.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
-            print(hit.collider);
+            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
+            print(_hit.collider);
         }
 
 
@@ -131,6 +136,11 @@ public class FireMan : MonoBehaviour
                 _shown = false;
             }
         }
+    }
+    
+    public void BackToStartPos()
+    {
+        _t.position = _startPosition;
     }
 
     private IEnumerator ThrowMolotov()

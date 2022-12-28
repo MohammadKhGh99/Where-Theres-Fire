@@ -71,6 +71,8 @@ public class Molotov : MonoBehaviour
 
     void Update()
     {
+        if (!GameManager.IsGameRunning)
+            return;
         // shooting molotov to target
         if (_hasBeenShot && !_reachedTarget)
         {

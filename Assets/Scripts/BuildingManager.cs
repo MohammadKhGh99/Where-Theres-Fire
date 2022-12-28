@@ -36,6 +36,8 @@ public class BuildingManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!GameManager.IsGameRunning || status == GameManager.BURNED)
+            return;
         switch (status)
         {
             case GameManager.BURNING when _timeToBurn > 0:
@@ -59,6 +61,7 @@ public class BuildingManager : MonoBehaviour
                 if (_timeToBurn <= 0)
                 {
                     SetStatus(GameManager.BURNED);
+                    GameManager.NumBurnedBuildings++;
                     print(status);
                     _spriteRenderer.color = Color.black;
                     // _timeToBurn = MaxBurningTime;

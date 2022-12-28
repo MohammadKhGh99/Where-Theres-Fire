@@ -66,6 +66,8 @@ public class SplashBullet : MonoBehaviour
  
     void Update()
     {
+        if (!GameManager.IsGameRunning)
+            return;
         // shooting water to target
         if (_watering)
             _t.localPosition = Vector3.down * 8;

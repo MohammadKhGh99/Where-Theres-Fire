@@ -38,6 +38,7 @@ public class WaterMan : MonoBehaviour
     private SplashBullet _splashBullet;
     private Image _waterCoolSlideImage;
     private bool _canWater = true;
+    private Vector3 _startPosition;
 
 
     // Start is called before the first frame update
@@ -45,6 +46,7 @@ public class WaterMan : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _t = GetComponent<Transform>();
+        _startPosition = _t.position;
         _lookAtDirection = Vector2.left;
         
         _waterSplash = _t.GetChild(0).GetComponent<ParticleSystem>();
@@ -58,11 +60,13 @@ public class WaterMan : MonoBehaviour
         waterCoolDownSlider.value = 0;
         _waterCoolSlideImage = waterCoolDownSlider.fillRect.GetComponent<Image>();
         
-        _hit = Physics2D.Raycast(_t.position, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
+        _hit = Physics2D.Raycast(_startPosition, _lookAtDirection, distanceToBurnBuilding, layerMask: _buildingsMask);
     }
 
     private void Update()
     {
+        if (!GameManager.IsGameRunning)
+            return;
         // *** Movement ***
         var xDirection = Input.GetAxis("Horizontal1");
         var yDirection = Input.GetAxis("Vertical1");
@@ -152,6 +156,11 @@ public class WaterMan : MonoBehaviour
         
     }
 
+    public void BackToStartPos()
+    {
+        _t.position = _startPosition;
+    }
+    
     private void StopWatering()
     {
         _waterSplash.Stop();
