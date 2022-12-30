@@ -111,7 +111,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -0.005000353, y: 0.0024999976}
+  m_AnchoredPosition: {x: -0.005001068, y: 0.0024999976}
   m_SizeDelta: {x: -0.1606, y: -0.1254}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2368870154107117167
@@ -246,10 +246,10 @@ GameObject:
   m_Component:
   - component: {fileID: 339029448283884258}
   - component: {fileID: 489105816378202097}
-  - component: {fileID: -4579167230268701106}
   - component: {fileID: 8432937252253579443}
+  - component: {fileID: 7196890699618283024}
   m_Layer: 3
-  m_Name: Building
+  m_Name: House2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -263,8 +263,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4436703046860456311}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -45, y: 15, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9165425591892894341}
@@ -313,8 +313,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6509434, g: 0.39836034, b: 0.22353148, a: 1}
+  m_Sprite: {fileID: 21300000, guid: e0ade5231c87ee546ad83f5efb899c39, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -324,7 +324,22 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &-4579167230268701106
+--- !u!114 &8432937252253579443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4436703046860456311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac0eac65128de0e44be50f97fd294266, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  status: Normal
+  healthBar: 10
+  healthBarObj: {fileID: 4157691279868257508}
+--- !u!61 &7196890699618283024
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -341,32 +356,15 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 5, y: 4}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 5, y: 4}
   m_EdgeRadius: 0
---- !u!114 &8432937252253579443
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4436703046860456311}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac0eac65128de0e44be50f97fd294266, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  status: Normal
-  healthBar: 5
-  healthBarObj: {fileID: 4157691279868257508}
-  fullBarColor: {r: 0, g: 1, b: 0, a: 1}
-  emptyBarColor: {r: 0.85882354, g: 0.14509805, b: 0.14509805, a: 1}
 --- !u!1 &5554813526394644634
 GameObject:
   m_ObjectHideFlags: 0
@@ -404,8 +402,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -45.008095, y: 17.631998}
-  m_SizeDelta: {x: 4.0265, y: 0.765}
+  m_AnchoredPosition: {x: -45.066, y: 24.22}
+  m_SizeDelta: {x: 19.999, y: 1.492}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4157691279868257508
 MonoBehaviour:

@@ -66,8 +66,10 @@ public class FireMan : MonoBehaviour
 
     private void Update()
     {
+        // don't move when the game is not started yet!!!
         if (!GameManager.IsGameRunning)
             return;
+        
         // *** Movement ***
         var xDirection = Input.GetAxis("Horizontal2");
         var yDirection = Input.GetAxis("Vertical2");

@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -18,7 +19,7 @@ public class GameManager : Singleton<GameManager>
     
     //  **** Housing.. ****
     [SerializeField] private GameObject housesParent;           // where to store the houses Parent
-    [SerializeField] private bool controlHousesPos = true;
+    [SerializeField] private bool controlHousesPos;
     [SerializeField] private string[] housesPositions =
     {
         "-28.75,12.5", "-14.25,12.5", "0.25,12.5", "14.75,12.5", "29,12.5",
@@ -73,7 +74,8 @@ public class GameManager : Singleton<GameManager>
     // Burned Building
     public static int NumBurnedBuildings = 0;
     
-    // public static Canvas healthBarParent;
+    // Types of Houses we have
+    private string[] _housesTypes = { "House1", "House2" };
 
     
     
@@ -151,24 +153,6 @@ public class GameManager : Singleton<GameManager>
     
     void Start()
     {
-        // // ** set the game timer **//
-        // _gameTimer = gameTimeInSeconds != 0 ? gameTimeInSeconds : DEFAULT_GAME_TIME;
-        //
-        // // ** the game didn't start yet **
-        // IsGameRunning = false;
-        //
-        // BuildingsMask =  LayerMask.GetMask("Building");
-        //
-        // _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
-        // for (int i = 0; i < _housesPosBackUp.Length; i++)
-        // {
-        //     var temp = _housesPosBackUp[i].Split(',');
-        //     float x = float.Parse(temp[0]), y = float.Parse(temp[1]);
-        //     var curPos = new Vector3(x, y, 0);
-        //     Instantiate(Resources.Load("Building"), curPos, Quaternion.identity, housesParent.transform);
-        //     
-        // }
-        
         InitializeGame();
         
         // getting the canvas and images of the start and end screens...
@@ -192,13 +176,14 @@ public class GameManager : Singleton<GameManager>
         BuildingsMask =  LayerMask.GetMask("Building");
 
         _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
-        for (int i = 0; i < _housesPosBackUp.Length; i++)
+        if (!controlHousesPos) return;
+        foreach (var t in _housesPosBackUp)
         {
-            var temp = _housesPosBackUp[i].Split(',');
+            var temp = t.Split(',');
             float x = float.Parse(temp[0]), y = float.Parse(temp[1]);
             var curPos = new Vector3(x, y, 0);
-            Instantiate(Resources.Load("Building"), curPos, Quaternion.identity, housesParent.transform);
-            
+            var houseType = _housesTypes[Random.Range(0, 2)];
+            Instantiate(Resources.Load(houseType), curPos, Quaternion.identity, housesParent.transform);
         }
     }
 
@@ -227,12 +212,12 @@ public class GameManager : Singleton<GameManager>
         }
 
         // ** to start the game press any key to start
-        // if (Input.anyKeyDown && !IsGameRunning)
-        // {
-        //     InitializeGame();
-        //     StartCoroutine(FadeOut(_imageStartGame));
-        //     IsGameRunning = true;
-        // }
+        if (Input.anyKeyDown && !IsGameRunning)
+        {
+            InitializeGame();
+            StartCoroutine(FadeOut(_imageStartGame));
+            IsGameRunning = true;
+        }
 
         // if (NumBurnedBuildings >= 1 && IsGameRunning)
         // {

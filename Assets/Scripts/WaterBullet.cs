@@ -112,7 +112,7 @@ public class WaterBullet : MonoBehaviour
             if (!hit.collider.IsUnityNull())
             {
                 // we collider something, make sure if it's building 
-                if(hit.collider.transform.gameObject.name.StartsWith("Building"))
+                if(hit.collider.transform.gameObject.name.StartsWith("House"))
                 {
                     // it's a building, so our target shouldn't cross it, should stay at this size! or shrink a bit
                     if (hit.distance < _currentSizeX)
@@ -145,7 +145,7 @@ public class WaterBullet : MonoBehaviour
             if (!hit.collider.IsUnityNull())
             {
                 // we collider something, make sure if it's building 
-                if(hit.collider.transform.gameObject.name.StartsWith("Building"))
+                if(hit.collider.transform.gameObject.name.StartsWith("House"))
                 {
                     // it's a building, so our target shouldn't cross it, should stay at this size! or shrink a bit
                     if (hit.distance < _currentSizeX)
@@ -199,7 +199,7 @@ public class WaterBullet : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D col)
     {
         print("there is trigger");
-        if (col.name.StartsWith("Building"))
+        if (col.name.StartsWith("House"))
         {
             print("*BUILDING* is trigger");
             // we want it to burn
@@ -220,7 +220,7 @@ public class WaterBullet : MonoBehaviour
     private void OnTriggerStay2D(Collider2D col)
     {
         print("there is trigger");
-        if (col.name.StartsWith("Building"))
+        if (col.name.StartsWith("House"))
         {
             print("*BUILDING* is trigger");
             // we want it to burn

@@ -2,19 +2,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class BuildingManager : MonoBehaviour
 {
     [SerializeField] private string status = "Normal";
-    [SerializeField] private float healthBar = 5.0f;
+    [SerializeField] private float healthBarLife = 10.0f;
     [SerializeField] private Slider healthBarObj;
     // [SerializeField] private Color fullBarColor;
     // [SerializeField] private Color emptyBarColor;
     
 
-    private const float MaxBurningTime = 5.0f;
-    private float _timeToBurn = MaxBurningTime;
+    private float _maxBurningTime = 10.0f;
+    private float _timeToBurn;
     private SpriteRenderer _spriteRenderer;
     private Color _initialColor;
     private Image _healthBarSlideImage;
@@ -24,13 +25,14 @@ public class BuildingManager : MonoBehaviour
     void Start()
     {
         _t = transform;
-        _timeToBurn = MaxBurningTime;
+        _maxBurningTime = healthBarLife;
+        _timeToBurn = _maxBurningTime;
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _initialColor = _spriteRenderer.color;
         
         // healthBarObj = GetComponent<Slider>();
-        healthBarObj.maxValue = MaxBurningTime;
-        healthBarObj.value = MaxBurningTime;
+        healthBarObj.maxValue = _maxBurningTime;
+        healthBarObj.value = _maxBurningTime;
         _healthBarSlideImage = healthBarObj.fillRect.GetComponent<Image>();
         // _healthBarSlideImage.color = fullBarColor;
     }
@@ -73,15 +75,15 @@ public class BuildingManager : MonoBehaviour
                 break;
             }
             // print(status);
-            case GameManager.WATERING when _timeToBurn < MaxBurningTime:
+            case GameManager.WATERING when _timeToBurn < _maxBurningTime:
             {
                 _timeToBurn += Time.deltaTime;
-                if (_timeToBurn >= MaxBurningTime)
+                if (_timeToBurn >= _maxBurningTime)
                     SetStatus(GameManager.NORMAL);
                 break;
             }
             case GameManager.WATERING:
-                _timeToBurn = MaxBurningTime;
+                _timeToBurn = _maxBurningTime;
                 break;
         }
     }
