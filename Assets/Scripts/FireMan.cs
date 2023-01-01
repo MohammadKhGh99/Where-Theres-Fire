@@ -155,7 +155,7 @@ public class FireMan : MonoBehaviour
 
     private IEnumerator StartFire(Vector3 molotovDropPos)
     {
-        var checkWhereDropCollider2D = Physics2D.OverlapPoint(molotovDropPos, layerMask: GameManager.instance.BuildingsMask);
+        var checkWhereDropCollider2D = Physics2D.OverlapPoint(molotovDropPos, layerMask: GameManager.instance.HousesMask);
         // var checkWhereDrop = Physics2D.CircleCast(molotovDropPos, 0.5f, Vector2.up,
         //     distance:  Mathf.Infinity, layerMask: GameManager.instance.BuildingsMask);
 
@@ -168,7 +168,7 @@ public class FireMan : MonoBehaviour
         else
         {
             // we will drop molotov fire at Building
-            var building = checkWhereDropCollider2D.GetComponent<BuildingManager>();
+            var building = checkWhereDropCollider2D.GetComponent<HouseManager>();
             molotovDropPos = building.GetBuildingPos();
             building.SetStatus(GameManager.BURNING);
         }

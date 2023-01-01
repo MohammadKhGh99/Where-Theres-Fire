@@ -69,10 +69,10 @@ public class GameManager : Singleton<GameManager>
     }
     
     // Building mask
-    public LayerMask BuildingsMask { get; private set; }
+    public LayerMask HousesMask { get; private set; }
 
     // Burned Building
-    public static int NumBurnedBuildings = 0;
+    public static int NumBurnedHouses = 0;
     
     // Types of Houses we have
     private string[] _housesTypes = { "House1", "House2" };
@@ -173,7 +173,7 @@ public class GameManager : Singleton<GameManager>
         // ** the game didn't start yet **
         IsGameRunning = false;
         
-        BuildingsMask =  LayerMask.GetMask("Building");
+        HousesMask =  LayerMask.GetMask("Building");
 
         _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
         if (!controlHousesPos) return;

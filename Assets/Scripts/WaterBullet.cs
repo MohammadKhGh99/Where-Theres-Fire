@@ -108,7 +108,7 @@ public class WaterBullet : MonoBehaviour
             // var bulletDirection = new Vector3(Mathf.Cos(_previousAngel * Mathf.Deg2Rad), Mathf.Sin(_previousAngel * Mathf.Deg2Rad), 0);
             var bulletDirection = _direction;
             
-            RaycastHit2D hit = Physics2D.Raycast(_previousStartPosition, bulletDirection, _currentSizeX, GameManager.instance.BuildingsMask);
+            RaycastHit2D hit = Physics2D.Raycast(_previousStartPosition, bulletDirection, _currentSizeX, GameManager.instance.HousesMask);
             if (!hit.collider.IsUnityNull())
             {
                 // we collider something, make sure if it's building 
@@ -141,7 +141,7 @@ public class WaterBullet : MonoBehaviour
         {
             var target = _diePosition;
             var tempStartPoint = _t.position - _direction * _currentSizeX / 2;  
-            RaycastHit2D hit = Physics2D.Raycast(tempStartPoint, _direction, _currentSizeX, GameManager.instance.BuildingsMask);
+            RaycastHit2D hit = Physics2D.Raycast(tempStartPoint, _direction, _currentSizeX, GameManager.instance.HousesMask);
             if (!hit.collider.IsUnityNull())
             {
                 // we collider something, make sure if it's building 
