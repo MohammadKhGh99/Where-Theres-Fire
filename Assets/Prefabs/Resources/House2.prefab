@@ -248,9 +248,10 @@ GameObject:
   - component: {fileID: 489105816378202097}
   - component: {fileID: 8432937252253579443}
   - component: {fileID: 7196890699618283024}
+  - component: {fileID: 3173127440840066045}
   m_Layer: 3
   m_Name: House2
-  m_TagString: Untagged
+  m_TagString: House
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -337,7 +338,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   status: Normal
-  healthBar: 10
+  healthBarLife: 10
   healthBarObj: {fileID: 4157691279868257508}
 --- !u!61 &7196890699618283024
 BoxCollider2D:
@@ -365,6 +366,27 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 5, y: 4}
   m_EdgeRadius: 0
+--- !u!50 &3173127440840066045
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4436703046860456311}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7
 --- !u!1 &5554813526394644634
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6558127574218333528}
   - component: {fileID: 6558127574218333529}
   - component: {fileID: 2246694295596606062}
+  - component: {fileID: 4411834864462824340}
   m_Layer: 0
   m_Name: FireMolotov
   m_TagString: FireMolotov
@@ -117,3 +118,24 @@ MonoBehaviour:
   targetScale: 4
   timeToEnlarge: 0.5
   timeToReduce: 0.1
+--- !u!50 &4411834864462824340
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6558127574218333526}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7
