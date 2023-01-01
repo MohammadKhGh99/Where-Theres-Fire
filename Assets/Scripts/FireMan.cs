@@ -70,6 +70,12 @@ public class FireMan : MonoBehaviour
         if (!GameManager.IsGameRunning)
             return;
         
+        // ** make Invisible **
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            _spriteRenderer.enabled = !_spriteRenderer.enabled;
+        }
+        
         // *** Movement ***
         var xDirection = Input.GetAxis("Horizontal2");
         var yDirection = Input.GetAxis("Vertical2");
@@ -123,17 +129,17 @@ public class FireMan : MonoBehaviour
         _cooldownToMolotov = Mathf.Max(_cooldownToMolotov - Time.deltaTime, 0f);
         
         // *** Power-Up: hide the character ***
-        if (_shown)
-        {
-            _hideTime -= Time.deltaTime;
-            if (_hideTime <= 0)
-            {
-                _hideTime = 4.0f;
-                _spriteRenderer.enabled = false;
-                // _spriteRenderer.sprite = null;
-                _shown = false;
-            }
-        }
+        // if (_shown)
+        // {
+        //     _hideTime -= Time.deltaTime;
+        //     if (_hideTime <= 0)
+        //     {
+        //         _hideTime = 4.0f;
+        //         _spriteRenderer.enabled = false;
+        //         // _spriteRenderer.sprite = null;
+        //         _shown = false;
+        //     }
+        // }
     }
     
     public void BackToStartPos()
@@ -144,13 +150,13 @@ public class FireMan : MonoBehaviour
     private IEnumerator ThrowMolotov()
     {
         var molotov = GameManager.instance.MolotovPool.Get();
+        // if(invisible)
+        molotov.SetVisibility(_spriteRenderer.enabled);
         yield return molotov.Shoot(_t.position, _lookAtDirection);
         // when we finish with the bomb, 
         var molotovDropPos = molotov.GetMolotovDropPos();
         GameManager.instance.MolotovPool.Release(molotov);
         StartCoroutine(StartFire(molotovDropPos));
-
-
     }
 
     private IEnumerator StartFire(Vector3 molotovDropPos)

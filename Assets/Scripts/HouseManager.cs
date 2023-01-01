@@ -18,7 +18,7 @@ public class HouseManager : MonoBehaviour
     private Transform _t;
     private BoxCollider2D _collider;
 
-    // variables for ovelaping box around the house
+    // variables for overlaping box around the house
     private Vector2 _overlapSize;
     private Collider2D[] _overlappingResults;
     private bool _madeInfection;

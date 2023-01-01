@@ -31,8 +31,8 @@ public class Molotov : MonoBehaviour
     
     // flags for update of the throw
     private float _throwPassedTime;
-    private bool _hasBeenShot = false;
-    private bool _reachedTarget = false;
+    private bool _hasBeenShot;
+    private bool _reachedTarget;
     private SpriteRenderer _bottleSpriteRenderer;
     
     public void FakeStart()
@@ -68,6 +68,12 @@ public class Molotov : MonoBehaviour
         // var j = _t.TransformPoint(_targetPos);
         // return j;
         return _targetPos;
+    }
+
+    public void SetVisibility(bool visibility)
+    {
+        _bottleSpriteRenderer.enabled = visibility;
+        _shadowT.gameObject.SetActive(visibility);
     }
 
     void Update()
