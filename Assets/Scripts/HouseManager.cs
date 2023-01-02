@@ -12,6 +12,7 @@ public class HouseManager : MonoBehaviour
     [SerializeField] private float healthBarLife = 10.0f;
     [SerializeField] private float wateringTime = 3.0f;
     [SerializeField] private Slider healthBarObj;
+    [SerializeField] private Slider wateringBarObj;
 
     private float _maxBurningTime;
     private float _maxWateringTime;
@@ -20,6 +21,8 @@ public class HouseManager : MonoBehaviour
     private SpriteRenderer _spriteRenderer;
     private Transform _t;
     private BoxCollider2D _collider;
+
+    private Image _healthBarImage;
 
     // variables for overlapping box around the house
     private Vector2 _overlapSize;
@@ -36,6 +39,7 @@ public class HouseManager : MonoBehaviour
         _t = transform;
         _collider = GetComponent<BoxCollider2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        _healthBarImage = healthBarObj.transform.GetChild(0).GetComponent<Image>();
         
         // ** time to burn and to water **
         _maxBurningTime = healthBarLife;
@@ -47,6 +51,10 @@ public class HouseManager : MonoBehaviour
         // controlling health bar for this house
         healthBarObj.maxValue = _maxBurningTime;
         healthBarObj.value = _maxBurningTime;
+        
+        // controlling watering bar for this house
+        wateringBarObj.maxValue = _maxWateringTime;
+        wateringBarObj.value = 0;
         
         // saving all surrounding houses to an array
         _overlappingResults = new Collider2D[8];
@@ -81,6 +89,7 @@ public class HouseManager : MonoBehaviour
                 healthBarObj.value -= Time.deltaTime;
                 _spriteRenderer.material.color = Color.Lerp(_spriteRenderer.material.color, Color.black,
                     Time.deltaTime / _timeToBurn);
+                _healthBarImage.color = Color.Lerp(_healthBarImage.color, Color.red, Time.deltaTime / _timeToBurn);
                 _timeToBurn -= Time.deltaTime;
                 if (_timeToBurn <= 0)
                 {
@@ -92,17 +101,23 @@ public class HouseManager : MonoBehaviour
 
                 break;
             }
-            case GameManager.WATERING when _timeToBurn < _maxBurningTime && _timeToWater > 0:
+            case GameManager.WATERING when _timeToBurn > 0 && _timeToWater > 0:
             {
-                // _timeToBurn += Time.deltaTime;
                 _timeToWater -= Time.deltaTime;
+                wateringBarObj.value += Time.deltaTime;
+                print("Watering Time: " + _timeToWater);
                 if (_timeToWater <= 0)
                     SetStatus(GameManager.NORMAL);
                 break;
             }
-            case GameManager.WATERING:
-                _timeToBurn = _maxBurningTime;
+            // case GameManager.WATERING:
+            //     _timeToBurn = _maxBurningTime;
+            //     break;
+            case GameManager.NORMAL when _timeToWater > 0 && _timeToWater < _maxWateringTime:
+            {
+                SetStatus(GameManager.BURNING);
                 break;
+            }
         }
     }
 
@@ -135,12 +150,27 @@ public class HouseManager : MonoBehaviour
         return _t.position;
     }
 
+    public string GetStatus()
+    {
+        return status;
+    }
 
     public void SetStatus(string newStatus)
     {
-        if (status.Equals(GameManager.WATERING) && newStatus.Equals(GameManager.NORMAL))
-            status = _timeToWater > 0 ? GameManager.BURNING : newStatus;
-        else
-            status = newStatus;
+        status = newStatus;
+        // switch (status)
+        // {
+        //     case GameManager.WATERING when newStatus.Equals(GameManager.NORMAL) && GameManager.Instance.WaterBulletPool.CountActive == 1:
+        //         status = _timeToWater > 0 ? GameManager.BURNING : newStatus;
+        //         break;
+        //     case GameManager.NORMAL when newStatus.Equals(GameManager.BURNING):
+        //     case GameManager.BURNING when newStatus.Equals(GameManager.WATERING):
+        //         status = newStatus;
+        //         break;
+        // }
+
+        // else
+        //     status = newStatus;
+        print("New Status:  " + status + " In Time: " + _timeToWater);
     }
 }

@@ -7,11 +7,12 @@ TagManager:
   - FireMolotov
   - Molotov
   - WaterBullet
+  - House
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Building
+  - Houses
   - Water
   - UI
   - 
