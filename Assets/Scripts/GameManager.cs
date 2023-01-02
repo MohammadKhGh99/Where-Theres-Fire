@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -47,10 +48,10 @@ public class GameManager : Singleton<GameManager>
     
     // this is a declaration for the singleton, maybe it's not needed, keep it for now. 
 
-    public static GameManager instance;
+    public new static GameManager Instance;
     private void Awake()
     {
-        instance = this;
+        Instance = this;
     }
 
     
@@ -68,6 +69,7 @@ public class GameManager : Singleton<GameManager>
         Start, Enlarge, Shoot, Decrease, Done
     }
     
+    
     // Building mask
     public LayerMask HousesMask { get; private set; }
 
@@ -77,6 +79,15 @@ public class GameManager : Singleton<GameManager>
     // Types of Houses we have
     private string[] _housesTypes = { "House1", "House2" };
 
+    
+    
+    
+    
+    // **** TileMap and Tiles ****
+    public static Tilemap GroundBaseTilemap;
+    public static TileBase WaterTile;
+    
+    
     
     
 
@@ -106,6 +117,7 @@ public class GameManager : Singleton<GameManager>
     
     
     // **** "WaterBullet" pool and functions ****
+    // Pool
     public ObjectPool<WaterBullet> WaterBulletPool =
         new (CreateWaterBullet, OnGetWaterBullet, OnReleaseWaterBullet, OnDestroyWaterBullet, false, 15, 20);
     private static WaterBullet CreateWaterBullet()
@@ -114,7 +126,6 @@ public class GameManager : Singleton<GameManager>
         var script = waterBullet.GetComponent<WaterBullet>();
         script.currentStatus = WaterBulletStatus.Start;
         return script;
-
     }
     private static void OnGetWaterBullet(WaterBullet waterBullet)
     {
@@ -127,6 +138,79 @@ public class GameManager : Singleton<GameManager>
     private static void OnDestroyWaterBullet(WaterBullet waterBullet)
     {
         Destroy(waterBullet.gameObject);
+    }
+    
+    // Functions
+    public static void SetTileAndUpdateNeighbors(Vector3 worldPosition,Tilemap myTilemap, TileBase newTile)
+    {
+        // set tile,
+        Vector3Int gridPosition = myTilemap.WorldToCell(worldPosition);
+        myTilemap.SetTile(gridPosition, newTile);
+        myTilemap.RefreshTile(gridPosition);
+        
+        // check with neighbours
+        var topTilePos = gridPosition + new Vector3Int(0, 1, 0);
+        var bottomTilePos = gridPosition + new Vector3Int(0, -1, 0);
+        var leftTilePos = gridPosition + new Vector3Int(-1, 0, 0);
+        var rightTilePos = gridPosition + new Vector3Int(1, 0, 0);
+        var topLeftTilePos = gridPosition + new Vector3Int(-1, 1, 0);
+        var topRightTilePos = gridPosition + new Vector3Int(1, 1, 0);
+        var bottomLeftTilePos = gridPosition + new Vector3Int(-1, -1, 0);
+        var bottomRightTilePos = gridPosition + new Vector3Int(1, -1, 0);
+        
+        
+        // Get the tiles around the modified tile
+        TileBase topTile = myTilemap.GetTile(topTilePos);
+        TileBase bottomTile = myTilemap.GetTile(bottomTilePos);
+        TileBase leftTile = myTilemap.GetTile(leftTilePos);
+        TileBase rightTile = myTilemap.GetTile(rightTilePos);
+        TileBase topLeftTile = myTilemap.GetTile(topLeftTilePos);
+        TileBase topRightTile = myTilemap.GetTile(topRightTilePos );
+        TileBase bottomLeftTile = myTilemap.GetTile(bottomLeftTilePos);
+        TileBase bottomRightTile = myTilemap.GetTile(bottomRightTilePos);
+
+        // Check if the tiles around the modified tile need to be updated
+        if (topTile != newTile) 
+        {
+            myTilemap.SetTile(topTilePos, newTile);
+            myTilemap.RefreshTile(topTilePos);
+        }
+        if (bottomTile != newTile) 
+        {
+            myTilemap.SetTile(bottomTilePos, newTile);
+            myTilemap.RefreshTile(bottomTilePos);
+        }
+        if (leftTile != newTile) 
+        {
+            myTilemap.SetTile(leftTilePos, newTile);
+            myTilemap.RefreshTile(leftTilePos);
+        }
+        if (rightTile != newTile) 
+        {
+            myTilemap.SetTile(rightTilePos, newTile);
+            myTilemap.RefreshTile(rightTilePos);
+        }
+        if (topLeftTile != newTile) 
+        {
+            myTilemap.SetTile(topLeftTilePos, newTile);
+            myTilemap.RefreshTile(topLeftTilePos);
+        }
+        if (topRightTile != newTile) 
+        {
+            myTilemap.SetTile(topRightTilePos, newTile);
+            myTilemap.RefreshTile(topRightTilePos);
+        }
+        if (bottomLeftTile != newTile) 
+        {
+            myTilemap.SetTile(bottomLeftTilePos, newTile);
+            myTilemap.RefreshTile(bottomLeftTilePos);
+        }
+        if (bottomRightTile != newTile) 
+        {
+            myTilemap.SetTile(bottomRightTilePos, newTile);
+            myTilemap.RefreshTile(bottomRightTilePos);
+        }
+
     }
     
     
@@ -219,13 +303,6 @@ public class GameManager : Singleton<GameManager>
             IsGameRunning = true;
         }
 
-        // if (NumBurnedBuildings >= 1 && IsGameRunning)
-        // {
-        //     StartCoroutine(FadeIn(_imageFireWon));
-        //     IsGameRunning = false;
-        // }
-        
-        
     }
 
     // timer countdown

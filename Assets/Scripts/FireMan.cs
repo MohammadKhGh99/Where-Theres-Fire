@@ -149,19 +149,19 @@ public class FireMan : MonoBehaviour
 
     private IEnumerator ThrowMolotov()
     {
-        var molotov = GameManager.instance.MolotovPool.Get();
+        var molotov = GameManager.Instance.MolotovPool.Get();
         // if(invisible)
         molotov.SetVisibility(_spriteRenderer.enabled);
         yield return molotov.Shoot(_t.position, _lookAtDirection);
         // when we finish with the bomb, 
         var molotovDropPos = molotov.GetMolotovDropPos();
-        GameManager.instance.MolotovPool.Release(molotov);
+        GameManager.Instance.MolotovPool.Release(molotov);
         StartCoroutine(StartFire(molotovDropPos));
     }
 
     private IEnumerator StartFire(Vector3 molotovDropPos)
     {
-        var checkWhereDropCollider2D = Physics2D.OverlapPoint(molotovDropPos, layerMask: GameManager.instance.HousesMask);
+        var checkWhereDropCollider2D = Physics2D.OverlapPoint(molotovDropPos, layerMask: GameManager.Instance.HousesMask);
         // var checkWhereDrop = Physics2D.CircleCast(molotovDropPos, 0.5f, Vector2.up,
         //     distance:  Mathf.Infinity, layerMask: GameManager.instance.BuildingsMask);
 
@@ -179,7 +179,7 @@ public class FireMan : MonoBehaviour
             building.SetStatus(GameManager.BURNING);
         }
 
-        var molotovFire = GameManager.instance.FireMolotovPool.Get();
+        var molotovFire = GameManager.Instance.FireMolotovPool.Get();
         molotovFire.Burn(molotovDropPos);
         
         yield break;

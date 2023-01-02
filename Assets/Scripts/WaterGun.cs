@@ -9,7 +9,7 @@ public class WaterGun : MonoBehaviour
 
     public void CreateWaterStream()
     {
-        _currentWaterBullet = GameManager.instance.WaterBulletPool.Get();
+        _currentWaterBullet = GameManager.Instance.WaterBulletPool.Get();
     }
 
     public void EnlargeWaterStream(Vector3 playerCurrentPos, Vector3 playerLookAtDirection, Vector3 startPosition)
@@ -21,7 +21,7 @@ public class WaterGun : MonoBehaviour
         else        // we changed our direction, shoot what you used to have, and create a new one, and enlarge it
         {
             _currentWaterBullet.ShootBullet();
-            _currentWaterBullet = GameManager.instance.WaterBulletPool.Get();
+            _currentWaterBullet = GameManager.Instance.WaterBulletPool.Get();
             _previousLookAtDirection = playerLookAtDirection; 
             _currentWaterBullet.EnlargeBullet(playerCurrentPos,  playerLookAtDirection, startPosition);
         }

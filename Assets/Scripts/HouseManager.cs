@@ -102,7 +102,7 @@ public class HouseManager : MonoBehaviour
         _setOrNot = true;
         
         Physics2D.OverlapBox( _collider.bounds.center,  _collider.size + Vector2.one,
-            0, new ContactFilter2D { layerMask = GameManager.Instance.HousesMask }, _overlappingResults);
+            0, new ContactFilter2D { layerMask = Singleton<GameManager>.Instance.HousesMask }, _overlappingResults);
         
         if (_overlappingResults.Length == 0) return;
         

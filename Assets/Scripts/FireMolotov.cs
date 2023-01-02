@@ -38,7 +38,7 @@ public class FireMolotov : MonoBehaviour
             _t.localScale = Vector3.Lerp(_t.localScale, _startScale / 100.0f, t);
             if (t >= 1)
             {
-                GameManager.instance.FireMolotovPool.Release(this);
+                GameManager.Instance.FireMolotovPool.Release(this);
             }
         }
     }
