@@ -339,6 +339,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   status: Normal
   healthBarLife: 20
+  wateringTime: 7
   healthBarObj: {fileID: 4157691279868257508}
 --- !u!61 &5151519252988378217
 BoxCollider2D:

@@ -10,15 +10,18 @@ public class HouseManager : MonoBehaviour
 {
     [SerializeField] private string status = "Normal";
     [SerializeField] private float healthBarLife = 10.0f;
+    [SerializeField] private float wateringTime = 3.0f;
     [SerializeField] private Slider healthBarObj;
 
     private float _maxBurningTime;
+    private float _maxWateringTime;
     private float _timeToBurn;
+    private float _timeToWater;
     private SpriteRenderer _spriteRenderer;
     private Transform _t;
     private BoxCollider2D _collider;
 
-    // variables for overlaping box around the house
+    // variables for overlapping box around the house
     private Vector2 _overlapSize;
     private Collider2D[] _overlappingResults;
     private bool _madeInfection;
@@ -29,11 +32,17 @@ public class HouseManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // ** Components **
         _t = transform;
-        _maxBurningTime = healthBarLife;
-        _timeToBurn = _maxBurningTime;
         _collider = GetComponent<BoxCollider2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        
+        // ** time to burn and to water **
+        _maxBurningTime = healthBarLife;
+        _maxWateringTime = wateringTime;
+        _timeToBurn = _maxBurningTime;
+        _timeToWater = _maxWateringTime;
+        
 
         // controlling health bar for this house
         healthBarObj.maxValue = _maxBurningTime;
@@ -42,7 +51,6 @@ public class HouseManager : MonoBehaviour
         // saving all surrounding houses to an array
         _overlappingResults = new Collider2D[8];
         _housesSurrounding = new HouseManager[8];
-        
         
     }
 
@@ -84,10 +92,11 @@ public class HouseManager : MonoBehaviour
 
                 break;
             }
-            case GameManager.WATERING when _timeToBurn < _maxBurningTime:
+            case GameManager.WATERING when _timeToBurn < _maxBurningTime && _timeToWater > 0:
             {
-                _timeToBurn += Time.deltaTime;
-                if (_timeToBurn >= _maxBurningTime)
+                // _timeToBurn += Time.deltaTime;
+                _timeToWater -= Time.deltaTime;
+                if (_timeToWater <= 0)
                     SetStatus(GameManager.NORMAL);
                 break;
             }
@@ -129,6 +138,9 @@ public class HouseManager : MonoBehaviour
 
     public void SetStatus(string newStatus)
     {
-        status = newStatus;
+        if (status.Equals(GameManager.WATERING) && newStatus.Equals(GameManager.NORMAL))
+            status = _timeToWater > 0 ? GameManager.BURNING : newStatus;
+        else
+            status = newStatus;
     }
 }

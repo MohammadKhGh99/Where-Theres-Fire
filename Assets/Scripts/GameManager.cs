@@ -173,7 +173,7 @@ public class GameManager : Singleton<GameManager>
         // ** the game didn't start yet **
         IsGameRunning = false;
         
-        HousesMask =  LayerMask.GetMask("Building");
+        HousesMask =  LayerMask.GetMask("Houses");
 
         _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
         if (!controlHousesPos) return;

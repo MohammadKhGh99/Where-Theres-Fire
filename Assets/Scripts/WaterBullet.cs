@@ -199,10 +199,10 @@ public class WaterBullet : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D col)
     {
         print("there is trigger");
-        if (col.name.StartsWith("House"))
+        if (col.CompareTag("House"))
         {
-            print("*BUILDING* is trigger");
-            // we want it to burn
+            print("*HOUSE* start watering");
+            // we want it to water
         }
         else if (col.CompareTag("FireMolotov"))
         {
@@ -220,10 +220,12 @@ public class WaterBullet : MonoBehaviour
     private void OnTriggerStay2D(Collider2D col)
     {
         print("there is trigger");
-        if (col.name.StartsWith("House"))
+        if (col.CompareTag("House"))
         {
-            print("*BUILDING* is trigger");
-            // we want it to burn
+            print("*HOUSE* is watering");
+            // we want it to water
+            // watering
+            col.GetComponent<HouseManager>().SetStatus(GameManager.WATERING);
         }
         else if (col.CompareTag("FireMolotov"))
         {
@@ -235,6 +237,15 @@ public class WaterBullet : MonoBehaviour
         {
             print("*anyRIGIDBODY* is trigger");
             col.attachedRigidbody.AddForce(_direction * waterBulletPower * bulletSpeed, ForceMode2D.Force);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("House"))
+        {
+            print("*HOUSE* stops watering");
+            other.GetComponent<HouseManager>().SetStatus(GameManager.NORMAL);
         }
     }
 }
