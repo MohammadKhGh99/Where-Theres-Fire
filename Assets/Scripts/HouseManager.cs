@@ -11,6 +11,7 @@ public class HouseManager : MonoBehaviour
     [SerializeField] private string status = "Normal";
     [SerializeField] private float healthBarLife = 10.0f;
     [SerializeField] private float wateringTime = 3.0f;
+    [SerializeField] private float wateringSpeed = 3;
     [SerializeField] private Slider healthBarObj;
     [SerializeField] private Slider wateringBarObj;
 
@@ -18,6 +19,7 @@ public class HouseManager : MonoBehaviour
     private float _maxWateringTime;
     private float _timeToBurn;
     private float _timeToWater;
+    private float _percentToInfect = 0.5f;
     private SpriteRenderer _spriteRenderer;
     private Transform _t;
     private BoxCollider2D _collider;
@@ -30,6 +32,7 @@ public class HouseManager : MonoBehaviour
     private bool _madeInfection;
     private HouseManager[] _housesSurrounding;
     private bool _setOrNot;
+    private Color _initialColor;
 
 
     // Start is called before the first frame update
@@ -60,6 +63,9 @@ public class HouseManager : MonoBehaviour
         _overlappingResults = new Collider2D[8];
         _housesSurrounding = new HouseManager[8];
         
+        // initial color
+        _initialColor = _spriteRenderer.material.color;
+
     }
 
     // Update is called once per frame
@@ -74,13 +80,15 @@ public class HouseManager : MonoBehaviour
         {
             case GameManager.BURNING when _timeToBurn > 0:
             {
-                if (_maxBurningTime - _timeToBurn >= 2 && !_madeInfection)
+                if ((healthBarObj.maxValue - healthBarObj.value) / healthBarObj.maxValue >= _percentToInfect && !_madeInfection)
                 {
                     foreach (var building in _housesSurrounding)
                     {
-                        if (building.IsUnityNull())
-                            continue;
-                        building.SetStatus(GameManager.BURNING);
+                        if (!building.IsUnityNull() && building.GetStatus().Equals(GameManager.NORMAL))
+                        {
+                            building.SetStatus(GameManager.BURNING);
+                            break;
+                        }
                     }
 
                     _madeInfection = true;
@@ -101,19 +109,32 @@ public class HouseManager : MonoBehaviour
 
                 break;
             }
-            case GameManager.WATERING when _timeToBurn > 0 && _timeToWater > 0:
+            case GameManager.WATERING when healthBarObj.value > 0:
             {
                 _timeToWater -= Time.deltaTime;
+                _timeToBurn += Time.deltaTime;
                 wateringBarObj.value += Time.deltaTime;
-                print("Watering Time: " + _timeToWater);
-                if (_timeToWater <= 0)
+                healthBarObj.value += Time.deltaTime * wateringSpeed;
+                
+                _spriteRenderer.material.color = Color.Lerp(_spriteRenderer.material.color, _initialColor,
+                    wateringSpeed * Time.deltaTime / _timeToWater);
+                
+                _healthBarImage.color = Color.Lerp(_healthBarImage.color, Color.green, wateringSpeed * Time.deltaTime / _timeToWater);
+                
+                if(healthBarObj.value >= healthBarObj.maxValue)
+                {
                     SetStatus(GameManager.NORMAL);
+                    _timeToBurn = _maxBurningTime;
+                    _timeToWater = _maxWateringTime;
+                }
+                // if (_timeToWater <= 0)
+                // {
+                //     SetStatus(GameManager.NORMAL);
+                //     _timeToWater = _maxWateringTime;
+                // }
                 break;
             }
-            // case GameManager.WATERING:
-            //     _timeToBurn = _maxBurningTime;
-            //     break;
-            case GameManager.NORMAL when _timeToWater > 0 && _timeToWater < _maxWateringTime:
+            case GameManager.NORMAL when healthBarObj.value < healthBarObj.maxValue: // when _timeToWater > 0 && _timeToWater < _maxWateringTime:
             {
                 SetStatus(GameManager.BURNING);
                 break;
@@ -158,19 +179,15 @@ public class HouseManager : MonoBehaviour
     public void SetStatus(string newStatus)
     {
         status = newStatus;
-        // switch (status)
-        // {
-        //     case GameManager.WATERING when newStatus.Equals(GameManager.NORMAL) && GameManager.Instance.WaterBulletPool.CountActive == 1:
-        //         status = _timeToWater > 0 ? GameManager.BURNING : newStatus;
-        //         break;
-        //     case GameManager.NORMAL when newStatus.Equals(GameManager.BURNING):
-        //     case GameManager.BURNING when newStatus.Equals(GameManager.WATERING):
-        //         status = newStatus;
-        //         break;
-        // }
-
-        // else
-        //     status = newStatus;
-        print("New Status:  " + status + " In Time: " + _timeToWater);
+    }
+    
+    public void StartGame()
+    {
+        _spriteRenderer.material.color = _initialColor;
+        _healthBarImage.color = Color.green;
+        healthBarObj.value = healthBarObj.maxValue;
+        status = GameManager.NORMAL;
+        _timeToBurn = _maxBurningTime;
+        _timeToWater = _maxWateringTime;
     }
 }

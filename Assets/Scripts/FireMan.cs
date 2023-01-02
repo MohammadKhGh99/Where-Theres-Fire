@@ -30,7 +30,7 @@ public class FireMan : MonoBehaviour
     // hiding ability 
     [SerializeField] private bool invisible;
     private Sprite _mySprite;
-    private SpriteShapeRenderer _spriteRenderer;
+    private SpriteRenderer _spriteRenderer;
     private bool _shown;
     private float _hideTime;
 
@@ -52,7 +52,7 @@ public class FireMan : MonoBehaviour
         _t = GetComponent<Transform>();
         _startPosition = _t.position;
         _lookAtDirection = Vector2.right;
-        _spriteRenderer = GetComponent<SpriteShapeRenderer>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
         
         if (invisible)
         {
@@ -143,6 +143,11 @@ public class FireMan : MonoBehaviour
     }
     
     public void BackToStartPos()
+    {
+        _t.position = _startPosition;
+    }
+
+    public void StartGame()
     {
         _t.position = _startPosition;
     }

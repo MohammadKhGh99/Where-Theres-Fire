@@ -21,12 +21,15 @@ public class Extinguisher : MonoBehaviour
     private WaterGun _waterGun;
     private float _waterKeyHoldingTime = 0f;
     private bool _waterKeyDown = false;
+    [SerializeField] private Vector3 waterGunLocalPosVec = new Vector3(0, -1.25f, 0);
     
     // controls changing
     private const KeyCode Extinguish = KeyCode.Period;
     
     // ** water particle
     private ParticleSystem _waterSplash;
+
+    private Vector3 _startPosition;
 
 
     // Start is called before the first frame update
@@ -37,6 +40,7 @@ public class Extinguisher : MonoBehaviour
         _waterGun = GetComponent<WaterGun>();
         _waterSplash = _t.GetChild(0).GetComponent<ParticleSystem>();
         _lookAtDirection = Vector2.left;
+        _startPosition = _t.position;
     }
 
     private void Update()
@@ -103,5 +107,10 @@ public class Extinguisher : MonoBehaviour
     {
         // _rb.MovePosition(_rb.position + _moveDirection * (35.0f * Time.fixedDeltaTime));
         _rb.velocity = _moveDirection.normalized * (movingSpeed * Time.fixedDeltaTime);
+    }
+    
+    public void StartGame()
+    {
+        _t.position = _startPosition;
     }
 }
