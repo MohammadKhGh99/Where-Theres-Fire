@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.Tilemaps;
@@ -95,8 +96,8 @@ public class GameManager : Singleton<GameManager>
 
 
     // **** TileMap and Tiles ****
-    public static Tilemap GroundBaseTilemap;
-    public static RuleTile WaterTile;
+    public Tilemap GroundBaseTilemap;
+    public RuleTile WaterTile;
 
 
     // **** "Molotov" pool and functions ****
@@ -249,7 +250,7 @@ public class GameManager : Singleton<GameManager>
 
         // Check if the tile is a Rule Tile
         RuleTile ruleTile = newTile as RuleTile;
-        if (ruleTile != null)
+        if (!ruleTile.IsUnityNull())
         {
             // Refresh the tile to apply the Rule Tile's rules
             thisTilemap.RefreshTile(gridPosition);

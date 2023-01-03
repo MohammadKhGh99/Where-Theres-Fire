@@ -39,8 +39,8 @@ public class WaterBullet : MonoBehaviour
 
 
     //dropping water on tiles
-    static float timer = 0.0f;
-    private float _checkingTileRatio = 1f;  // this is how many times we check and change the tile to tile of water, because calling the function toomuch isn't good
+    static float _timer = 0.0f;
+    private float _checkingTileRatio = 0.0f;  // this is how many times we check and change the tile to tile of water, because calling the function toomuch isn't good
     
     // Start is called before the first frame update
     public void FakeStart()
@@ -117,6 +117,10 @@ public class WaterBullet : MonoBehaviour
     }
     void Update()
     {
+        // Update the timer
+        _timer += Time.deltaTime;   // timer for the function addWaterToTile.
+        
+        
         if (currentStatus.Equals(GameManager.WaterBulletStatus.Enlarge))
         {
             // var bulletDirection = new Vector3(Mathf.Cos(_previousAngel * Mathf.Deg2Rad), Mathf.Sin(_previousAngel * Mathf.Deg2Rad), 0);
@@ -135,6 +139,10 @@ public class WaterBullet : MonoBehaviour
                         _currentSizeX = hit.distance;
                         _t.position = bulletDirection * (_currentSizeX / 2 + InitialSizeX / 2) + _previousStartPosition;
                         _t.localScale = GetScaleFromSizeX(_currentSizeX);
+                        
+                        // add water to the end position
+                        var waterDropPos = bulletDirection * _currentSizeX + _previousStartPosition;
+                        AddWaterToTile(waterDropPos);
                         return;
                     }
                 }
@@ -143,7 +151,7 @@ public class WaterBullet : MonoBehaviour
             if (_currentSizeX >= _finalSizeX)
             {
                 // we Reached Full size! add water to the tile there
-                var waterDropPos = bulletDirection * (_currentSizeX / 2 + InitialSizeX / 2) + _previousStartPosition;
+                var waterDropPos = bulletDirection * _currentSizeX + _previousStartPosition;
                 AddWaterToTile(waterDropPos);
                 // return;
             }
@@ -193,6 +201,10 @@ public class WaterBullet : MonoBehaviour
         else if (currentStatus.Equals(GameManager.WaterBulletStatus.Decrease))
         {
             var tempEndPosition = _t.position + _direction * _currentSizeX / 2;  
+            
+            // add water to the end position
+            AddWaterToTile(tempEndPosition);
+            
             _currentSizeX = Mathf.MoveTowards(_currentSizeX, InitialSizeX, Time.deltaTime * bulletSpeed);
             _t.position = tempEndPosition - _direction * (_currentSizeX / 2);
             _t.localScale = GetScaleFromSizeX(_currentSizeX);
@@ -200,6 +212,8 @@ public class WaterBullet : MonoBehaviour
             {
                 // we shrank down, now it's time to disappear!
                 currentStatus = GameManager.WaterBulletStatus.Done;
+                // add water to the end position
+                AddWaterToTile(tempEndPosition);
                 GameManager.Instance.WaterBulletPool.Release(this);
             }
         }
@@ -214,24 +228,14 @@ public class WaterBullet : MonoBehaviour
     
     private void AddWaterToTile(Vector3 waterDropPos)
     {
-        // Timer to track the elapsed time
-
-        // Update the timer
-        timer += Time.deltaTime;
         // Check if the timer has reached the "_checkingTileRatio"
-        if (timer >= _checkingTileRatio)
+        if (_timer >= _checkingTileRatio)
         {
             // Reset the timer
-            timer = 0.0f;
-
-            var gridPosition = GameManager.GroundBaseTilemap.WorldToCell(waterDropPos);
-            // todo maybe check if null?
-            if (!GameManager.GroundBaseTilemap.GetTile(gridPosition).name.Equals(GameManager.WaterTile.name))
-            {
-                // this tile doesn't have water on it, so add it!
-                GameManager.SetTileAndUpdateNeighbors(waterDropPos, GameManager.GroundBaseTilemap,
-                    GameManager.WaterTile);
-            }
+            _timer = 0.0f;
+            
+            // Change the Tile if needed.
+            GameManager.SetTile(waterDropPos, GameManager.Instance.GroundBaseTilemap, GameManager.Instance.WaterTile);
         }
     }
     

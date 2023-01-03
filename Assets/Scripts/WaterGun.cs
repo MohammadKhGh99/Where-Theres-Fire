@@ -12,8 +12,16 @@ public class WaterGun : MonoBehaviour
         _currentWaterBullet = GameManager.Instance.WaterBulletPool.Get();
     }
 
-    public void EnlargeWaterStream(Vector3 playerCurrentPos, Vector3 playerLookAtDirection, Vector3 startPosition)
+    public void EnlargeWaterStream(Vector3 playerCurrentPos, Vector3 playerLookAtDirection, Vector3 startPosition,
+        bool isWaterKeyDown)
     {
+        if (!isWaterKeyDown)
+        {
+            _currentWaterBullet = GameManager.Instance.WaterBulletPool.Get();
+            _previousLookAtDirection = playerLookAtDirection;
+        }
+      
+        
         if (_previousLookAtDirection.Equals(playerLookAtDirection))     // if we didn't change our direction, then enlarge
         {
             _currentWaterBullet.EnlargeBullet(playerCurrentPos,  playerLookAtDirection, startPosition);

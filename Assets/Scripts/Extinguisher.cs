@@ -73,22 +73,12 @@ public class Extinguisher : MonoBehaviour
         }
         
         
-        if (_waterKeyDown)      // we are holding the water key
-        {
-            _waterKeyHoldingTime += Time.deltaTime;
-            // TODO: here we spray particles as long as we keep pressing the button
-            // PARTICLE!
-            _waterSplash.Play();
-            _waterGun.EnlargeWaterStream(_t.position, _lookAtDirection, waterGunLocalPos.position);
-        }
-        
         // *** shooting ability ***
-        if (Input.GetKeyDown(Extinguish))   // we started clicking the button
+        if (Input.GetKey(Extinguish))   // we started holding the button
         {
+            _waterSplash.Play();
+            _waterGun.EnlargeWaterStream(_t.position, _lookAtDirection, waterGunLocalPos.position, _waterKeyDown);
             _waterKeyDown = true;
-            
-            // create a new waterStream
-            _waterGun.CreateWaterStream();
         }
         else if (Input.GetKeyUp(Extinguish))    // we stopped clicking the button
         {

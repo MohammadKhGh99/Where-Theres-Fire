@@ -23,7 +23,6 @@ public class Molotov : MonoBehaviour
     [SerializeField] private float timeToReachTarget;       // time to reach the target
     [SerializeField] private float throwingAngel;           // the angel we throw the bomb
     [SerializeField] private float scalingUpRatio;          // the scaling up ratio
-    [SerializeField] private float molotovPower;               // the effect the bomb will make after hitting floor
     
     // important private variables for the throw
     private Vector2 _targetPos;
@@ -35,14 +34,21 @@ public class Molotov : MonoBehaviour
     private bool _reachedTarget;
     private SpriteRenderer _bottleSpriteRenderer;
     
+    // initializing and Statuses
+    private bool _hasInitialized = false;
+    
     public void FakeStart()
     {
+        // if we already did this, don't do it again (just to make the code a bit faster :#
+        if (_hasInitialized) return;
+        
         _t = GetComponent<Transform>();
         _shadowT = _t.Find("Shadow");
         _bottleT = _t.Find("Bottle");
         _bottleSpriteRenderer = _bottleT.GetComponent<SpriteRenderer>();
         _shadowScale = _shadowT.localScale;
         _bottleScale = _bottleT.localScale;
+        _hasInitialized = true;
     }
     
     public IEnumerator Shoot(Vector3 position, Vector3 throwDirection)
@@ -59,7 +65,7 @@ public class Molotov : MonoBehaviour
         yield return new WaitUntil(() => _reachedTarget);
         // StartCoroutine(FireLifeTime());
 
-        // todo continue
+        // todo continue (MOSTLY NOTHING)
         
     }
 
@@ -99,7 +105,7 @@ public class Molotov : MonoBehaviour
             // move position to target
             _t.position = Vector3.Lerp(_startPos, _targetPos, throwProgress);
             var aboveGroundOscillation = Mathf.Sin(throwProgress * Mathf.PI) * _oscillationHeight;
-            _bottleT.localPosition = new Vector3(0,aboveGroundOscillation * _bottleScale.y,0);        //todo maybe += instead of =
+            _bottleT.localPosition = new Vector3(0,aboveGroundOscillation * _bottleScale.y,0);
             
             // enlarging the bottle
             var scalingUpMaxBottle = scalingUpRatio * _bottleScale;
@@ -117,13 +123,4 @@ public class Molotov : MonoBehaviour
 
         }
     }
-
-    private IEnumerator FireLifeTime()
-    {
-        // _fireChild.SetActive(true);
-        _bottleSpriteRenderer.sprite = null;
-        yield return new WaitForSeconds(8);
-        gameObject.SetActive(false);
-    }
-    
 }
