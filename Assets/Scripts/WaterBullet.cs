@@ -94,6 +94,16 @@ public class WaterBullet : MonoBehaviour
     
     public void ShootBullet()
     {
+        // todo this is a temporary solution for that small bullet:
+        // TEMPORARY SOLUTION - IDK IF IT WORKS
+        //*****
+        if (_currentSizeX <= 0.05f)
+        {
+            GameManager.Instance.WaterBulletPool.Release(this);
+        }
+        //******
+        
+        
         var distance = _finalSizeX - _currentSizeX / 2;
         if (distance > 0)
         {

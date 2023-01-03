@@ -96,7 +96,7 @@ public class GameManager : Singleton<GameManager>
 
     // **** TileMap and Tiles ****
     public static Tilemap GroundBaseTilemap;
-    public static TileBase WaterTile;
+    public static RuleTile WaterTile;
 
 
     // **** "Molotov" pool and functions ****
@@ -159,6 +159,7 @@ public class GameManager : Singleton<GameManager>
     // Functions
     public static void SetTileAndUpdateNeighbors(Vector3 worldPosition, Tilemap myTilemap, TileBase newTile)
     {
+        
         // set tile,
         Vector3Int gridPosition = myTilemap.WorldToCell(worldPosition);
         myTilemap.SetTile(gridPosition, newTile);
@@ -235,6 +236,27 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    public static void SetTile(Vector3 worldPosition, Tilemap thisTilemap, TileBase newTile)
+    {
+        Vector3Int gridPosition = thisTilemap.WorldToCell(worldPosition);
+        
+        if (thisTilemap.HasTile(gridPosition))
+        {
+            if (thisTilemap.GetTile(gridPosition) == newTile) return;
+        }
+
+        thisTilemap.SetTile(gridPosition, newTile);
+
+        // Check if the tile is a Rule Tile
+        RuleTile ruleTile = newTile as RuleTile;
+        if (ruleTile != null)
+        {
+            // Refresh the tile to apply the Rule Tile's rules
+            thisTilemap.RefreshTile(gridPosition);
+        }
+        
+    }
+    
 
     // **** "FireMolotov" pool and functions ****
     public ObjectPool<FireMolotov> FireMolotovPool =
