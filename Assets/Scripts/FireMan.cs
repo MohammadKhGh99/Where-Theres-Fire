@@ -17,6 +17,7 @@ public class FireMan : MonoBehaviour
 
     // movement
     [SerializeField] private float movingSpeed;
+    [SerializeField] private bool moveByGrid;
     [SerializeField] private bool fourDirection;
     private Vector2 _moveDirection;
     private Vector2 _lookAtDirection;
@@ -77,19 +78,22 @@ public class FireMan : MonoBehaviour
         }
         
         // *** Movement ***
-        var xDirection = Input.GetAxis("Horizontal2");
-        var yDirection = Input.GetAxis("Vertical2");
-        _moveDirection.x = xDirection;
-        _moveDirection.y = yDirection;
-        
-        var snapping = fourDirection ? 90.0f : 45.0f;
-        if (_moveDirection.sqrMagnitude > 0)
+        if(!moveByGrid)
         {
-            var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
-            angle = Mathf.Round(angle / snapping) * snapping;
-            _t.rotation = Quaternion.AngleAxis( 90 + angle, Vector3.forward);
-            _moveDirection = Quaternion.AngleAxis( angle, Vector3.forward) * Vector3.right;
-            _lookAtDirection = _moveDirection;
+            var xDirection = Input.GetAxis("Horizontal2");
+            var yDirection = Input.GetAxis("Vertical2");
+            _moveDirection.x = xDirection;
+            _moveDirection.y = yDirection;
+
+            var snapping = fourDirection ? 90.0f : 45.0f;
+            if (_moveDirection.sqrMagnitude > 0)
+            {
+                var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
+                angle = Mathf.Round(angle / snapping) * snapping;
+                _t.rotation = Quaternion.AngleAxis(90 + angle, Vector3.forward);
+                _moveDirection = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
+                _lookAtDirection = _moveDirection;
+            }
         }
 
 
@@ -193,7 +197,8 @@ public class FireMan : MonoBehaviour
     // Update is called once per frame
     private void FixedUpdate()
     {
-        _rb.MovePosition(_rb.position + _moveDirection * (movingSpeed * Time.fixedDeltaTime));
+        if(!moveByGrid)
+            _rb.MovePosition(_rb.position + _moveDirection * (movingSpeed * Time.fixedDeltaTime));
     }
     
     
