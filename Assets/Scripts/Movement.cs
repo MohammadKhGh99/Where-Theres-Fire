@@ -10,11 +10,14 @@ public class Movement : MonoBehaviour
 
     private Vector3Int currentGridPos; // current position of the object in grid cells
     private float gridMoveTimer; // timer for moving from one grid cell to the next
+    private Vector3 _moveDirection;
+    private Vector2 _lookAtDirection;
 
     void Start()
     {
         // Initialize the current grid position to the position of the object in world space
         currentGridPos = tilemap.WorldToCell(transform.position);
+        _lookAtDirection = Vector3.right;
     }
 
     void Update()
@@ -34,6 +37,18 @@ public class Movement : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.W))// && currentGridPos.y < gridSize.y - 1)
             {
                 currentGridPos.y++;
+                _moveDirection.x = 0;
+                _moveDirection.y = 1;
+
+                var snapping = 90.0f;
+                if (_moveDirection.sqrMagnitude > 0)
+                {
+                    var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
+                    angle = Mathf.Round(angle / snapping) * snapping;
+                    transform.rotation = Quaternion.AngleAxis(90 + angle, Vector3.forward);
+                    _moveDirection = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
+                    _lookAtDirection = _moveDirection;
+                }
             }
             else if (Input.GetKeyDown(KeyCode.S))// && currentGridPos.y > 0)
             {

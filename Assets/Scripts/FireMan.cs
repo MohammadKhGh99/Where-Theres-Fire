@@ -7,11 +7,7 @@ using UnityEngine.U2D;
 
 public class FireMan : MonoBehaviour
 {
-    //for testing
-    [SerializeField] private Transform circle;
-    
-    
-    // Gamemanager
+    // Game manager
     private Transform _t;
     private Rigidbody2D _rb;
 
@@ -41,7 +37,7 @@ public class FireMan : MonoBehaviour
                           Left = KeyCode.A,
                           Up = KeyCode.W,
                           Down = KeyCode.S;
-
+ 
     private RaycastHit2D _hit;
     private LayerMask _buildingsMask;
     private Vector3 _startPosition;
@@ -80,8 +76,8 @@ public class FireMan : MonoBehaviour
         // *** Movement ***
         if(!moveByGrid)
         {
-            var xDirection = Input.GetAxis("Horizontal2");
-            var yDirection = Input.GetAxis("Vertical2");
+            var xDirection = Input.GetAxisRaw("Horizontal2");
+            var yDirection = Input.GetAxisRaw("Vertical2");
             _moveDirection.x = xDirection;
             _moveDirection.y = yDirection;
 
@@ -171,10 +167,6 @@ public class FireMan : MonoBehaviour
     private IEnumerator StartFire(Vector3 molotovDropPos)
     {
         var checkWhereDropCollider2D = Physics2D.OverlapPoint(molotovDropPos, layerMask: GameManager.Instance.HousesMask);
-        // var checkWhereDrop = Physics2D.CircleCast(molotovDropPos, 0.5f, Vector2.up,
-        //     distance:  Mathf.Infinity, layerMask: GameManager.instance.BuildingsMask);
-
-        circle.position = molotovDropPos;
         
         if (checkWhereDropCollider2D.IsUnityNull())
         {

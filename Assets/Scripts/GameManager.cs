@@ -18,6 +18,12 @@ public class GameManager : Singleton<GameManager>
     private const float DEFAULT_GAME_TIME = 5.0f * 60.0f; // 5 Minutes
     private float _gameTimer;
 
+    // *** Players ***
+    [SerializeField] private GameObject fireMan;
+    [SerializeField] private GameObject extinguisher;
+    private Extinguisher _extinguisherMan;
+    private FireMan _fireMan;
+    
 
     //  **** Housing.. ****
     [SerializeField] private GameObject housesParent; // where to store the houses Parent
@@ -286,6 +292,8 @@ public class GameManager : Singleton<GameManager>
 
     void Start()
     {
+        _extinguisherMan = extinguisher.GetComponent<Extinguisher>();
+        _fireMan = fireMan.GetComponent<FireMan>();
         var housesParentTransform = housesParent.transform;
         _numHouses = housesParentTransform.childCount;
         _houses = new HouseManager[_numHouses];
@@ -311,7 +319,9 @@ public class GameManager : Singleton<GameManager>
     private void InitializeGame()
     {
         _gameTimer = gameTimeInSeconds != 0 ? gameTimeInSeconds : DEFAULT_GAME_TIME;
-
+        // _extinguisherMan.StartGame();
+        // _fireMan.StartGame();
+        
         // ** the game didn't start yet **
         IsGameRunning = false;
 
@@ -349,6 +359,7 @@ public class GameManager : Singleton<GameManager>
             StartCoroutine(FadeIn(_imageStartGame));
             IsGameRunning = false;
             IsGameOver = false;
+            InitializeGame();
             return;
         }
 
