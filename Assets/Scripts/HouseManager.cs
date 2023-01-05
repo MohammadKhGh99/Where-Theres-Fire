@@ -12,8 +12,8 @@ public class HouseManager : MonoBehaviour
     [SerializeField] private float healthBarLife = 10.0f;
     [SerializeField] private float wateringTime = 3.0f;
     [SerializeField] private float wateringSpeed = 3;
-    [SerializeField] private Slider healthBarObj;
-    [SerializeField] private Slider wateringBarObj;
+    // [SerializeField] private Slider healthBarObj;
+    // [SerializeField] private Slider wateringBarObj;
 
     private float _maxBurningTime;
     private float _maxWateringTime;
@@ -26,6 +26,7 @@ public class HouseManager : MonoBehaviour
 
     private GameObject _healthBar = null;
     private Image _healthBarImage;
+    private Slider _healthBarObj;
 
     // variables for overlapping box around the house
     private Vector2 _overlapSize;
@@ -43,7 +44,7 @@ public class HouseManager : MonoBehaviour
         _t = transform;
         _collider = GetComponent<BoxCollider2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        _healthBarImage = healthBarObj.transform.GetChild(0).GetComponent<Image>();
+        _healthBarImage = _healthBarObj.transform.GetChild(0).GetComponent<Image>();
         
         // ** time to burn and to water **
         _maxBurningTime = healthBarLife;
@@ -55,13 +56,13 @@ public class HouseManager : MonoBehaviour
         // controlling health bar for this house
         if (!_healthBar.IsUnityNull())
         {
-            healthBarObj.maxValue = _maxBurningTime;
-            healthBarObj.value = _maxBurningTime;
+            _healthBarObj.maxValue = _maxBurningTime;
+            _healthBarObj.value = _maxBurningTime;
         }
         
         // controlling watering bar for this house
-        wateringBarObj.maxValue = _maxWateringTime;
-        wateringBarObj.value = 0;
+        // wateringBarObj.maxValue = _maxWateringTime;
+        // wateringBarObj.value = 0;
         
         // saving all surrounding houses to an array
         _overlappingResults = new Collider2D[8];
@@ -87,7 +88,7 @@ public class HouseManager : MonoBehaviour
         {
             case GameManager.BURNING when _timeToBurn > 0:
             {
-                if ((healthBarObj.maxValue - healthBarObj.value) / healthBarObj.maxValue >= _percentToInfect && !_madeInfection)
+                if ((_healthBarObj.maxValue - _healthBarObj.value) / _healthBarObj.maxValue >= _percentToInfect && !_madeInfection)
                 {
                     var numOfNeighborToBurn = (int)Mathf.Ceil((float)_housesSurrounding.Length / 3); 
                     foreach (var building in _housesSurrounding)
@@ -104,7 +105,7 @@ public class HouseManager : MonoBehaviour
                     _madeInfection = true;
                 }
 
-                healthBarObj.value -= Time.deltaTime;
+                _healthBarObj.value -= Time.deltaTime;
                 _spriteRenderer.material.color = Color.Lerp(_spriteRenderer.material.color, Color.black,
                     Time.deltaTime / _timeToBurn);
                 _healthBarImage.color = Color.Lerp(_healthBarImage.color, Color.red, Time.deltaTime / _timeToBurn);
@@ -119,19 +120,19 @@ public class HouseManager : MonoBehaviour
 
                 break;
             }
-            case GameManager.WATERING when healthBarObj.value > 0:
+            case GameManager.WATERING when _healthBarObj.value > 0:
             {
                 _timeToWater -= Time.deltaTime;
                 _timeToBurn += Time.deltaTime;
-                wateringBarObj.value += Time.deltaTime;
-                healthBarObj.value += Time.deltaTime * wateringSpeed;
+                // wateringBarObj.value += Time.deltaTime;
+                _healthBarObj.value += Time.deltaTime * wateringSpeed;
                 
                 _spriteRenderer.material.color = Color.Lerp(_spriteRenderer.material.color, _initialColor,
                     wateringSpeed * Time.deltaTime / _timeToWater);
                 
                 _healthBarImage.color = Color.Lerp(_healthBarImage.color, Color.green, wateringSpeed * Time.deltaTime / _timeToWater);
                 
-                if(healthBarObj.value >= healthBarObj.maxValue)
+                if(_healthBarObj.value >= _healthBarObj.maxValue)
                 {
                     SetStatus(GameManager.NORMAL);
                     _timeToBurn = _maxBurningTime;
@@ -144,7 +145,7 @@ public class HouseManager : MonoBehaviour
                 // }
                 break;
             }
-            case GameManager.NORMAL when healthBarObj.value < healthBarObj.maxValue: // when _timeToWater > 0 && _timeToWater < _maxWateringTime:
+            case GameManager.NORMAL when _healthBarObj.value < _healthBarObj.maxValue: // when _timeToWater > 0 && _timeToWater < _maxWateringTime:
             {
                 SetStatus(GameManager.BURNING);
                 break;
@@ -155,9 +156,9 @@ public class HouseManager : MonoBehaviour
     public void SetHealthBar(GameObject other)
     {
         _healthBar = other;
-        healthBarObj = _healthBar.GetComponent<Slider>();
-        healthBarObj.maxValue = _maxBurningTime;
-        healthBarObj.value = _maxBurningTime;
+        _healthBarObj = _healthBar.GetComponent<Slider>();
+        _healthBarObj.maxValue = _maxBurningTime;
+        _healthBarObj.value = _maxBurningTime;
     }
 
     private void SetSurroundings()
