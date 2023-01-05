@@ -24,6 +24,7 @@ public class HouseManager : MonoBehaviour
     private Transform _t;
     private BoxCollider2D _collider;
 
+    private GameObject _healthBar = null;
     private Image _healthBarImage;
 
     // variables for overlapping box around the house
@@ -52,8 +53,11 @@ public class HouseManager : MonoBehaviour
         
 
         // controlling health bar for this house
-        healthBarObj.maxValue = _maxBurningTime;
-        healthBarObj.value = _maxBurningTime;
+        if (!_healthBar.IsUnityNull())
+        {
+            healthBarObj.maxValue = _maxBurningTime;
+            healthBarObj.value = _maxBurningTime;
+        }
         
         // controlling watering bar for this house
         wateringBarObj.maxValue = _maxWateringTime;
@@ -76,19 +80,25 @@ public class HouseManager : MonoBehaviour
         if (!_setOrNot)
             SetSurroundings();
         
+        if (_healthBar.IsUnityNull())
+            return;
+        
         switch (status)
         {
             case GameManager.BURNING when _timeToBurn > 0:
             {
                 if ((healthBarObj.maxValue - healthBarObj.value) / healthBarObj.maxValue >= _percentToInfect && !_madeInfection)
                 {
+                    var numOfNeighborToBurn = (int)Mathf.Ceil((float)_housesSurrounding.Length / 3); 
                     foreach (var building in _housesSurrounding)
                     {
                         if (!building.IsUnityNull() && building.GetStatus().Equals(GameManager.NORMAL))
                         {
                             building.SetStatus(GameManager.BURNING);
-                            break;
+                            numOfNeighborToBurn--;
                         }
+                        if (numOfNeighborToBurn <= 0)
+                            break;
                     }
 
                     _madeInfection = true;
@@ -142,6 +152,14 @@ public class HouseManager : MonoBehaviour
         }
     }
 
+    public void SetHealthBar(GameObject other)
+    {
+        _healthBar = other;
+        healthBarObj = _healthBar.GetComponent<Slider>();
+        healthBarObj.maxValue = _maxBurningTime;
+        healthBarObj.value = _maxBurningTime;
+    }
+
     private void SetSurroundings()
     {
         _setOrNot = true;
@@ -181,13 +199,13 @@ public class HouseManager : MonoBehaviour
         status = newStatus;
     }
     
-    public void StartGame()
-    {
-        _spriteRenderer.material.color = _initialColor;
-        _healthBarImage.color = Color.green;
-        healthBarObj.value = healthBarObj.maxValue;
-        status = GameManager.NORMAL;
-        _timeToBurn = _maxBurningTime;
-        _timeToWater = _maxWateringTime;
-    }
+    // public void StartGame()
+    // {
+    //     _spriteRenderer.material.color = _initialColor;
+    //     _healthBarImage.color = Color.green;
+    //     healthBarObj.value = healthBarObj.maxValue;
+    //     status = GameManager.NORMAL;
+    //     _timeToBurn = _maxBurningTime;
+    //     _timeToWater = _maxWateringTime;
+    // }
 }

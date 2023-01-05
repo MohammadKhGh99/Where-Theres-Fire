@@ -7,16 +7,13 @@ using UnityEngine.U2D;
 
 public class FireMan : MonoBehaviour
 {
-    //for testing
-    [SerializeField] private Transform circle;
-    
-    
-    // Gamemanager
+    // Game manager
     private Transform _t;
     private Rigidbody2D _rb;
 
     // movement
     [SerializeField] private float movingSpeed;
+    [SerializeField] private bool moveByGrid;
     [SerializeField] private bool fourDirection;
     private Vector2 _moveDirection;
     private Vector2 _lookAtDirection;
@@ -40,7 +37,7 @@ public class FireMan : MonoBehaviour
                           Left = KeyCode.A,
                           Up = KeyCode.W,
                           Down = KeyCode.S;
-
+ 
     private RaycastHit2D _hit;
     private LayerMask _buildingsMask;
     private Vector3 _startPosition;
@@ -77,19 +74,22 @@ public class FireMan : MonoBehaviour
         }
         
         // *** Movement ***
-        var xDirection = Input.GetAxis("Horizontal2");
-        var yDirection = Input.GetAxis("Vertical2");
-        _moveDirection.x = xDirection;
-        _moveDirection.y = yDirection;
-        
-        var snapping = fourDirection ? 90.0f : 45.0f;
-        if (_moveDirection.sqrMagnitude > 0)
+        if(!moveByGrid)
         {
-            var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
-            angle = Mathf.Round(angle / snapping) * snapping;
-            _t.rotation = Quaternion.AngleAxis( 90 + angle, Vector3.forward);
-            _moveDirection = Quaternion.AngleAxis( angle, Vector3.forward) * Vector3.right;
-            _lookAtDirection = _moveDirection;
+            var xDirection = Input.GetAxisRaw("Horizontal2");
+            var yDirection = Input.GetAxisRaw("Vertical2");
+            _moveDirection.x = xDirection;
+            _moveDirection.y = yDirection;
+
+            var snapping = fourDirection ? 90.0f : 45.0f;
+            if (_moveDirection.sqrMagnitude > 0)
+            {
+                var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
+                angle = Mathf.Round(angle / snapping) * snapping;
+                _t.rotation = Quaternion.AngleAxis(90 + angle, Vector3.forward);
+                _moveDirection = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
+                _lookAtDirection = _moveDirection;
+            }
         }
 
 
@@ -167,10 +167,6 @@ public class FireMan : MonoBehaviour
     private IEnumerator StartFire(Vector3 molotovDropPos)
     {
         var checkWhereDropCollider2D = Physics2D.OverlapPoint(molotovDropPos, layerMask: GameManager.Instance.HousesMask);
-        // var checkWhereDrop = Physics2D.CircleCast(molotovDropPos, 0.5f, Vector2.up,
-        //     distance:  Mathf.Infinity, layerMask: GameManager.instance.BuildingsMask);
-
-        circle.position = molotovDropPos;
         
         if (checkWhereDropCollider2D.IsUnityNull())
         {
@@ -193,7 +189,8 @@ public class FireMan : MonoBehaviour
     // Update is called once per frame
     private void FixedUpdate()
     {
-        _rb.MovePosition(_rb.position + _moveDirection * (movingSpeed * Time.fixedDeltaTime));
+        if(!moveByGrid)
+            _rb.MovePosition(_rb.position + _moveDirection * (movingSpeed * Time.fixedDeltaTime));
     }
     
     

@@ -60,6 +60,7 @@ public class WaterBullet : MonoBehaviour
     private Vector3 GetScaleFromSizeX(float xSize)
     {
         var tempScale = Vector3.one;
+        tempScale.y = _t.localScale.y;
         tempScale.x = xSize;
         return tempScale;
     }
