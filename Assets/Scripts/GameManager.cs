@@ -302,7 +302,7 @@ public class GameManager : Singleton<GameManager>
         for (int i = 0; i < _numHouses; i++)
         {
             _houses[i] = housesParentTransform.GetChild(i).GetComponent<HouseManager>();
-            var healthBar = Instantiate(Resources.Load("HealthBar"), _houses[i].transform.position + Vector3.up * 2,
+            var healthBar = Instantiate(Resources.Load("HealthBar"), _houses[i].transform.position + Vector3.up * 2.3f,
                     Quaternion.identity, barsParent.transform) as GameObject;
             if (healthBar == null)
             {
@@ -448,6 +448,20 @@ public class GameManager : Singleton<GameManager>
 
         image.gameObject.SetActive(false);
     }
+    
+    public IEnumerator FadeOut(SpriteRenderer spriteRenderer)
+    {
+        Color c = spriteRenderer.color;
+
+        for (float i = 0.25f; i >= 0; i -= Time.deltaTime)
+        {
+            spriteRenderer.color = new Color(c.r, c.g, c.b, i * 4);
+            yield return null;
+        }
+
+        spriteRenderer.enabled = false;
+        // image.gameObject.SetActive(false);
+    }
 
     // function that make fade in effect on image
     private IEnumerator FadeIn(Image image)
@@ -461,5 +475,18 @@ public class GameManager : Singleton<GameManager>
         }
 
         image.color = new Color(c.r, c.g, c.b, 1);
+    }
+    
+    public IEnumerator FadeIn(SpriteRenderer spriteRenderer)
+    {
+        spriteRenderer.enabled = true;
+        Color c = spriteRenderer.color;
+        for (float i = 0; i <= 0.25f; i += Time.deltaTime)
+        {
+            spriteRenderer.color = new Color(c.r, c.g, c.b, i * 4);
+            yield return null;
+        }
+
+        spriteRenderer.color = new Color(c.r, c.g, c.b, 1);
     }
 }

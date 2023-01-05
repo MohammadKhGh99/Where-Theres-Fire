@@ -44,7 +44,7 @@ public class HouseManager : MonoBehaviour
         _t = transform;
         _collider = GetComponent<BoxCollider2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        _healthBarImage = _healthBarObj.transform.GetChild(0).GetComponent<Image>();
+        
         
         // ** time to burn and to water **
         _maxBurningTime = healthBarLife;
@@ -114,7 +114,7 @@ public class HouseManager : MonoBehaviour
                 {
                     SetStatus(GameManager.BURNED);
                     GameManager.NumBurnedHouses++;
-                    print(status);
+                    // print(status);
                     _spriteRenderer.color = Color.black;
                 }
 
@@ -159,6 +159,7 @@ public class HouseManager : MonoBehaviour
         _healthBarObj = _healthBar.GetComponent<Slider>();
         _healthBarObj.maxValue = _maxBurningTime;
         _healthBarObj.value = _maxBurningTime;
+        _healthBarImage = _healthBarObj.transform.GetChild(0).GetComponent<Image>();
     }
 
     private void SetSurroundings()

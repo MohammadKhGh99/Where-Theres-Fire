@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using UnityEngine.U2D;
 
 public class FireMan : MonoBehaviour
@@ -18,6 +19,13 @@ public class FireMan : MonoBehaviour
     private Vector2 _moveDirection;
     private Vector2 _lookAtDirection;
 
+    // grid movement
+    [SerializeField] private Tilemap tilemap;
+    [SerializeField] private Vector3Int gridSize;
+    [SerializeField] private float gridMoveDuration;
+    private Vector3Int currentGridPos; // current position of the object in grid cells
+    private float gridMoveTimer; // timer for moving from one grid cell to the next
+    
     // shooting fire
     private float _fireKeyHoldingTime = 0f;
     private bool _fireKeyDown = false;
@@ -70,7 +78,10 @@ public class FireMan : MonoBehaviour
         // ** make Invisible **
         if (Input.GetKeyDown(KeyCode.R))
         {
-            _spriteRenderer.enabled = !_spriteRenderer.enabled;
+            StartCoroutine(_spriteRenderer.enabled
+                ? GameManager.Instance.FadeOut(_spriteRenderer)
+                : GameManager.Instance.FadeIn(_spriteRenderer));
+            // _spriteRenderer.enabled = !_spriteRenderer.enabled;
         }
         
         // *** Movement ***
@@ -122,7 +133,7 @@ public class FireMan : MonoBehaviour
             if (_fireKeyHoldingTime >= 5f)
             {
                 // the torch is thrown in the -building- and it will start to burn - stop animation also
-                Debug.Log("FIIRREEE BRRRRR");
+                print("FIIRREEE BRRRRR");
                 _fireKeyDown = false;
             }
         }
@@ -141,13 +152,54 @@ public class FireMan : MonoBehaviour
         //     }
         // }
     }
+
+    private void GridMovement()
+    {
+        // Update the timer
+        gridMoveTimer += Time.deltaTime;
+
+        // Check if it's time to move to the next grid cell
+        if (gridMoveTimer >= gridMoveDuration)
+        {
+            // Reset the timer
+            gridMoveTimer = 0;
+
+            // Check input and move in the corresponding direction
+            if (Input.GetKeyDown(KeyCode.W))// && currentGridPos.y < gridSize.y - 1)
+            {
+                currentGridPos.y++;
+                _moveDirection.x = 0;
+                _moveDirection.y = 1;
+
+                var snapping = 90.0f;
+                if (_moveDirection.sqrMagnitude > 0)
+                {
+                    var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
+                    angle = Mathf.Round(angle / snapping) * snapping;
+                    transform.rotation = Quaternion.AngleAxis(90 + angle, Vector3.forward);
+                    _moveDirection = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
+                    _lookAtDirection = _moveDirection;
+                }
+            }
+            else if (Input.GetKeyDown(KeyCode.S))// && currentGridPos.y > 0)
+            {
+                currentGridPos.y--;
+            }
+            else if (Input.GetKeyDown(KeyCode.D))// && currentGridPos.x < gridSize.x - 1)
+            {
+                currentGridPos.x++;
+            }
+            else if (Input.GetKeyDown(KeyCode.A))// && currentGridPos.x > 0)
+            {
+                currentGridPos.x--;
+            }
+
+            // Update the position of the object in world space
+            transform.position = tilemap.GetCellCenterWorld(currentGridPos);
+        }
+    }
     
     public void BackToStartPos()
-    {
-        _t.position = _startPosition;
-    }
-
-    public void StartGame()
     {
         _t.position = _startPosition;
     }
@@ -156,7 +208,7 @@ public class FireMan : MonoBehaviour
     {
         var molotov = GameManager.Instance.MolotovPool.Get();
         // if(invisible)
-        molotov.SetVisibility(_spriteRenderer.enabled);
+        // molotov.SetVisibility(_spriteRenderer.enabled);
         yield return molotov.Shoot(_t.position, _lookAtDirection);
         // when we finish with the bomb, 
         var molotovDropPos = molotov.GetMolotovDropPos();
@@ -212,7 +264,7 @@ public class FireMan : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        // print(col.collider);
+        print(col.collider);
         if (col.collider.name.StartsWith("Water") && invisible)
         {
             _spriteRenderer.enabled = true;
