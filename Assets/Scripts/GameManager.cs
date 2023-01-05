@@ -5,6 +5,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -27,6 +28,7 @@ public class GameManager : Singleton<GameManager>
 
     //  **** Housing.. ****
     [SerializeField] private GameObject housesParent; // where to store the houses Parent
+    [SerializeField] private GameObject barsParent;
     [SerializeField] private bool controlHousesPos;
 
     [SerializeField] private string[] housesPositions =
@@ -300,6 +302,13 @@ public class GameManager : Singleton<GameManager>
         for (int i = 0; i < _numHouses; i++)
         {
             _houses[i] = housesParentTransform.GetChild(i).GetComponent<HouseManager>();
+            var healthBar = Instantiate(Resources.Load("HealthBar"), _houses[i].transform.position + Vector3.up * 2,
+                    Quaternion.identity, barsParent.transform) as GameObject;
+            if (healthBar == null)
+            {
+                throw new NullReferenceException("There is no Health Bar in the Prefabs!");
+            }
+            _houses[i].SetHealthBar(healthBar);
         }
         InitializeGame();
 
@@ -330,10 +339,10 @@ public class GameManager : Singleton<GameManager>
         _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
         if (!controlHousesPos)
         {
-            foreach (var house in _houses)
-            {
-                house.StartGame();
-            }
+            // foreach (var house in _houses)
+            // {
+            //     house.StartGame();
+            // }
             return;
         }
         foreach (var t in _housesPosBackUp)
@@ -354,12 +363,13 @@ public class GameManager : Singleton<GameManager>
         // ** if esc pressed while in game, we go to start page
         if ((Input.GetKey(KeyCode.Space) && IsGameOver) || (Input.GetKey(KeyCode.Escape) && IsGameRunning))
         {
-            StartCoroutine(FadeOut(_imageFireWon));
-            StartCoroutine(FadeOut(_imageWaterWon));
-            StartCoroutine(FadeIn(_imageStartGame));
+            SceneManager.LoadScene("Main");
+            // StartCoroutine(FadeOut(_imageFireWon));
+            // StartCoroutine(FadeOut(_imageWaterWon));
+            // StartCoroutine(FadeIn(_imageStartGame));
             IsGameRunning = false;
             IsGameOver = false;
-            InitializeGame();
+            // InitializeGame();
             return;
         }
 
@@ -373,9 +383,9 @@ public class GameManager : Singleton<GameManager>
         }
 
         // ** to start the game press any key to start
-        if (Input.anyKeyDown && !IsGameRunning)
+        if (Input.GetKey(KeyCode.Space) && !IsGameRunning)     // Input.anyKeyDown
         {
-            InitializeGame();
+            // InitializeGame();
             StartCoroutine(FadeOut(_imageStartGame));
             IsGameRunning = true;
         }
