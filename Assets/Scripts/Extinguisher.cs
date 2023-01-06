@@ -62,7 +62,7 @@ public class Extinguisher : MonoBehaviour
             _isMoving = true;
             var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
             angle = Mathf.Round(angle / snapping) * snapping;
-            transform.rotation = Quaternion.AngleAxis( 90 + angle, Vector3.forward);
+            // transform.rotation = Quaternion.AngleAxis( 90 + angle, Vector3.forward);
             // _moveDirection = Quaternion.AngleAxis( angle, Vector3.forward) * Vector3.right;
             _moveDirection = new Vector3(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad), 0);
             _lookAtDirection = _moveDirection;
