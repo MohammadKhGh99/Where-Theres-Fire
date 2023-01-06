@@ -363,6 +363,7 @@ public class GameManager : Singleton<GameManager>
         // ** if esc pressed while in game, we go to start page
         if ((Input.GetKey(KeyCode.Space) && IsGameOver) || (Input.GetKey(KeyCode.Escape) && IsGameRunning))
         {
+            StartCoroutine(FadeIn(_imageStartGame));
             SceneManager.LoadScene("Main");
             // StartCoroutine(FadeOut(_imageFireWon));
             // StartCoroutine(FadeOut(_imageWaterWon));
@@ -383,13 +384,13 @@ public class GameManager : Singleton<GameManager>
         }
 
         // ** to start the game press any key to start
-        if (Input.GetKey(KeyCode.Space) && !IsGameRunning)     // Input.anyKeyDown
+        if (Input.GetKey(KeyCode.Space) && !IsGameRunning) // Input.anyKeyDown
         {
             // InitializeGame();
             StartCoroutine(FadeOut(_imageStartGame));
             IsGameRunning = true;
         }
-
+        // print("Burned Houses: " + NumBurnedHouses + " Houses: " + _numHouses);
         // check which player won
         if(!IsGameOver)
         {
@@ -404,7 +405,9 @@ public class GameManager : Singleton<GameManager>
             }
 
             // ** fire man won **
-            if (_currentSeconds < _gameTimer && (float)NumBurnedHouses / _numHouses >= winPercent)
+            var allBurned = _currentSeconds < _gameTimer && NumBurnedHouses == _numHouses;
+            var winPercentReached = _currentSeconds >= _gameTimer && (float)NumBurnedHouses / _numHouses >= winPercent;
+            if ( allBurned || winPercentReached)
             {
                 StartCoroutine(FadeOut(_imageStartGame));
                 StartCoroutine(FadeIn(_imageFireWon));

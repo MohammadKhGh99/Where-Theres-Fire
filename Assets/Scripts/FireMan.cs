@@ -22,6 +22,7 @@ public class FireMan : MonoBehaviour
     // grid movement
     [SerializeField] private Vector3Int gridSize;
     [SerializeField] private float gridMoveDuration;
+    [SerializeField] private int numGridMove = 2;
     private Vector3Int currentGridPos; // current position of the object in grid cells
     private float gridMoveTimer; // timer for moving from one grid cell to the next
     
@@ -53,6 +54,7 @@ public class FireMan : MonoBehaviour
         _startPosition = _t.position;
         _lookAtDirection = Vector2.right;
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        currentGridPos = GameManager.Instance.GroundBaseTilemap.WorldToCell(transform.position);
         
         if (invisible)
         {
@@ -92,10 +94,14 @@ public class FireMan : MonoBehaviour
             {
                 var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
                 angle = Mathf.Round(angle / snapping) * snapping;
-                _t.rotation = Quaternion.AngleAxis(90 + angle, Vector3.forward);
+                // _t.rotation = Quaternion.AngleAxis(90 + angle, Vector3.forward);
                 _moveDirection = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
                 _lookAtDirection = _moveDirection;
             }
+        }
+        else
+        {
+            GridMovement();
         }
 
 
@@ -145,45 +151,41 @@ public class FireMan : MonoBehaviour
         {
             // Reset the timer
             gridMoveTimer = 0;
-
+            
             // Check input and move in the corresponding direction
             if (Input.GetKeyDown(KeyCode.W))// && currentGridPos.y < gridSize.y - 1)
             {
-                currentGridPos.y++;
-                _moveDirection.x = 0;
-                _moveDirection.y = 1;
-
-                var snapping = 90.0f;
-                if (_moveDirection.sqrMagnitude > 0)
-                {
-                    var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
-                    angle = Mathf.Round(angle / snapping) * snapping;
-                    transform.rotation = Quaternion.AngleAxis(90 + angle, Vector3.forward);
-                    _moveDirection = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
-                    _lookAtDirection = _moveDirection;
-                }
+                _lookAtDirection = Vector3.up;
+                _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask);
+                if(!_hit)
+                    currentGridPos.y += numGridMove;
+                
             }
             else if (Input.GetKeyDown(KeyCode.S))// && currentGridPos.y > 0)
             {
-                currentGridPos.y--;
+                _lookAtDirection = Vector3.down;
+                _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask);
+                if(!_hit)
+                    currentGridPos.y -= numGridMove;
             }
             else if (Input.GetKeyDown(KeyCode.D))// && currentGridPos.x < gridSize.x - 1)
             {
-                currentGridPos.x++;
+                _lookAtDirection = Vector3.right;
+                _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask);
+                if(!_hit)
+                    currentGridPos.x += numGridMove;
             }
             else if (Input.GetKeyDown(KeyCode.A))// && currentGridPos.x > 0)
             {
-                currentGridPos.x--;
+                _lookAtDirection = Vector3.left;
+                _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask);
+                if(!_hit)
+                    currentGridPos.x -= numGridMove;
             }
-
+            GameManager.Instance.bo
             // Update the position of the object in world space
             transform.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(currentGridPos);
         }
-    }
-    
-    public void BackToStartPos()
-    {
-        _t.position = _startPosition;
     }
 
     private IEnumerator ThrowMolotov()
@@ -227,9 +229,6 @@ public class FireMan : MonoBehaviour
             _rb.MovePosition(_rb.position + _moveDirection * (movingSpeed * Time.fixedDeltaTime));
     }
     
-    
-    
-    
     private void OnTriggerEnter2D(Collider2D col)
     {
         if (col.gameObject.name.StartsWith("Splash") || col.gameObject.name.StartsWith("FirePlace"))
@@ -246,8 +245,9 @@ public class FireMan : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.collider.name.StartsWith("Water") && invisible)
+        if (col.collider.name.StartsWith("Water") && !_spriteRenderer.enabled)
         {
+            print("Water Collision");
             _spriteRenderer.enabled = true;
             _shown = true;
         }
