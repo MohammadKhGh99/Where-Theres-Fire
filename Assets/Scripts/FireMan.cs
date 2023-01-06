@@ -25,6 +25,10 @@ public class FireMan : MonoBehaviour
     [SerializeField] private int numGridMove = 2;
     private Vector3Int currentGridPos; // current position of the object in grid cells
     private float gridMoveTimer; // timer for moving from one grid cell to the next
+    private static float _leftXLimit = -21.5f;
+    private static float _rightXLimit = 21.5f;
+    private static float _upYLimit = 11.5f;
+    private static float _downYLimit = -11.5f;
     
     // shooting fire
     private float _fireKeyHoldingTime = 0f;
@@ -145,6 +149,8 @@ public class FireMan : MonoBehaviour
     {
         // Update the timer
         gridMoveTimer += Time.deltaTime;
+        // print(GameManager.Instance.GroundBaseTilemap.localBounds);
+        // print(_t.position);
 
         // Check if it's time to move to the next grid cell
         if (gridMoveTimer >= gridMoveDuration)
@@ -156,7 +162,7 @@ public class FireMan : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.W))// && currentGridPos.y < gridSize.y - 1)
             {
                 _lookAtDirection = Vector3.up;
-                _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask);
+                _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
                 if(!_hit)
                     currentGridPos.y += numGridMove;
                 
@@ -164,25 +170,25 @@ public class FireMan : MonoBehaviour
             else if (Input.GetKeyDown(KeyCode.S))// && currentGridPos.y > 0)
             {
                 _lookAtDirection = Vector3.down;
-                _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask);
+                _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
                 if(!_hit)
                     currentGridPos.y -= numGridMove;
             }
             else if (Input.GetKeyDown(KeyCode.D))// && currentGridPos.x < gridSize.x - 1)
             {
                 _lookAtDirection = Vector3.right;
-                _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask);
+                _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
                 if(!_hit)
                     currentGridPos.x += numGridMove;
             }
             else if (Input.GetKeyDown(KeyCode.A))// && currentGridPos.x > 0)
             {
                 _lookAtDirection = Vector3.left;
-                _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask);
+                _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
                 if(!_hit)
                     currentGridPos.x -= numGridMove;
             }
-            GameManager.Instance.bo
+            
             // Update the position of the object in world space
             transform.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(currentGridPos);
         }
