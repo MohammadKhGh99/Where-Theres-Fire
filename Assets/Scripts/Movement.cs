@@ -3,7 +3,6 @@ using UnityEngine.Tilemaps;
 
 public class Movement : MonoBehaviour
 {
-    public Tilemap tilemap;
     public Vector3Int gridSize; // size of the grid in grid cells
     public float gridMoveDuration; // time it takes to move from one grid cell to the next
     public bool moveByGrid = true;
@@ -16,7 +15,7 @@ public class Movement : MonoBehaviour
     void Start()
     {
         // Initialize the current grid position to the position of the object in world space
-        currentGridPos = tilemap.WorldToCell(transform.position);
+        currentGridPos = GameManager.Instance.GroundBaseTilemap.WorldToCell(transform.position);
         _lookAtDirection = Vector3.right;
     }
 
@@ -64,7 +63,7 @@ public class Movement : MonoBehaviour
             }
 
             // Update the position of the object in world space
-            transform.position = tilemap.GetCellCenterWorld(currentGridPos);
+            transform.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(currentGridPos);
         }
     }
 }

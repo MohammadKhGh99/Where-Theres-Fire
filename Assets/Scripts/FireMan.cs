@@ -20,7 +20,6 @@ public class FireMan : MonoBehaviour
     private Vector2 _lookAtDirection;
 
     // grid movement
-    [SerializeField] private Tilemap tilemap;
     [SerializeField] private Vector3Int gridSize;
     [SerializeField] private float gridMoveDuration;
     private Vector3Int currentGridPos; // current position of the object in grid cells
@@ -41,11 +40,7 @@ public class FireMan : MonoBehaviour
 
     // controls changing
     private const KeyCode Fire = KeyCode.T;
-    private const KeyCode Right = KeyCode.D,
-                          Left = KeyCode.A,
-                          Up = KeyCode.W,
-                          Down = KeyCode.S;
- 
+
     private RaycastHit2D _hit;
     private LayerMask _buildingsMask;
     private Vector3 _startPosition;
@@ -138,19 +133,6 @@ public class FireMan : MonoBehaviour
             }
         }
         _cooldownToMolotov = Mathf.Max(_cooldownToMolotov - Time.deltaTime, 0f);
-        
-        // *** Power-Up: hide the character ***
-        // if (_shown)
-        // {
-        //     _hideTime -= Time.deltaTime;
-        //     if (_hideTime <= 0)
-        //     {
-        //         _hideTime = 4.0f;
-        //         _spriteRenderer.enabled = false;
-        //         // _spriteRenderer.sprite = null;
-        //         _shown = false;
-        //     }
-        // }
     }
 
     private void GridMovement()
@@ -195,7 +177,7 @@ public class FireMan : MonoBehaviour
             }
 
             // Update the position of the object in world space
-            transform.position = tilemap.GetCellCenterWorld(currentGridPos);
+            transform.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(currentGridPos);
         }
     }
     
@@ -264,7 +246,6 @@ public class FireMan : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D col)
     {
-        print(col.collider);
         if (col.collider.name.StartsWith("Water") && invisible)
         {
             _spriteRenderer.enabled = true;
