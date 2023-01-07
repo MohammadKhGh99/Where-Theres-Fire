@@ -7,8 +7,6 @@ using UnityEngine.Pool;
 
 public class FootStep : MonoBehaviour
 {
-    [SerializeField] private float legsWide;
-    public float timeBeforeDisappear;
     private bool _hasInitialized;
     private Transform _t;
 
@@ -25,7 +23,7 @@ public class FootStep : MonoBehaviour
         _hasInitialized = true;
     }
 
-    public void SetStep(Vector3 position, Vector2 direction, WetShoes.Legs step)
+    public void SetStep(Vector3 position, Vector2 direction, WetShoes.Legs step, float legsWide)
     {
         // todo make sure the direction is for directional and it's 01 only
         // Direction

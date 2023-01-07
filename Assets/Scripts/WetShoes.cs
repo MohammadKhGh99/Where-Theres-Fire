@@ -6,10 +6,11 @@ using UnityEngine.Tilemaps;
 
 public class WetShoes : MonoBehaviour
 {
-    [SerializeField] private int NumOfWetCells;
-    // [SerializeField] private float DistanceBetweenSteps;
+    [SerializeField] private int numOfWetCells;
+    [SerializeField] private float legsWide;
+    [SerializeField] private float timeBeforeDisappear;
+
     private Transform _t;
-    // private Rigidbody2D _rb;
     private bool _isWetShoes;
     private int _currentNumOfWetCellsMade;
     
@@ -23,11 +24,7 @@ public class WetShoes : MonoBehaviour
     private Vector3 _previousDirection;
 
     private List<FootStep> _stepsToStartCoroutine = new List<FootStep>();
-    public enum Legs
-    {
-        Left, Right
-    }
-
+    public enum Legs { Left, Right }
     private Legs _nextLegToUse;
     void Start()
     {
@@ -35,8 +32,6 @@ public class WetShoes : MonoBehaviour
         _currentNumOfWetCellsMade = 0;
         _nextLegToUse = Legs.Right;
         _t = GetComponent<Transform>();
-        // _rb = GetComponent<Rigidbody2D>();
-        
     }
 
     void Update()
@@ -69,7 +64,7 @@ public class WetShoes : MonoBehaviour
                 {
                     // we can now insert the second leg
                     var secondFootStep = _footStepPool.Get();
-                    secondFootStep.SetStep(_t.position, _previousDirection, _nextLegToUse);
+                    secondFootStep.SetStep(_t.position, _previousDirection, _nextLegToUse, legsWide);
                     _nextLegToUse = _nextLegToUse.Equals(Legs.Right) ? Legs.Left : Legs.Right;
                     _stepsToStartCoroutine.Add(secondFootStep);
                     _secondLegInserted = true;
@@ -87,13 +82,13 @@ public class WetShoes : MonoBehaviour
 
                 // setup the new footstep
                 var footStep = _footStepPool.Get();
-                footStep.SetStep(_t.position, _previousDirection, _nextLegToUse);
+                footStep.SetStep(_t.position, _previousDirection, _nextLegToUse, legsWide);
                 _nextLegToUse = _nextLegToUse.Equals(Legs.Right) ? Legs.Left : Legs.Right;
                 _stepsToStartCoroutine.Add(footStep);
 
                 // add 1 to the currentNumOfWetCellsMade
                 _currentNumOfWetCellsMade += 1;
-                if (_currentNumOfWetCellsMade > NumOfWetCells)
+                if (_currentNumOfWetCellsMade > numOfWetCells)
                 {
                     _isWetShoes = false;
                 }
@@ -121,7 +116,7 @@ public class WetShoes : MonoBehaviour
 
     private IEnumerator FootStepTime(FootStep footStep)
     {
-        yield return new WaitForSeconds(footStep.timeBeforeDisappear);
+        yield return new WaitForSeconds(timeBeforeDisappear);
         _footStepPool.Release(footStep);
     }
     
