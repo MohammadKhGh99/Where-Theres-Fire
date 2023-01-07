@@ -14,6 +14,7 @@ public class GameManager : Singleton<GameManager>
 {
     // *** Time of the Game variables **** ///
     [SerializeField] private TextMeshProUGUI timerText; // timer counting down until the game is over
+    private Vector3 _initialTextScale;
     [SerializeField] private float gameTimeInSeconds; // the game time in seconds
     [SerializeField] private float winPercent = 0.5f;
     private const float DEFAULT_GAME_TIME = 5.0f * 60.0f; // 5 Minutes
@@ -323,7 +324,7 @@ public class GameManager : Singleton<GameManager>
         _fireWonCanvas = transform.GetChild(2).gameObject;
         _imageFireWon = _fireWonCanvas.GetComponent<Transform>().GetChild(0).GetComponent<Image>();
 
-        // transform.Find("Field").transform.Find("Buildings");
+        _initialTextScale = timerText.transform.localScale;
     }
 
     private void InitializeGame()
@@ -340,13 +341,8 @@ public class GameManager : Singleton<GameManager>
 
         _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
         if (!controlHousesPos)
-        {
-            // foreach (var house in _houses)
-            // {
-            //     house.StartGame();
-            // }
             return;
-        }
+        
         foreach (var t in _housesPosBackUp)
         {
             var temp = t.Split(',');
@@ -367,12 +363,8 @@ public class GameManager : Singleton<GameManager>
         {
             StartCoroutine(FadeIn(_imageStartGame));
             SceneManager.LoadScene("Main");
-            // StartCoroutine(FadeOut(_imageFireWon));
-            // StartCoroutine(FadeOut(_imageWaterWon));
-            // StartCoroutine(FadeIn(_imageStartGame));
             IsGameRunning = false;
             IsGameOver = false;
-            // InitializeGame();
             return;
         }
 
@@ -388,11 +380,10 @@ public class GameManager : Singleton<GameManager>
         // ** to start the game press any key to start
         if (Input.GetKey(KeyCode.Space) && !IsGameRunning) // Input.anyKeyDown
         {
-            // InitializeGame();
             StartCoroutine(FadeOut(_imageStartGame));
             IsGameRunning = true;
         }
-        // print("Burned Houses: " + NumBurnedHouses + " Houses: " + _numHouses);
+        
         // check which player won
         if(!IsGameOver)
         {
@@ -420,7 +411,7 @@ public class GameManager : Singleton<GameManager>
     }
 
     // timer countdown
-    private float _currentSeconds = 0;
+    private float _currentSeconds;
 
     private void UpdateTheTimeOfTheGame()
     {
@@ -435,6 +426,11 @@ public class GameManager : Singleton<GameManager>
         seconds = 59 - seconds;
         if (minutes == 1 && seconds == 0)
             timerText.color = Color.red;
+        
+        if (minutes <= 1 && seconds is <= 59 and >= 0)
+        {
+            timerText.transform.localScale = timerText.transform.localScale == _initialTextScale ? _initialTextScale / 2 : _initialTextScale;
+        }
 
         // Showing the elapsed time in game
         timerText.text = $"{minutes:00}:{seconds:00}";

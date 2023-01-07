@@ -8,7 +8,7 @@ public class Extinguisher : MonoBehaviour
     // components
     private Transform _t;
     private Rigidbody2D _rb;
-    
+
     // movement
     [SerializeField] private float movingSpeed;
     [SerializeField] private bool fourDirection;
@@ -22,14 +22,17 @@ public class Extinguisher : MonoBehaviour
     private float _waterKeyHoldingTime = 0f;
     private bool _waterKeyDown = false;
     [SerializeField] private Vector3 waterGunLocalPosVec = new Vector3(0, -1.25f, 0);
-    
+
     // controls changing
     private const KeyCode Extinguish = KeyCode.Period;
-    
+
     // ** water particle
     private ParticleSystem _waterSplash;
 
     private Vector3 _startPosition;
+
+    // ** Animations **
+    private Animator _animator;
 
 
     // Start is called before the first frame update
@@ -39,6 +42,7 @@ public class Extinguisher : MonoBehaviour
         _t = GetComponent<Transform>();
         _waterGun = GetComponent<WaterGun>();
         _waterSplash = _t.GetChild(0).GetComponent<ParticleSystem>();
+        _animator = GetComponent<Animator>();
         _lookAtDirection = Vector2.left;
         _startPosition = _t.position;
     }
@@ -48,14 +52,14 @@ public class Extinguisher : MonoBehaviour
         // don't move when the game is not started yet!!!
         if (!GameManager.IsGameRunning)
             return;
-        
+
         // *** Movement ***
         var yDirection = Input.GetAxis("Vertical");
         var xDirection = Input.GetAxis("Horizontal");
-        
+
         _moveDirection.x = xDirection;
         _moveDirection.y = yDirection;
-        
+
         var snapping = fourDirection ? 90.0f : 45.0f;
         if (_moveDirection.sqrMagnitude > 0)
         {
@@ -71,25 +75,46 @@ public class Extinguisher : MonoBehaviour
         {
             _isMoving = false;
         }
-        
-        
+
+        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow))
+        {
+            _animator.SetBool("ExtinguisherIdleLeft", false);
+            _animator.SetBool("ExtinguisherWalkingLeft", true);
+        }
+        else if (Input.GetKey(KeyCode.UpArrow))
+        {
+            _animator.SetBool("ExtinguisherIdleLeft", false);
+            _animator.SetBool("ExtinguisherWalkingUp", true);
+        }
+        else if (Input.GetKey(KeyCode.DownArrow))
+        {
+            _animator.SetBool("ExtinguisherIdleLeft", false);
+            _animator.SetBool("ExtinguisherWalkingDown", true);
+        }
+        else if (!Input.GetKey(Extinguish))
+        {
+            _animator.SetBool("ExtinguisherWalkingLeft", false);
+            _animator.SetBool("ExtinguisherWalkingUp", false);
+            _animator.SetBool("ExtinguisherWalkingDown", false);
+            _animator.SetBool("ExtinguisherIdleLeft", true);
+        }
+
         // *** shooting ability ***
-        if (Input.GetKey(Extinguish))   // we started holding the button
+        if (Input.GetKey(Extinguish)) // we started holding the button
         {
             _waterSplash.Play();
             _waterGun.EnlargeWaterStream(_t.position, _lookAtDirection, waterGunLocalPos.position, _waterKeyDown);
             _waterKeyDown = true;
         }
-        else if (Input.GetKeyUp(Extinguish))    // we stopped clicking the button
+        else if (Input.GetKeyUp(Extinguish)) // we stopped clicking the button
         {
             _waterSplash.Stop();
             _waterGun.ShootWaterStream();
             _waterKeyHoldingTime = 0f;
             _waterKeyDown = false;
-            
+
             // stop enlarging the waterStream - shoot it 
         }
-        
     }
 
     // Update is called once per frame
@@ -98,7 +123,7 @@ public class Extinguisher : MonoBehaviour
         // _rb.MovePosition(_rb.position + _moveDirection * (35.0f * Time.fixedDeltaTime));
         _rb.velocity = _moveDirection.normalized * (movingSpeed * Time.fixedDeltaTime);
     }
-    
+
     public void StartGame()
     {
         _t.position = _startPosition;

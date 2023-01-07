@@ -14,60 +14,37 @@ public class FireMan : MonoBehaviour
 
     // movement
     [SerializeField] private float movingSpeed;
-    [SerializeField] private bool moveByGrid;
-    [SerializeField] private bool fourDirection;
+    [SerializeField] private bool moveByGrid = true;
+    [SerializeField] private bool fourDirection = true;
     private Vector2 _moveDirection;
     private Vector2 _lookAtDirection;
 
     // grid movement
-    [SerializeField] private Vector3Int gridSize;
     [SerializeField] private float gridMoveDuration;
     [SerializeField] private int numGridMove = 2;
-    private Vector3Int currentGridPos; // current position of the object in grid cells
-    private float gridMoveTimer; // timer for moving from one grid cell to the next
-    private static float _leftXLimit = -21.5f;
-    private static float _rightXLimit = 21.5f;
-    private static float _upYLimit = 11.5f;
-    private static float _downYLimit = -11.5f;
-    
-    // shooting fire
-    private float _fireKeyHoldingTime = 0f;
-    private bool _fireKeyDown = false;
-    private float _cooldownToMolotov = 0f;
-    private bool _burningBuildingAnimationStarted = false;
+    private Vector3Int _currentGridPos; // current position of the object in grid cells
+    private float _gridMoveTimer; // timer for moving from one grid cell to the next
 
-    // hiding ability 
-    [SerializeField] private bool invisible;
-    private Sprite _mySprite;
-    private SpriteRenderer _spriteRenderer;
-    private bool _shown;
-    private float _hideTime;
+    // shooting fire
+    private float _fireKeyHoldingTime;
+    private bool _fireKeyDown;
+    private float _cooldownToMolotov;
+    private bool _burningBuildingAnimationStarted;
 
     // controls changing
     private const KeyCode Fire = KeyCode.T;
+    private const KeyCode Up = KeyCode.W, Down = KeyCode.S, Left = KeyCode.A, Right = KeyCode.D;
 
     private RaycastHit2D _hit;
     private LayerMask _buildingsMask;
-    private Vector3 _startPosition;
 
     // Start is called before the first frame update
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
         _t = GetComponent<Transform>();
-        _startPosition = _t.position;
         _lookAtDirection = Vector2.right;
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-        currentGridPos = GameManager.Instance.GroundBaseTilemap.WorldToCell(transform.position);
-        
-        if (invisible)
-        {
-            _spriteRenderer.enabled = false;
-            // _mySprite = _spriteRenderer..sprite;
-            // _spriteRenderer.sprite = null;
-            _shown = false;
-            _hideTime = 4.0f;
-        }
+        _currentGridPos = GameManager.Instance.GroundBaseTilemap.WorldToCell(transform.position);
     }
 
     private void Update()
@@ -75,33 +52,11 @@ public class FireMan : MonoBehaviour
         // don't move when the game is not started yet!!!
         if (!GameManager.IsGameRunning)
             return;
-        
-        // ** make Invisible **
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            StartCoroutine(_spriteRenderer.enabled
-                ? GameManager.Instance.FadeOut(_spriteRenderer)
-                : GameManager.Instance.FadeIn(_spriteRenderer));
-            // _spriteRenderer.enabled = !_spriteRenderer.enabled;
-        }
-        
+
         // *** Movement ***
         if(!moveByGrid)
         {
-            var xDirection = Input.GetAxisRaw("Horizontal2");
-            var yDirection = Input.GetAxisRaw("Vertical2");
-            _moveDirection.x = xDirection;
-            _moveDirection.y = yDirection;
-
-            var snapping = fourDirection ? 90.0f : 45.0f;
-            if (_moveDirection.sqrMagnitude > 0)
-            {
-                var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
-                angle = Mathf.Round(angle / snapping) * snapping;
-                // _t.rotation = Quaternion.AngleAxis(90 + angle, Vector3.forward);
-                _moveDirection = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
-                _lookAtDirection = _moveDirection;
-            }
+            SnappingMovement();
         }
         else
         {
@@ -145,60 +100,75 @@ public class FireMan : MonoBehaviour
         _cooldownToMolotov = Mathf.Max(_cooldownToMolotov - Time.deltaTime, 0f);
     }
 
+
+    private void SnappingMovement()
+    {
+        var xDirection = Input.GetAxisRaw("Horizontal2");
+        var yDirection = Input.GetAxisRaw("Vertical2");
+        _moveDirection.x = xDirection;
+        _moveDirection.y = yDirection;
+
+        var snapping = fourDirection ? 90.0f : 45.0f;
+        if (_moveDirection.sqrMagnitude > 0)
+        {
+            var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
+            angle = Mathf.Round(angle / snapping) * snapping;
+            // _t.rotation = Quaternion.AngleAxis(90 + angle, Vector3.forward);
+            _moveDirection = Quaternion.AngleAxis(angle, Vector3.forward) * Vector3.right;
+            _lookAtDirection = _moveDirection;
+        }
+    }
+    
     private void GridMovement()
     {
         // Update the timer
-        gridMoveTimer += Time.deltaTime;
-        // print(GameManager.Instance.GroundBaseTilemap.localBounds);
-        // print(_t.position);
+        // _gridMoveTimer += Time.deltaTime;
 
         // Check if it's time to move to the next grid cell
-        if (gridMoveTimer >= gridMoveDuration)
+        // if (_gridMoveTimer >= gridMoveDuration)
+        // {
+        // Reset the timer
+        // _gridMoveTimer = 0;
+        
+        // Check input and move in the corresponding direction
+        if (Input.GetKeyDown(Up))
         {
-            // Reset the timer
-            gridMoveTimer = 0;
+            _lookAtDirection = Vector3.up;
+            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
+            if(!_hit)
+                _currentGridPos.y += numGridMove;
             
-            // Check input and move in the corresponding direction
-            if (Input.GetKeyDown(KeyCode.W))// && currentGridPos.y < gridSize.y - 1)
-            {
-                _lookAtDirection = Vector3.up;
-                _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
-                if(!_hit)
-                    currentGridPos.y += numGridMove;
-                
-            }
-            else if (Input.GetKeyDown(KeyCode.S))// && currentGridPos.y > 0)
-            {
-                _lookAtDirection = Vector3.down;
-                _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
-                if(!_hit)
-                    currentGridPos.y -= numGridMove;
-            }
-            else if (Input.GetKeyDown(KeyCode.D))// && currentGridPos.x < gridSize.x - 1)
-            {
-                _lookAtDirection = Vector3.right;
-                _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
-                if(!_hit)
-                    currentGridPos.x += numGridMove;
-            }
-            else if (Input.GetKeyDown(KeyCode.A))// && currentGridPos.x > 0)
-            {
-                _lookAtDirection = Vector3.left;
-                _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
-                if(!_hit)
-                    currentGridPos.x -= numGridMove;
-            }
-            
-            // Update the position of the object in world space
-            transform.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(currentGridPos);
         }
+        else if (Input.GetKeyDown(Down))
+        {
+            _lookAtDirection = Vector3.down;
+            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
+            if(!_hit)
+                _currentGridPos.y -= numGridMove;
+        }
+        else if (Input.GetKeyDown(Right))
+        {
+            _lookAtDirection = Vector3.right;
+            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
+            if(!_hit)
+                _currentGridPos.x += numGridMove;
+        }
+        else if (Input.GetKeyDown(Left))
+        {
+            _lookAtDirection = Vector3.left;
+            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
+            if(!_hit)
+                _currentGridPos.x -= numGridMove;
+        }
+        
+        // Update the position of the object in world space
+        transform.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos);
+        // }
     }
 
     private IEnumerator ThrowMolotov()
     {
         var molotov = GameManager.Instance.MolotovPool.Get();
-        // if(invisible)
-        // molotov.SetVisibility(_spriteRenderer.enabled);
         yield return molotov.Shoot(_t.position, _lookAtDirection);
         // when we finish with the bomb, 
         var molotovDropPos = molotov.GetMolotovDropPos();
@@ -233,29 +203,5 @@ public class FireMan : MonoBehaviour
     {
         if(!moveByGrid)
             _rb.MovePosition(_rb.position + _moveDirection * (movingSpeed * Time.fixedDeltaTime));
-    }
-    
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-        if (col.gameObject.name.StartsWith("Splash") || col.gameObject.name.StartsWith("FirePlace"))
-        {
-            var curPos = _t.position;
-            // var splashPos = col.transform.position;
-            if (curPos.x - 10 > -40)
-                _t.position += 10 * Vector3.left;
-            else
-                _t.position += (-40 - curPos.x) * Vector3.right;
-            Destroy(col.gameObject);
-        }
-    }
-
-    private void OnCollisionEnter2D(Collision2D col)
-    {
-        if (col.collider.name.StartsWith("Water") && !_spriteRenderer.enabled)
-        {
-            print("Water Collision");
-            _spriteRenderer.enabled = true;
-            _shown = true;
-        }
     }
 }

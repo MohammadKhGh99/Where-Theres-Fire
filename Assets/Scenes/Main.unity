@@ -365,7 +365,7 @@ GameObject:
   - component: {fileID: 256850566}
   - component: {fileID: 256850565}
   m_Layer: 0
-  m_Name: FireWon
+  m_Name: FireManWon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7816,6 +7816,7 @@ GameObject:
   - component: {fileID: 1121103932}
   - component: {fileID: 1121103934}
   - component: {fileID: 1121103935}
+  - component: {fileID: 1121103936}
   m_Layer: 0
   m_Name: FireMan
   m_TagString: Untagged
@@ -7853,10 +7854,8 @@ MonoBehaviour:
   movingSpeed: 10
   moveByGrid: 1
   fourDirection: 1
-  gridSize: {x: 16, y: 16, z: 0}
   gridMoveDuration: 0
   numGridMove: 1
-  invisible: 0
 --- !u!50 &1121103931
 Rigidbody2D:
   serializedVersion: 4
@@ -7977,6 +7976,26 @@ MonoBehaviour:
   numOfWetCells: 8
   legsWide: 0.25
   timeBeforeDisappear: 4
+--- !u!95 &1121103936
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1121103925}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 5ef3f30da3ad3dc489211599f8c848f9, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &1126140960
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8066,8 +8085,9 @@ GameObject:
   - component: {fileID: 1194340242}
   - component: {fileID: 1194340244}
   - component: {fileID: 1194340243}
+  - component: {fileID: 1194340245}
   m_Layer: 0
-  m_Name: FireWining
+  m_Name: FireManWining
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8113,7 +8133,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3b42412a200ccd2489a1bcadcb2fd75d, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8131,6 +8151,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1194340241}
   m_CullTransparentMesh: 1
+--- !u!95 &1194340245
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1194340241}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7ca1bfaa97284fa4183e26bb4ba00af4, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1001 &1277369934
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13328,8 +13368,9 @@ GameObject:
   - component: {fileID: 1545262293}
   - component: {fileID: 1545262295}
   - component: {fileID: 1545262294}
+  - component: {fileID: 1545262296}
   m_Layer: 0
-  m_Name: WaterWining
+  m_Name: ExtinguisherWining
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13375,7 +13416,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3e45268e2ffdf404abd34fb11ae7408a, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -13393,6 +13434,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1545262292}
   m_CullTransparentMesh: 1
+--- !u!95 &1545262296
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1545262292}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7783ca84147c699428d264eb7e315a17, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!4 &1568198258 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 339029448283884258, guid: a3b2840167b1d9745b9b34d612d819eb, type: 3}
@@ -13411,7 +13472,7 @@ GameObject:
   - component: {fileID: 1624164150}
   - component: {fileID: 1624164149}
   m_Layer: 0
-  m_Name: WaterWon
+  m_Name: ExtinguisherWon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13593,6 +13654,7 @@ GameObject:
   - component: {fileID: 1682657997}
   - component: {fileID: 1682657999}
   - component: {fileID: 1682658000}
+  - component: {fileID: 1682658001}
   m_Layer: 7
   m_Name: Extinguisher
   m_TagString: Untagged
@@ -13766,6 +13828,26 @@ MonoBehaviour:
   numOfWetCells: 8
   legsWide: 0.25
   timeBeforeDisappear: 5
+--- !u!95 &1682658001
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1682657992}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2ea9985c9739faa4bb11a8c7dee6e628, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1809783091
 GameObject:
   m_ObjectHideFlags: 0
