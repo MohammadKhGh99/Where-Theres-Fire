@@ -105,7 +105,7 @@ public class GameManager : Singleton<GameManager>
 
 
     // **** TileMap and Tiles ****
-    public Tilemap GroundBaseTilemap;
+    public Tilemap GroundBaseTilemap;          // this is ground and water, maybe we can split them.
     public RuleTile WaterTile;
 
 
