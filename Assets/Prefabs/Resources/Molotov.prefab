@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8231978712701910675}
   m_Layer: 0
   m_Name: Molotov
-  m_TagString: Untagged
+  m_TagString: Molotov
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -46,9 +46,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d59217e61fb2ee64698ef488377cc4d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  molotovTravelDistance: 7
+  molotovTravelDistance: 5
   timeToReachTarget: 1
-  throwingAngel: 20
+  throwingAngel: 35
   scalingUpRatio: 0.35
 --- !u!1 &5501425989872653996
 GameObject:
@@ -64,7 +64,7 @@ GameObject:
   - component: {fileID: 7681038373494457265}
   m_Layer: 0
   m_Name: Bottle
-  m_TagString: Untagged
+  m_TagString: Molotov
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

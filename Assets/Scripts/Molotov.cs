@@ -63,16 +63,10 @@ public class Molotov : MonoBehaviour
         _reachedTarget = false;
         _throwPassedTime = 0f;
         yield return new WaitUntil(() => _reachedTarget);
-        // StartCoroutine(FireLifeTime());
-
-        // todo continue (MOSTLY NOTHING)
-        
     }
 
     public Vector3 GetMolotovDropPos()
     {
-        // var j = _t.TransformPoint(_targetPos);
-        // return j;
         return _targetPos;
     }
 
