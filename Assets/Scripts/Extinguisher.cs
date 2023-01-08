@@ -76,23 +76,41 @@ public class Extinguisher : MonoBehaviour
             _isMoving = false;
         }
 
-        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.LeftArrow))
         {
+            _t.rotation = Quaternion.identity;
+            // _t.Rotate(Vector3.up, -180);
             _animator.SetBool("ExtinguisherIdleLeft", false);
+            _animator.SetBool("ExtinguisherWalkingUp", false);
+            _animator.SetBool("ExtinguisherWalkingDown", false);
+            _animator.SetBool("ExtinguisherWalkingLeft", true);
+        }
+        else if (Input.GetKey(KeyCode.RightArrow))
+        {
+            _t.Rotate(Vector3.up, 180);
+            _animator.SetBool("ExtinguisherIdleLeft", false);
+            _animator.SetBool("ExtinguisherWalkingUp", false);
+            _animator.SetBool("ExtinguisherWalkingDown", false);
             _animator.SetBool("ExtinguisherWalkingLeft", true);
         }
         else if (Input.GetKey(KeyCode.UpArrow))
         {
             _animator.SetBool("ExtinguisherIdleLeft", false);
+            _animator.SetBool("ExtinguisherWalkingLeft", false);
+            _animator.SetBool("ExtinguisherWalkingDown", false);
             _animator.SetBool("ExtinguisherWalkingUp", true);
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
             _animator.SetBool("ExtinguisherIdleLeft", false);
+            _animator.SetBool("ExtinguisherWalkingLeft", false);
+            _animator.SetBool("ExtinguisherWalkingUp", false);
             _animator.SetBool("ExtinguisherWalkingDown", true);
         }
         else if (!Input.GetKey(Extinguish))
         {
+            // _t.rotation = _lookAtDirection.x 
+            // _t.Rotate(Vector3.up, _lookAtDirection.x == 1 ? 180 : -180);
             _animator.SetBool("ExtinguisherWalkingLeft", false);
             _animator.SetBool("ExtinguisherWalkingUp", false);
             _animator.SetBool("ExtinguisherWalkingDown", false);
