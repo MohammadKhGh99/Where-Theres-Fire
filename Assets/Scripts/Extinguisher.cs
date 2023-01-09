@@ -65,8 +65,6 @@ public class Extinguisher : MonoBehaviour
         _animator.SetInteger("XSpeed", (int)_moveDirection.x);
         _animator.SetInteger("YSpeed", (int)_moveDirection.y);
         
-        print(_moveDirection);
-        
         var snapping = fourDirection ? 90.0f : 45.0f;
         if (_moveDirection.sqrMagnitude > 0)
         {

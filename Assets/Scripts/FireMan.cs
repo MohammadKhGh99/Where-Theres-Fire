@@ -40,6 +40,7 @@ public class FireMan : MonoBehaviour
     
     //**Animation**
     private Animator _animator;
+    private SpriteRenderer _spriteRenderer;
 
     // Start is called before the first frame update
     void Start()
@@ -49,6 +50,7 @@ public class FireMan : MonoBehaviour
         _lookAtDirection = Vector2.right;
         _currentGridPos = GameManager.Instance.GroundBaseTilemap.WorldToCell(transform.position);
         _animator = GetComponent<Animator>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Update()
@@ -70,7 +72,8 @@ public class FireMan : MonoBehaviour
         {
             GridMovement();
         }
-
+        _animator.SetInteger("XSpeed", (int)_lookAtDirection.x);
+        _animator.SetInteger("YSpeed", (int)_lookAtDirection.y);
 
         // *** shooting ability ***
         if (Input.GetKeyDown(Fire))
@@ -140,11 +143,6 @@ public class FireMan : MonoBehaviour
             _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
             if(!_hit)
                 _currentGridPos.y += numGridMove;
-            
-            _animator.SetBool("FireManIdleLeft", false);
-            _animator.SetBool("FireManWalkingLeft", false);
-            _animator.SetBool("FireManWalkingDown", false);
-            _animator.SetBool("FireManWalkingUp", true);
         }
         else if (Input.GetKeyDown(Down))
         {
@@ -152,11 +150,6 @@ public class FireMan : MonoBehaviour
             _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
             if(!_hit)
                 _currentGridPos.y -= numGridMove;
-            
-            _animator.SetBool("FireManIdleLeft", false);
-            _animator.SetBool("FireManWalkingLeft", false);
-            _animator.SetBool("FireManWalkingUp", false);
-            _animator.SetBool("FireManWalkingDown", true);
         }
         else if (Input.GetKeyDown(Right))
         {
@@ -164,13 +157,8 @@ public class FireMan : MonoBehaviour
             _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
             if(!_hit)
                 _currentGridPos.x += numGridMove;
-            
-            _t.rotation = new Quaternion(0, 180, 0, 1);
-            // _t.Rotate(Vector3.up, 180);
-            _animator.SetBool("FireManIdleLeft", false);
-            _animator.SetBool("FireManWalkingDown", false);
-            _animator.SetBool("FireManWalkingUp", false);
-            _animator.SetBool("FireManWalkingLeft", true);
+            if (_spriteRenderer.flipX)
+                _spriteRenderer.flipX = false;
         }
         else if (Input.GetKeyDown(Left))
         {
@@ -178,22 +166,10 @@ public class FireMan : MonoBehaviour
             _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 1, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
             if(!_hit)
                 _currentGridPos.x -= numGridMove;
-            
-            _t.rotation = Quaternion.identity;
-            // _t.Rotate(Vector3.up, 180);
-            _animator.SetBool("FireManIdleLeft", false);
-            _animator.SetBool("FireManWalkingDown", false);
-            _animator.SetBool("FireManWalkingUp", false);
-            _animator.SetBool("FireManWalkingLeft", true);
-        }else if (!Input.GetKeyDown(Fire))
-        {
-            // _t.Rotate(Vector3.up, _lookAtDirection.x == 1 ? 180 : -180);
-            _animator.SetBool("FireManWalkingLeft", false);
-            _animator.SetBool("FireManWalkingDown", false);
-            _animator.SetBool("FireManWalkingUp", false);
-            _animator.SetBool("FireManIdleLeft", true);
+            if (!_spriteRenderer.flipX)
+                _spriteRenderer.flipX = true;
         }
-        
+
         // Update the position of the object in world space
         transform.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos);
         // }

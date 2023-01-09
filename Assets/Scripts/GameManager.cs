@@ -317,6 +317,8 @@ public class GameManager : Singleton<GameManager>
         // getting the canvas and images of the start and end screens...
         _startGameCanvas = transform.GetChild(0).gameObject;
         _imageStartGame = _startGameCanvas.GetComponent<Transform>().GetChild(0).GetComponent<Image>();
+        if (!_startGameCanvas.activeInHierarchy)
+            _startGameCanvas.SetActive(true);
 
         _waterWonCanvas = transform.GetChild(1).gameObject;
         _imageWaterWon = _waterWonCanvas.GetComponent<Transform>().GetChild(0).GetComponent<Image>();
@@ -412,6 +414,7 @@ public class GameManager : Singleton<GameManager>
 
     // timer countdown
     private float _currentSeconds;
+    private float _pulsingTimer;
 
     private void UpdateTheTimeOfTheGame()
     {
@@ -419,19 +422,21 @@ public class GameManager : Singleton<GameManager>
             return;
         // counter to end of game 
         // todo: IT doesn't stop.
+        _pulsingTimer += Time.deltaTime;
         _currentSeconds += Time.deltaTime;
         int minutes = ((int)(_currentSeconds / 60)) % 60;
         int seconds = ((int)_currentSeconds) % 60;
-        minutes = 5 - minutes - 1;
+        minutes = (int)gameTimeInSeconds / 60 - minutes - 1;
         seconds = 59 - seconds;
         if (minutes == 1 && seconds == 0)
             timerText.color = Color.red;
-        
-        if (minutes <= 1 && seconds is <= 59 and >= 0)
-        {
-            timerText.transform.localScale = timerText.transform.localScale == _initialTextScale ? _initialTextScale / 2 : _initialTextScale;
-        }
 
+        if (minutes < 1 && seconds is <= 59 and > 0 && _pulsingTimer >= 0.5f)
+        {
+            _pulsingTimer = 0;
+            timerText.enabled = !timerText.enabled;
+        }
+                
         // Showing the elapsed time in game
         timerText.text = $"{minutes:00}:{seconds:00}";
     }
