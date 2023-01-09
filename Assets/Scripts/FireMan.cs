@@ -58,6 +58,10 @@ public class FireMan : MonoBehaviour
             return;
 
         // *** Movement ***
+        var xDirection = Input.GetAxisRaw("Horizontal2");
+        var yDirection = Input.GetAxisRaw("Vertical2");
+        _moveDirection.x = xDirection;
+        _moveDirection.y = yDirection;
         if(!moveByGrid)
         {
             SnappingMovement();
@@ -107,11 +111,6 @@ public class FireMan : MonoBehaviour
 
     private void SnappingMovement()
     {
-        var xDirection = Input.GetAxisRaw("Horizontal2");
-        var yDirection = Input.GetAxisRaw("Vertical2");
-        _moveDirection.x = xDirection;
-        _moveDirection.y = yDirection;
-
         var snapping = fourDirection ? 90.0f : 45.0f;
         if (_moveDirection.sqrMagnitude > 0)
         {
