@@ -9,15 +9,17 @@ public class FireMolotov : MonoBehaviour
     [SerializeField] private float targetScale = 4f;
     [SerializeField] private float timeToEnlarge = 0.2f;
     [SerializeField] private float timeToReduce = 0.1f;
+    
     private Transform _t;
-    private Vector3 _startScale = Vector3.one;
+    private readonly Vector3 _startScale = Vector3.one;
     private float _elapsedTime;
+    private bool _hasInitialized;
 
     private Status _currentStatus;
-    enum Status
-    {
-        Pause, Burn, Extinguish
-    }
+
+    enum Status { Pause, Burn, Extinguish }
+    
+    
     private void Update()
     {
         if (_currentStatus.Equals(Status.Burn))
@@ -45,11 +47,16 @@ public class FireMolotov : MonoBehaviour
 
     public void FakeStart()
     {
-        _t = GetComponent<Transform>();
+        if (!_hasInitialized)
+        {
+            _t = GetComponent<Transform>();
+        }
+
         _t.localScale = _startScale;
         _elapsedTime = 0f;
         _currentStatus = Status.Pause;
         gameObject.SetActive(true);
+        _hasInitialized = true;
     }
 
     public void FakeRelease()
