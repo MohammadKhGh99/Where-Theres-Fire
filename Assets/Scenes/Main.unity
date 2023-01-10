@@ -5466,6 +5466,8 @@ MonoBehaviour:
   - 0.25,-13.5
   - 14.75,-13.5
   - 29,-13.5
+  burnedHousesBar: {fileID: 0}
+  maxBurnedPoints: 10
   GroundBaseTilemap: {fileID: 1337867454}
   WaterTile: {fileID: 11400000, guid: d5c54c41ba3d1244eb1268bb05d1f127, type: 2}
 --- !u!4 &409695383 stripped

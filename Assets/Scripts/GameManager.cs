@@ -222,7 +222,7 @@ public class GameManager : Singleton<GameManager>
 
     void Start()
     {
-        var temp = Instantiate(Resources.Load("HealthBar"), new Vector3(-21, 0, 0), Quaternion.identity,
+        var temp = Instantiate(Resources.Load("HealthBar"), new Vector3(-22, 0, 0), Quaternion.identity,
             barsParent.transform) as GameObject;
         if (temp == null)
             throw new NullReferenceException("You cannot build new burned points bar, there is no such bar in Prefabs!");
@@ -232,7 +232,7 @@ public class GameManager : Singleton<GameManager>
         burnedHousesBar.value = 0;
         var transform1 = burnedHousesBar.transform;
         var scale = transform1.localScale;
-        transform1.localScale = new Vector3(scale.x + 5, scale.y, 0);
+        transform1.localScale = new Vector3(scale.x + 3, scale.y, 0);
 
         // ** houses **
         var housesParentTransform = housesParent.transform;

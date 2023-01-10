@@ -72,8 +72,7 @@ public class FireMan : MonoBehaviour
         {
             GridMovement();
         }
-        _animator.SetInteger("XSpeed", (int)_lookAtDirection.x);
-        _animator.SetInteger("YSpeed", (int)_lookAtDirection.y);
+        
 
         // *** shooting ability ***
         if (Input.GetKeyDown(Fire))
@@ -135,7 +134,7 @@ public class FireMan : MonoBehaviour
         // {
         // Reset the timer
         // _gridMoveTimer = 0;
-        _lookAtDirection = Vector3.zero;
+        // _lookAtDirection = Vector3.zero;
         
         // Check input and move in the corresponding direction
         if (Input.GetKeyDown(Up))
@@ -170,10 +169,18 @@ public class FireMan : MonoBehaviour
             if (!_spriteRenderer.flipX)
                 _spriteRenderer.flipX = true;
         }
-
+        _animator.SetInteger("XSpeed", (int)_lookAtDirection.x);
+        _animator.SetInteger("YSpeed", (int)_lookAtDirection.y);
+        StartCoroutine(DelayForFireManMovement());
+        
         // Update the position of the object in world space
         transform.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos);
         // }
+    }
+
+    private IEnumerator DelayForFireManMovement()
+    {
+        yield return new WaitForSeconds(0.5f);
     }
 
     private IEnumerator ThrowMolotov()
