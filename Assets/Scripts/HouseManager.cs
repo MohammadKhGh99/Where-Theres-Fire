@@ -12,6 +12,8 @@ public class HouseManager : MonoBehaviour
     [SerializeField] private float healthBarLife = 10.0f;
     [SerializeField] private float wateringTime = 3.0f;
     [SerializeField] private float wateringSpeed = 3;
+
+    [FormerlySerializedAs("pointsOnBurning")] [SerializeField] private float pointsOnBurn = 1;
     // [SerializeField] private Slider healthBarObj;
     // [SerializeField] private Slider wateringBarObj;
 
@@ -113,8 +115,8 @@ public class HouseManager : MonoBehaviour
                 if (_timeToBurn <= 0)
                 {
                     SetStatus(GameManager.BURNED);
+                    GameManager.Instance.burnedHousesBar.value += pointsOnBurn;
                     GameManager.NumBurnedHouses++;
-                    // print(status);
                     _spriteRenderer.color = Color.black;
                 }
 

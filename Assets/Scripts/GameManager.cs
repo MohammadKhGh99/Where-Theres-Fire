@@ -25,7 +25,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private GameObject extinguisher;
     private Extinguisher _extinguisherMan;
     private FireMan _fireMan;
-    
+
 
     //  **** Housing.. ****
     [SerializeField] private GameObject housesParent; // where to store the houses Parent
@@ -96,17 +96,19 @@ public class GameManager : Singleton<GameManager>
 
     // Burned Building
     public static int NumBurnedHouses = 0;
-    
+
     // num houses
     private static int _numHouses = 0;
 
     // Types of Houses we have
     private string[] _housesTypes = { "House1", "House2" };
     private HouseManager[] _houses;
+    public Slider burnedHousesBar;
+    [SerializeField] private float maxBurnedPoints = 10;
 
 
     // **** TileMap and Tiles ****
-    public Tilemap GroundBaseTilemap;          // this is ground and water, maybe we can split them.
+    public Tilemap GroundBaseTilemap; // this is ground and water, maybe we can split them.
     public RuleTile WaterTile;
 
 
@@ -170,7 +172,6 @@ public class GameManager : Singleton<GameManager>
     // Functions
     public static void SetTileAndUpdateNeighbors(Vector3 worldPosition, Tilemap myTilemap, TileBase newTile)
     {
-        
         // set tile,
         Vector3Int gridPosition = myTilemap.WorldToCell(worldPosition);
         myTilemap.SetTile(gridPosition, newTile);
@@ -250,7 +251,7 @@ public class GameManager : Singleton<GameManager>
     public static void SetTile(Vector3 worldPosition, Tilemap thisTilemap, TileBase newTile)
     {
         Vector3Int gridPosition = thisTilemap.WorldToCell(worldPosition);
-        
+
         if (thisTilemap.HasTile(gridPosition))
         {
             if (thisTilemap.GetTile(gridPosition) == newTile) return;
@@ -265,9 +266,8 @@ public class GameManager : Singleton<GameManager>
             // Refresh the tile to apply the Rule Tile's rules
             thisTilemap.RefreshTile(gridPosition);
         }
-        
     }
-    
+
 
     // **** "FireMolotov" pool and functions ****
     public ObjectPool<FireMolotov> FireMolotovPool =
@@ -296,22 +296,34 @@ public class GameManager : Singleton<GameManager>
 
     void Start()
     {
-        _extinguisherMan = extinguisher.GetComponent<Extinguisher>();
-        _fireMan = fireMan.GetComponent<FireMan>();
+        var temp = Instantiate(Resources.Load("HealthBar"), new Vector3(-21, 0, 0), Quaternion.identity,
+            barsParent.transform) as GameObject;
+        if (temp == null)
+            throw new NullReferenceException("You cannot build new burned points bar, there is no such bar in Prefabs!");
+        temp.transform.Rotate(Vector3.forward, 90);
+        burnedHousesBar = temp.GetComponent<Slider>();
+        burnedHousesBar.maxValue = maxBurnedPoints;
+        burnedHousesBar.value = 0;
+        var transform1 = burnedHousesBar.transform;
+        var scale = transform1.localScale;
+        transform1.localScale = new Vector3(scale.x + 5, scale.y, 0);
+
         var housesParentTransform = housesParent.transform;
         _numHouses = housesParentTransform.childCount;
         _houses = new HouseManager[_numHouses];
-        for (int i = 0; i < _numHouses; i++)
+        for (var i = 0; i < _numHouses; i++)
         {
             _houses[i] = housesParentTransform.GetChild(i).GetComponent<HouseManager>();
             var healthBar = Instantiate(Resources.Load("HealthBar"), _houses[i].transform.position + Vector3.up * 2.3f,
-                    Quaternion.identity, barsParent.transform) as GameObject;
+                Quaternion.identity, barsParent.transform) as GameObject;
             if (healthBar == null)
             {
                 throw new NullReferenceException("There is no Health Bar in the Prefabs!");
             }
+
             _houses[i].SetHealthBar(healthBar);
         }
+
         InitializeGame();
 
         // getting the canvas and images of the start and end screens...
@@ -334,7 +346,7 @@ public class GameManager : Singleton<GameManager>
         _gameTimer = gameTimeInSeconds != 0 ? gameTimeInSeconds : DEFAULT_GAME_TIME;
         // _extinguisherMan.StartGame();
         // _fireMan.StartGame();
-        
+
         // ** the game didn't start yet **
         IsGameRunning = false;
 
@@ -344,7 +356,7 @@ public class GameManager : Singleton<GameManager>
         _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
         if (!controlHousesPos)
             return;
-        
+
         foreach (var t in _housesPosBackUp)
         {
             var temp = t.Split(',');
@@ -374,9 +386,9 @@ public class GameManager : Singleton<GameManager>
         if (Input.GetKeyDown(KeyCode.Escape) && !IsGameRunning)
         {
             Application.Quit();
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
-            #endif
+#endif
         }
 
         // ** to start the game press any key to start
@@ -385,9 +397,9 @@ public class GameManager : Singleton<GameManager>
             StartCoroutine(FadeOut(_imageStartGame));
             IsGameRunning = true;
         }
-        
+
         // check which player won
-        if(!IsGameOver)
+        if (!IsGameOver)
         {
             // ** water man won **
             if (_currentSeconds >= _gameTimer && (float)NumBurnedHouses / _numHouses < winPercent)
@@ -402,7 +414,7 @@ public class GameManager : Singleton<GameManager>
             // ** fire man won **
             var allBurned = _currentSeconds < _gameTimer && NumBurnedHouses == _numHouses;
             var winPercentReached = _currentSeconds >= _gameTimer && (float)NumBurnedHouses / _numHouses >= winPercent;
-            if ( allBurned || winPercentReached)
+            if (allBurned || winPercentReached)
             {
                 StartCoroutine(FadeOut(_imageStartGame));
                 StartCoroutine(FadeIn(_imageFireWon));
@@ -424,9 +436,9 @@ public class GameManager : Singleton<GameManager>
         // todo: IT doesn't stop.
         _pulsingTimer += Time.deltaTime;
         _currentSeconds += Time.deltaTime;
-        int minutes = ((int)(_currentSeconds / 60)) % 60;
-        int seconds = ((int)_currentSeconds) % 60;
-        minutes = (int)gameTimeInSeconds / 60 - minutes - 1;
+        var minutes = (int)(_currentSeconds / 60) % 60;
+        var seconds = (int)_currentSeconds % 60;
+        minutes = (int)_gameTimer / 60 - minutes - 1;
         seconds = 59 - seconds;
         if (minutes == 1 && seconds == 0)
             timerText.color = Color.red;
@@ -436,7 +448,7 @@ public class GameManager : Singleton<GameManager>
             _pulsingTimer = 0;
             timerText.enabled = !timerText.enabled;
         }
-                
+
         // Showing the elapsed time in game
         timerText.text = $"{minutes:00}:{seconds:00}";
     }
@@ -454,7 +466,7 @@ public class GameManager : Singleton<GameManager>
 
         image.gameObject.SetActive(false);
     }
-    
+
     public IEnumerator FadeOut(SpriteRenderer spriteRenderer)
     {
         Color c = spriteRenderer.color;
@@ -482,7 +494,7 @@ public class GameManager : Singleton<GameManager>
 
         image.color = new Color(c.r, c.g, c.b, 1);
     }
-    
+
     public IEnumerator FadeIn(SpriteRenderer spriteRenderer)
     {
         spriteRenderer.enabled = true;

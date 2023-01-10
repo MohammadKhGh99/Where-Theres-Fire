@@ -135,6 +135,7 @@ public class FireMan : MonoBehaviour
         // {
         // Reset the timer
         // _gridMoveTimer = 0;
+        _lookAtDirection = Vector3.zero;
         
         // Check input and move in the corresponding direction
         if (Input.GetKeyDown(Up))
