@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 21072987}
   - component: {fileID: 21072986}
   m_Layer: 0
-  m_Name: Grid
+  m_Name: Grid32X32
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -509,7 +509,7 @@ GameObject:
   - component: {fileID: 259761630}
   - component: {fileID: 259761629}
   m_Layer: 0
-  m_Name: Grid
+  m_Name: Grid16X16
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
