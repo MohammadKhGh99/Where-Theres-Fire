@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class HouseManager : MonoBehaviour
 {
     [SerializeField] private string status = "Normal";
+    [SerializeField] private GameManager.HouseStatus currentStatus = GameManager.HouseStatus.Normal;
     [SerializeField] private float healthBarLife = 10.0f;
     [SerializeField] private float wateringTime = 3.0f;
     [SerializeField] private float wateringSpeed = 3;
@@ -76,7 +77,7 @@ public class HouseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!GameManager.IsGameRunning || status == GameManager.BURNED)
+        if (!GameManager.IsGameRunning || currentStatus.Equals(GameManager.HouseStatus.Burned))
             return;
         if (!_setOrNot)
             SetSurroundings();
@@ -84,18 +85,18 @@ public class HouseManager : MonoBehaviour
         if (_healthBar.IsUnityNull())
             return;
         
-        switch (status)
+        switch (currentStatus)
         {
-            case GameManager.BURNING when _timeToBurn > 0:
+            case GameManager.HouseStatus.Burning when _timeToBurn > 0:
             {
                 if ((_healthBarObj.maxValue - _healthBarObj.value) / _healthBarObj.maxValue >= _percentToInfect && !_madeInfection)
                 {
                     var numOfNeighborToBurn = (int)Mathf.Ceil((float)_housesSurrounding.Length / 3); 
                     foreach (var building in _housesSurrounding)
                     {
-                        if (!building.IsUnityNull() && building.GetStatus().Equals(GameManager.NORMAL))
+                        if (!building.IsUnityNull() && building.GetStatus().Equals(GameManager.HouseStatus.Normal))
                         {
-                            building.SetStatus(GameManager.BURNING);
+                            building.SetStatus(GameManager.HouseStatus.Burning);
                             numOfNeighborToBurn--;
                         }
                         if (numOfNeighborToBurn <= 0)
@@ -112,7 +113,7 @@ public class HouseManager : MonoBehaviour
                 _timeToBurn -= Time.deltaTime;
                 if (_timeToBurn <= 0)
                 {
-                    SetStatus(GameManager.BURNED);
+                    SetStatus(GameManager.HouseStatus.Burned);
                     GameManager.NumBurnedHouses++;
                     // print(status);
                     _spriteRenderer.color = Color.black;
@@ -120,7 +121,7 @@ public class HouseManager : MonoBehaviour
 
                 break;
             }
-            case GameManager.WATERING when _healthBarObj.value > 0:
+            case GameManager.HouseStatus.Watering when _healthBarObj.value > 0:
             {
                 _timeToWater -= Time.deltaTime;
                 _timeToBurn += Time.deltaTime;
@@ -134,20 +135,20 @@ public class HouseManager : MonoBehaviour
                 
                 if(_healthBarObj.value >= _healthBarObj.maxValue)
                 {
-                    SetStatus(GameManager.NORMAL);
+                    SetStatus(GameManager.HouseStatus.Normal);
                     _timeToBurn = _maxBurningTime;
                     _timeToWater = _maxWateringTime;
                 }
                 // if (_timeToWater <= 0)
                 // {
-                //     SetStatus(GameManager.NORMAL);
+                //     SetStatus(GameManager.HouseStatus.Normal);
                 //     _timeToWater = _maxWateringTime;
                 // }
                 break;
             }
-            case GameManager.NORMAL when _healthBarObj.value < _healthBarObj.maxValue: // when _timeToWater > 0 && _timeToWater < _maxWateringTime:
+            case GameManager.HouseStatus.Normal when _healthBarObj.value < _healthBarObj.maxValue: // when _timeToWater > 0 && _timeToWater < _maxWateringTime:
             {
-                SetStatus(GameManager.BURNING);
+                SetStatus(GameManager.HouseStatus.Burning);
                 break;
             }
         }
@@ -191,14 +192,14 @@ public class HouseManager : MonoBehaviour
         return _t.position;
     }
 
-    public string GetStatus()
+    public GameManager.HouseStatus GetStatus()
     {
-        return status;
+        return currentStatus;
     }
 
-    public void SetStatus(string newStatus)
+    public void SetStatus(GameManager.HouseStatus newStatus)
     {
-        status = newStatus;
+        currentStatus = newStatus;
     }
     
     // public void StartGame()
@@ -206,7 +207,7 @@ public class HouseManager : MonoBehaviour
     //     _spriteRenderer.material.color = _initialColor;
     //     _healthBarImage.color = Color.green;
     //     healthBarObj.value = healthBarObj.maxValue;
-    //     status = GameManager.NORMAL;
+    //     currentStatus = GameManager.HouseStatus.Normal;
     //     _timeToBurn = _maxBurningTime;
     //     _timeToWater = _maxWateringTime;
     // }

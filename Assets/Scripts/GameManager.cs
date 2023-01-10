@@ -28,7 +28,7 @@ public class GameManager : Singleton<GameManager>
     
 
     //  **** Housing.. ****
-    [SerializeField] private GameObject housesParent; // where to store the houses Parent
+    [SerializeField] private GameObject housesParent;    // where to store the houses Parent
     [SerializeField] private GameObject barsParent;
     [SerializeField] private bool controlHousesPos;
 
@@ -73,11 +73,14 @@ public class GameManager : Singleton<GameManager>
 
     //  *** Constants ***:
     // buildingStatus
-    public const string NORMAL = "Normal";
-    public const string BURNING = "Burning";
-    public const string BURNED = "Burned";
-    public const string WATERING = "Watering";
-    public const string WAS_BURNED = "Was Burned";
+    public enum HouseStatus
+    {
+        Normal,
+        Burning,
+        Burned,
+        Watering,
+        WasBurned
+    }
 
     // WaterBullet Stasuses
     public enum WaterBulletStatus
@@ -168,85 +171,6 @@ public class GameManager : Singleton<GameManager>
     }
 
     // Functions
-    public static void SetTileAndUpdateNeighbors(Vector3 worldPosition, Tilemap myTilemap, TileBase newTile)
-    {
-        
-        // set tile,
-        Vector3Int gridPosition = myTilemap.WorldToCell(worldPosition);
-        myTilemap.SetTile(gridPosition, newTile);
-        myTilemap.RefreshTile(gridPosition);
-
-        // check with neighbours
-        var topTilePos = gridPosition + new Vector3Int(0, 1, 0);
-        var bottomTilePos = gridPosition + new Vector3Int(0, -1, 0);
-        var leftTilePos = gridPosition + new Vector3Int(-1, 0, 0);
-        var rightTilePos = gridPosition + new Vector3Int(1, 0, 0);
-        var topLeftTilePos = gridPosition + new Vector3Int(-1, 1, 0);
-        var topRightTilePos = gridPosition + new Vector3Int(1, 1, 0);
-        var bottomLeftTilePos = gridPosition + new Vector3Int(-1, -1, 0);
-        var bottomRightTilePos = gridPosition + new Vector3Int(1, -1, 0);
-
-
-        // Get the tiles around the modified tile
-        TileBase topTile = myTilemap.GetTile(topTilePos);
-        TileBase bottomTile = myTilemap.GetTile(bottomTilePos);
-        TileBase leftTile = myTilemap.GetTile(leftTilePos);
-        TileBase rightTile = myTilemap.GetTile(rightTilePos);
-        TileBase topLeftTile = myTilemap.GetTile(topLeftTilePos);
-        TileBase topRightTile = myTilemap.GetTile(topRightTilePos);
-        TileBase bottomLeftTile = myTilemap.GetTile(bottomLeftTilePos);
-        TileBase bottomRightTile = myTilemap.GetTile(bottomRightTilePos);
-
-        // Check if the tiles around the modified tile need to be updated
-        if (topTile != newTile)
-        {
-            myTilemap.SetTile(topTilePos, newTile);
-            myTilemap.RefreshTile(topTilePos);
-        }
-
-        if (bottomTile != newTile)
-        {
-            myTilemap.SetTile(bottomTilePos, newTile);
-            myTilemap.RefreshTile(bottomTilePos);
-        }
-
-        if (leftTile != newTile)
-        {
-            myTilemap.SetTile(leftTilePos, newTile);
-            myTilemap.RefreshTile(leftTilePos);
-        }
-
-        if (rightTile != newTile)
-        {
-            myTilemap.SetTile(rightTilePos, newTile);
-            myTilemap.RefreshTile(rightTilePos);
-        }
-
-        if (topLeftTile != newTile)
-        {
-            myTilemap.SetTile(topLeftTilePos, newTile);
-            myTilemap.RefreshTile(topLeftTilePos);
-        }
-
-        if (topRightTile != newTile)
-        {
-            myTilemap.SetTile(topRightTilePos, newTile);
-            myTilemap.RefreshTile(topRightTilePos);
-        }
-
-        if (bottomLeftTile != newTile)
-        {
-            myTilemap.SetTile(bottomLeftTilePos, newTile);
-            myTilemap.RefreshTile(bottomLeftTilePos);
-        }
-
-        if (bottomRightTile != newTile)
-        {
-            myTilemap.SetTile(bottomRightTilePos, newTile);
-            myTilemap.RefreshTile(bottomRightTilePos);
-        }
-    }
-
     public static void SetTile(Vector3 worldPosition, Tilemap thisTilemap, TileBase newTile)
     {
         Vector3Int gridPosition = thisTilemap.WorldToCell(worldPosition);
@@ -298,6 +222,8 @@ public class GameManager : Singleton<GameManager>
     {
         _extinguisherMan = extinguisher.GetComponent<Extinguisher>();
         _fireMan = fireMan.GetComponent<FireMan>();
+        
+        // ** houses **
         var housesParentTransform = housesParent.transform;
         _numHouses = housesParentTransform.childCount;
         _houses = new HouseManager[_numHouses];
