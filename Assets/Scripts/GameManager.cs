@@ -114,6 +114,7 @@ public class GameManager : Singleton<GameManager>
     public Tilemap GroundBaseTilemap; 
     public Tilemap WaterFireTilemap; 
     public RuleTile WaterTile;
+    public TileBase GroundTile;
 
 
     // **** "Molotov" pool and functions ****

@@ -5516,6 +5516,7 @@ MonoBehaviour:
   GroundBaseTilemap: {fileID: 1337867454}
   WaterFireTilemap: {fileID: 1837429881}
   WaterTile: {fileID: 11400000, guid: d5c54c41ba3d1244eb1268bb05d1f127, type: 2}
+  GroundTile: {fileID: 0}
 --- !u!4 &409695383 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 339029448283884258, guid: f428bf33d953be64d870de8d6580cb48, type: 3}
@@ -8039,7 +8040,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   numOfWetCells: 8
   legsWide: 0.25
-  timeBeforeDisappear: 4
+  timeBeforeDisappear: 5
 --- !u!95 &1121103936
 Animator:
   serializedVersion: 4
