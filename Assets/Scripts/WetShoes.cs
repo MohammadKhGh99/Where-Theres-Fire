@@ -36,9 +36,9 @@ public class WetShoes : MonoBehaviour
 
     void Update()
     {
-        var currentPos= GameManager.Instance.GroundBaseTilemap.WorldToCell(_t.position);
-        if(!GameManager.Instance.GroundBaseTilemap.HasTile(currentPos)) return;     // dunno just keep it
-        var currentTile = GameManager.Instance.GroundBaseTilemap.GetTile(currentPos);
+        var currentPos= GameManager.Instance.WaterFireTilemap.WorldToCell(_t.position);
+        if(!GameManager.Instance.WaterFireTilemap.HasTile(currentPos)) return;     // dunno just keep it
+        var currentTile = GameManager.Instance.WaterFireTilemap.GetTile(currentPos);
 
         if (currentTile.Equals(GameManager.Instance.WaterTile))
         {
