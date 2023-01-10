@@ -127,7 +127,7 @@ public class WaterBullet : MonoBehaviour
             // var bulletDirection = new Vector3(Mathf.Cos(_previousAngel * Mathf.Deg2Rad), Mathf.Sin(_previousAngel * Mathf.Deg2Rad), 0);
             var bulletDirection = _direction;
             
-            RaycastHit2D hit = Physics2D.Raycast(_previousStartPosition, bulletDirection, _currentSizeX, GameManager.Instance.HousesMask);
+            RaycastHit2D hit = Physics2D.Raycast(_previousStartPosition, bulletDirection, _currentSizeX, GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
             if (!hit.collider.IsUnityNull())
             {
                 // we collider something, make sure if it's building 
@@ -166,7 +166,7 @@ public class WaterBullet : MonoBehaviour
         {
             var target = _diePosition;
             var tempStartPoint = _t.position - _direction * _currentSizeX / 2;  
-            RaycastHit2D hit = Physics2D.Raycast(tempStartPoint, _direction, _currentSizeX, GameManager.Instance.HousesMask);
+            RaycastHit2D hit = Physics2D.Raycast(tempStartPoint, _direction, _currentSizeX, GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
             if (!hit.collider.IsUnityNull())
             {
                 // we collider something, make sure if it's building 
@@ -235,7 +235,7 @@ public class WaterBullet : MonoBehaviour
             // Reset the timer
             _timer = 0.0f;
             // Change the Tile if needed.
-            GameManager.SetTile(waterDropPos, GameManager.Instance.GroundBaseTilemap, GameManager.Instance.WaterTile);
+            GameManager.SetTile(waterDropPos, GameManager.Instance.WaterFireTilemap, GameManager.Instance.WaterTile);
         }
     }
     
