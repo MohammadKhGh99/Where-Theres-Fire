@@ -234,7 +234,6 @@ public class WaterBullet : MonoBehaviour
         {
             // Reset the timer
             _timer = 0.0f;
-            
             // Change the Tile if needed.
             GameManager.SetTile(waterDropPos, GameManager.Instance.GroundBaseTilemap, GameManager.Instance.WaterTile);
         }
@@ -246,10 +245,8 @@ public class WaterBullet : MonoBehaviour
         // print("there is trigger");
         if (col.CompareTag("House"))
         {
-            // print("*HOUSE* start watering");
-            // we want it to water
             // watering
-            col.GetComponent<HouseManager>().SetStatus(GameManager.WATERING);
+            col.GetComponent<HouseManager>().SetStatus(GameManager.HouseStatus.Watering);
         }
         else if (col.CompareTag("FireMolotov"))
         {
@@ -270,8 +267,8 @@ public class WaterBullet : MonoBehaviour
             // we want it to water
             // watering
             var cur = col.GetComponent<HouseManager>();
-            if (!cur.GetStatus().Equals(GameManager.WATERING))
-                cur.SetStatus(GameManager.WATERING);
+            if (!cur.GetStatus().Equals(GameManager.HouseStatus.Watering))
+                cur.SetStatus(GameManager.HouseStatus.Watering);
 
         }
         else if (col.CompareTag("FireMolotov"))
@@ -289,7 +286,7 @@ public class WaterBullet : MonoBehaviour
         if (other.CompareTag("House"))
         {
             // print("*HOUSE* stops watering");
-            other.GetComponent<HouseManager>().SetStatus(GameManager.NORMAL);
+            other.GetComponent<HouseManager>().SetStatus(GameManager.HouseStatus.Normal);
         }
     }
 }

@@ -199,7 +199,7 @@ public class FireMan : MonoBehaviour
             // we will drop molotov fire at Building
             var building = checkWhereDropCollider2D.GetComponent<HouseManager>();
             molotovDropPos = building.GetBuildingPos();
-            building.SetStatus(GameManager.BURNING);
+            building.SetStatus(GameManager.HouseStatus.Burning);
         }
 
         var molotovFire = GameManager.Instance.FireMolotovPool.Get();
