@@ -212,9 +212,29 @@ public class FireMan : MonoBehaviour
             molotovDropPos = building.GetBuildingPos();
             building.SetStatus(GameManager.HouseStatus.Burning);
         }
-
+        
+        
+        
         var molotovFire = GameManager.Instance.FireMolotovPool.Get();
         molotovFire.Burn(molotovDropPos);
+        
+        // todo this need to be more general (THIS IS WAY WRONG)
+        Vector3Int gridPosition = GameManager.Instance.WaterFireTilemap.WorldToCell(molotovDropPos);
+        BoundsInt bounds = new BoundsInt(gridPosition , new Vector3Int(2, 2, 1));
+        var tiles = GameManager.Instance.WaterFireTilemap.GetTilesBlock(bounds);
+        int i = 0;
+        foreach (var tile in tiles)
+        {
+            if (!tile.IsUnityNull())
+            {
+                // then it's water tile, so delete it
+                int x = i % bounds.size.x;
+                int y = i / bounds.size.x;
+                Vector3Int tilePosition = new Vector3Int(x + bounds.x, y + bounds.y, bounds.z);
+                GameManager.Instance.WaterFireTilemap.SetTile(tilePosition, null);
+            }
+            i++;
+        }
         
         yield break;
     }
