@@ -98,6 +98,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4188e2ed010e04a4a938e6a2e4f06996, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 584
   waterBulletPower: 100
   bulletSpeed: 15
   bulletDistance: 5

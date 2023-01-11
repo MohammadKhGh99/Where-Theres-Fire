@@ -9,6 +9,7 @@ public class WaterBullet : MonoBehaviour
     // components
     private Transform _t;
     private BoxCollider2D _boxCollider;
+    [SerializeField] private LayerMask layerMask;
     
     // shooting force
     [SerializeField] private float waterBulletPower = 100f;
@@ -127,25 +128,21 @@ public class WaterBullet : MonoBehaviour
             // var bulletDirection = new Vector3(Mathf.Cos(_previousAngel * Mathf.Deg2Rad), Mathf.Sin(_previousAngel * Mathf.Deg2Rad), 0);
             var bulletDirection = _direction;
             
-            RaycastHit2D hit = Physics2D.Raycast(_previousStartPosition, bulletDirection, _currentSizeX, GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
+            RaycastHit2D hit = Physics2D.Raycast(_previousStartPosition, bulletDirection, _currentSizeX, layerMask);
             if (!hit.collider.IsUnityNull())
             {
-                // we collider something, make sure if it's building 
-                if(hit.collider.transform.gameObject.name.StartsWith("House"))
+                // our target shouldn't cross it, should stay at this size! or shrink a bit
+                if (hit.distance < _currentSizeX)
                 {
-                    // it's a building, so our target shouldn't cross it, should stay at this size! or shrink a bit
-                    if (hit.distance < _currentSizeX)
-                    {
-                        // we need to shrink it to be as distance 
-                        _currentSizeX = hit.distance;
-                        _t.position = bulletDirection * (_currentSizeX / 2 + InitialSizeX / 2) + _previousStartPosition;
-                        _t.localScale = GetScaleFromSizeX(_currentSizeX);
-                        
-                        // add water to the end position
-                        var waterDropPos = bulletDirection * _currentSizeX + _previousStartPosition;
-                        AddWaterToTile(waterDropPos);
-                        return;
-                    }
+                    // we need to shrink it to be as distance 
+                    _currentSizeX = hit.distance;
+                    _t.position = bulletDirection * (_currentSizeX / 2 + InitialSizeX / 2) + _previousStartPosition;
+                    _t.localScale = GetScaleFromSizeX(_currentSizeX);
+                    
+                    // add water to the end position
+                    var waterDropPos = bulletDirection * _currentSizeX + _previousStartPosition;
+                    AddWaterToTile(waterDropPos);
+                    return;
                 }
             }
             
@@ -166,19 +163,15 @@ public class WaterBullet : MonoBehaviour
         {
             var target = _diePosition;
             var tempStartPoint = _t.position - _direction * _currentSizeX / 2;  
-            RaycastHit2D hit = Physics2D.Raycast(tempStartPoint, _direction, _currentSizeX, GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
+            RaycastHit2D hit = Physics2D.Raycast(tempStartPoint, _direction, _currentSizeX, layerMask);
             if (!hit.collider.IsUnityNull())
             {
-                // we collider something, make sure if it's building 
-                if(hit.collider.transform.gameObject.name.StartsWith("House"))
+                //  our target shouldn't cross it, should stay at this size! or shrink a bit
+                if (hit.distance < _currentSizeX)
                 {
-                    // it's a building, so our target shouldn't cross it, should stay at this size! or shrink a bit
-                    if (hit.distance < _currentSizeX)
-                    {
-                        // we need to Stop it, we reached building
-                        currentStatus = GameManager.WaterBulletStatus.Decrease;
-                        return;
-                    }
+                    // we need to Stop it, we reached building
+                    currentStatus = GameManager.WaterBulletStatus.Decrease;
+                    return;
                 }
             }
             
@@ -242,7 +235,14 @@ public class WaterBullet : MonoBehaviour
     
     private void OnTriggerEnter2D(Collider2D col)
     {
-        // print("there is trigger");
+        if (col.gameObject.TryGetComponent(out Flammable res))
+        {
+            res.SetSelfWatering(true);
+        }
+
+
+
+            // print("there is trigger");
         if (col.CompareTag("House"))
         {
             // watering
@@ -263,13 +263,8 @@ public class WaterBullet : MonoBehaviour
         // print("there is trigger");
         if (col.CompareTag("House"))
         {
-            // print("*HOUSE* is watering");
-            // we want it to water
             // watering
-            var cur = col.GetComponent<HouseManager>();
-            if (!cur.GetStatus().Equals(GameManager.HouseStatus.Watering))
-                cur.SetStatus(GameManager.HouseStatus.Watering);
-
+            col.GetComponent<HouseManager>().SetStatus(GameManager.HouseStatus.Watering);
         }
         else if (col.CompareTag("FireMolotov"))
         {
@@ -283,10 +278,16 @@ public class WaterBullet : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
+        if (other.gameObject.TryGetComponent(out Flammable res))
+        {
+            res.SetSelfWatering(false);
+        }
+        
         if (other.CompareTag("House"))
         {
             // print("*HOUSE* stops watering");
             other.GetComponent<HouseManager>().SetStatus(GameManager.HouseStatus.Normal);
+            
         }
     }
 }

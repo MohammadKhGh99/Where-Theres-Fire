@@ -7,19 +7,30 @@ using Random = UnityEngine.Random;
 
 public class Flammable : MonoBehaviour
 {
+    // points on item
+    [SerializeField] private float numOfPoints;
+    [SerializeField] private bool isHouse;
+
     // initializing variables
+    [SerializeField] private bool isFireSource;
     [SerializeField] private float initialTimeUntilBurnOut;
     [SerializeField] private float initialChanceOfInflammation;
+    private Color _initialColor;
 
     private Transform _t;
-    private BoxCollider2D _boxCollider;
-    
-    // onFire and burning others variables
+    private Collider2D _collider;
+    private SpriteRenderer _spriteRenderer;
+
+    // onFire and Extinguishing others variables
     private float _timeUntilBurnOut;
+    [SerializeField] private float extinguishingSpeed;
+    private bool _gettingExtinguished;
+
 
     // NotOnFire variables
     [SerializeField] private float increaseChancePercentage = 5f;
     private float _currentChanceOfInflammation;
+
 
     // objects around us and radius to capture them
     [SerializeField] private float ratioOfRadiusBySize = 4f;
@@ -28,11 +39,12 @@ public class Flammable : MonoBehaviour
     private SortedList<float, Flammable> _objectsAroundUsSorted;
     private bool _inOrder;
     private bool _notFoundSomethingToBurn;
-    
+
+
     // burning objects around us
     [SerializeField] private float cooldownToBurn = 3f;
     private float _passedTimeForCooldown;
-    
+
 
     // current status
     public enum Status { NotOnFire, OnFire, FinishedBurning }
@@ -42,74 +54,129 @@ public class Flammable : MonoBehaviour
     private void Start()
     {
         _t = GetComponent<Transform>();
-        _boxCollider = GetComponent<BoxCollider2D>();
-        
-        _timeUntilBurnOut = initialTimeUntilBurnOut;
-        _currentChanceOfInflammation = initialChanceOfInflammation;
+        _collider = GetComponent<Collider2D>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        _initialColor = _spriteRenderer.color;
+        _objectsAroundUs = new HashSet<Flammable>();
+        _objectsAroundUsSorted = new SortedList<float, Flammable>();
 
+        if (isFireSource)
+        {
+            _currentChanceOfInflammation = 0;
+            _timeUntilBurnOut = Mathf.Infinity;
+        }
+        else
+        {
+            _currentChanceOfInflammation = initialChanceOfInflammation;
+            _timeUntilBurnOut = initialTimeUntilBurnOut;
+        }
+        
         CurrentStatus = Status.NotOnFire;
         
+        // we need to collect all the objects around us now, and we randomly burn an object from the list
+        if (!isFireSource)
+        {
+            GetFlammableObjectsAroundUs();
+        }
+
         // *** experimental testing ***
         _inOrder = true;
     }
     
     private Vector2 GetSizeOfArea()
     {
-        var objectSize = _boxCollider.size;
+        var objectSize = _collider.bounds.size;
         objectSize += objectSize / ratioOfRadiusBySize;
         return objectSize;
     }
     
     private void Update()
     {
-        if (CurrentStatus.Equals(Status.OnFire))
+        if (!CurrentStatus.Equals(Status.OnFire)) return;
+        
+        _timeUntilBurnOut -= Time.deltaTime;
+        if (_timeUntilBurnOut <= 0f)
         {
-            _timeUntilBurnOut += Time.deltaTime;
-            if (_timeUntilBurnOut >= initialTimeUntilBurnOut)
+            // the object is completely burnt!
+            CurrentStatus = Status.FinishedBurning;
+            BurnedOutEffectAndPoints();
+            return;
+        }
+
+        ChangingSpriteColorBecauseOfFireOrWater();
+        
+        // burn something around you
+        if (_passedTimeForCooldown >= cooldownToBurn)
+        {
+            _passedTimeForCooldown = 0f;
+            int chanceFromBurnTime;
+            if (isFireSource)
             {
-                // the object is completely burnt!
-                CurrentStatus = Status.FinishedBurning;
-                return;
+                chanceFromBurnTime = 100;
+            }
+            else
+            {
+                chanceFromBurnTime = (int)((1 - _timeUntilBurnOut / initialTimeUntilBurnOut) * 100);
             }
 
-            if (_passedTimeForCooldown >= cooldownToBurn)
+            // we can now try to burn something around us
+            if (_inOrder)
             {
-                _passedTimeForCooldown = 0f;
-                
-                // we can now try to burn something around us
-                if (_inOrder)
+                foreach (var (distance, otherFlameScript) in _objectsAroundUsSorted)    // todo make sure we go from negative (small) to positive (big)
                 {
-                    foreach (var (distance, otherFlameScript) in _objectsAroundUsSorted)
-                    {
-                        if (!otherFlameScript.CurrentStatus.Equals(Status.NotOnFire)) continue;
+                    if (!otherFlameScript.CurrentStatus.Equals(Status.NotOnFire)) continue;
                         
-                        // we want this, try to burn it!, else move to another one..
-                        var chanceFromDistance = (int)(distance / _maxDistanceFromOrigin * 100);
-                        otherFlameScript.TryToBurn(chanceFromDistance);     // true if it burned, false if not
-                    }
-                }
-                else
-                {
-                    foreach (var otherFlameScript in _objectsAroundUs)
-                    {
-                        if (!otherFlameScript.CurrentStatus.Equals(Status.NotOnFire)) continue;
-                        
-                        // we want this, try to burn it!, else move to another one..
-                        otherFlameScript.TryToBurn(50f);     // true if it burned, false if not
-                    }
+                    // we want this, try to burn it!, else move to another one.. (distance < _maxDistanceFromOrigin)
+                    var chanceFromDistance = (int)((1 - distance / _maxDistanceFromOrigin) * 100);
+
+                    otherFlameScript.TryToBurn(chanceFromDistance, chanceFromBurnTime);     // true if it burned, false if not
                 }
             }
-            _passedTimeForCooldown += Time.deltaTime;
+            else
+            {
+                foreach (var otherFlameScript in _objectsAroundUs)
+                {
+                    if (!otherFlameScript.CurrentStatus.Equals(Status.NotOnFire)) continue;
+                        
+                    // we want this, try to burn it!, else move to another one..
+                    otherFlameScript.TryToBurn(50, chanceFromBurnTime);     // true if it burned, false if not
+                }
+            }
+        }
+        _passedTimeForCooldown += Time.deltaTime;
+
+        if (_gettingExtinguished)
+        {
+            GettingExtinguished();
         }
     }
 
 
-    public bool TryToBurn(float chanceFromDistance)
+    private void BurnedOutEffectAndPoints()
+    {
+        _spriteRenderer.color = Color.black;
+        GameManager.Instance.burnedHousesBar.value += numOfPoints;
+        if (isHouse)
+        {
+            GameManager.NumBurnedHouses++;
+        }
+    }
+
+    private void ChangingSpriteColorBecauseOfFireOrWater()
+    {
+        _spriteRenderer.color = Color.Lerp(_spriteRenderer.color, Color.black, Time.deltaTime / _timeUntilBurnOut);
+    }
+
+
+    public bool TryToBurn(int chanceFromDistance, int chanceFromBurnTime)
     {
         // this is the main function that other people call when they try to burn object.
         // check if it has a chance to get burned using chance of distance from flame source, and material chance.
         // return true if it got burned, false if not.
-        var realChance = (chanceFromDistance + _currentChanceOfInflammation) / 2.0f;
+        if (isFireSource)
+            return false;
+
+        var realChance = (chanceFromDistance * 2 + _currentChanceOfInflammation * 2 + chanceFromBurnTime) / 5.0f; 
         if (Random.Range(0, 100) <= realChance)
         {
             // this object will get burned, call function that will make it burn, 
@@ -121,16 +188,32 @@ public class Flammable : MonoBehaviour
     }
     
     
-    private void SetSelfOnFire()
+    public void SetSelfOnFire()
     {
-        // i guess we need to collect all the objects around us now, and we randomly burn an object from the list
-        GetFlammableObjectsAroundUs();
-        // now set it on fire
+        // now set it on fire 
+        // todo things to make this object on fire, maybe call something from real code? idk
+        if(isFireSource)
+            GetFlammableObjectsAroundUs();
         CurrentStatus = Status.OnFire;
     }
 
+    public void SetSelfWatering(bool status)
+    {
+        _gettingExtinguished = status;
+    }
+    
+    private void GettingExtinguished()
+    {
+        _timeUntilBurnOut += Time.deltaTime * extinguishingSpeed;
+        if (!(_timeUntilBurnOut >= initialTimeUntilBurnOut)) return;
+        // we watered the object
+        initialTimeUntilBurnOut = _timeUntilBurnOut;
+        _spriteRenderer.color = _initialColor;
+        CurrentStatus = Status.NotOnFire;
+    }
+
+
     private void GetFlammableObjectsAroundUs()
-    // TODO, maybe you should run this at the start, it depends on the performance.
     {
         var area = GetSizeOfArea();
         _maxDistanceFromOrigin = Mathf.Max(area.x, area.y);
@@ -142,10 +225,13 @@ public class Flammable : MonoBehaviour
         {
             // Flammable res;
             if (!col.gameObject.TryGetComponent(out Flammable res)) continue;
+            if(res.Equals(this)|| res.isFireSource) continue;
+            
             _objectsAroundUs.Add(res);
                 
             // sort by distance of colliders (MAYBE DELETE IT LATER)
-            _objectsAroundUsSorted.Add(Physics2D.Distance(_boxCollider, col).distance, res);
+            _objectsAroundUsSorted.Add(Physics2D.Distance(_collider, col).distance, res);
+
         }
     }
 }
