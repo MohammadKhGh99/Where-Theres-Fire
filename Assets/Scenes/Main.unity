@@ -8004,8 +8004,8 @@ GameObject:
   - component: {fileID: 1121103932}
   - component: {fileID: 1121103934}
   - component: {fileID: 1121103935}
-  - component: {fileID: 1121103936}
   - component: {fileID: 1121103937}
+  - component: {fileID: 1121103936}
   m_Layer: 0
   m_Name: FireMan
   m_TagString: Untagged
@@ -8045,6 +8045,7 @@ MonoBehaviour:
   fourDirection: 1
   gridMoveDuration: 0.2
   numGridMove: 1
+  unHideWhenFire: 1
 --- !u!50 &1121103931
 Rigidbody2D:
   serializedVersion: 4

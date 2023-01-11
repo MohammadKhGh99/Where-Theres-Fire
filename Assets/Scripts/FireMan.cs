@@ -30,6 +30,7 @@ public class FireMan : MonoBehaviour
     private bool _fireKeyDown;
     private float _cooldownToMolotov;
     private bool _burningBuildingAnimationStarted;
+    private Vector2 _throwDirection;
 
     // controls changing
     private const KeyCode Fire = KeyCode.T;
@@ -41,6 +42,10 @@ public class FireMan : MonoBehaviour
     //**Animation**
     private Animator _animator;
     private SpriteRenderer _spriteRenderer;
+    
+    // ** unHide the fireman when he throw a molotov **
+    [SerializeField] private bool unHideWhenFire;
+    private Hideable _hideable;
 
     // Start is called before the first frame update
     void Start()
@@ -48,10 +53,12 @@ public class FireMan : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _t = GetComponent<Transform>();
         _lookAtDirection = Vector2.zero;
+        _throwDirection = Vector2.zero;
         _currentGridPos = GameManager.Instance.GroundBaseTilemap.WorldToCell(transform.position);
         _animator = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _spriteRenderer.flipX = !_spriteRenderer.flipX;
+        _hideable = GetComponent<Hideable>();
     }
 
     private void Update()
@@ -81,6 +88,8 @@ public class FireMan : MonoBehaviour
             {
                 // throwing a bomb of fire in the direction the player is looking at. (unless its a building then nothing)
                 _cooldownToMolotov = GameManager.MolotovCooldownTime;
+                if (unHideWhenFire && !_spriteRenderer.enabled)
+                    _hideable.ShowOrHide();
                 StartCoroutine(ThrowMolotov());
             }
 
@@ -132,11 +141,11 @@ public class FireMan : MonoBehaviour
         // _gridMoveTimer = 0;
         // _lookAtDirection = Vector3.zero;
         
-        print(_t.position);
         // Check input and move in the corresponding direction
         if (Input.GetKeyDown(Up))
         {
             _lookAtDirection = Vector3.up;
+            _throwDirection = Vector2.up;
             // var tmp = new Vector3Int(_currentGridPos.x , _currentGridPos.y + numGridMove, 0);
             // var temp = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(tmp);
             _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
@@ -146,6 +155,7 @@ public class FireMan : MonoBehaviour
         else if (Input.GetKeyDown(Down))
         {
             _lookAtDirection = Vector3.down;
+            _throwDirection = Vector2.down;
             _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
             if(!_hit)
                 _currentGridPos.y -= numGridMove;
@@ -153,6 +163,7 @@ public class FireMan : MonoBehaviour
         else if (Input.GetKeyDown(Right))
         {
             _lookAtDirection = Vector3.right;
+            _throwDirection = Vector2.right;
             _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
             print(_hit.collider);
             if(!_hit)
@@ -163,22 +174,24 @@ public class FireMan : MonoBehaviour
         else if (Input.GetKeyDown(Left))
         {
             _lookAtDirection = Vector3.left;
+            _throwDirection = Vector2.left;
             _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
             if(!_hit)
                 _currentGridPos.x -= numGridMove;
             if (!_spriteRenderer.flipX)
                 _spriteRenderer.flipX = true;
         }
-        // else if (!Input.GetKeyDown(Fire))
-        // {
-        //     _lookAtDirection = Vector3.zero;
-        // }
+        else if (!Input.GetKeyDown(Fire))
+        {
+            _lookAtDirection = Vector3.zero;
+        }
         _animator.SetInteger("XSpeed", (int)_lookAtDirection.x);
         _animator.SetInteger("YSpeed", (int)_lookAtDirection.y);
         // StartCoroutine(DelayForFireManMovement());
         
         // Update the position of the object in world space
-        transform.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos);
+        _t.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos);
+        // _t.position = Vector3.Lerp(_t.position, GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos), Time.deltaTime);
         // }
     }
 
@@ -190,7 +203,7 @@ public class FireMan : MonoBehaviour
     private IEnumerator ThrowMolotov()
     {
         var molotov = GameManager.Instance.MolotovPool.Get();
-        yield return molotov.Shoot(_t.position, _lookAtDirection is { x: 0, y: 0 } ? Vector3.right : _lookAtDirection);
+        yield return molotov.Shoot(_t.position, _throwDirection is { x: 0, y: 0 } ? Vector3.right : _throwDirection);
         // when we finish with the bomb, 
         var molotovDropPos = molotov.GetMolotovDropPos();
         GameManager.Instance.MolotovPool.Release(molotov);

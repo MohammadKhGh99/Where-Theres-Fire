@@ -24,7 +24,7 @@ public class Hideable : MonoBehaviour
             ShowOrHide();
     }
 
-    private void ShowOrHide()
+    public void ShowOrHide()
     {
         StartCoroutine(_spriteRenderer.enabled
             ? GameManager.Instance.FadeOut(_spriteRenderer)

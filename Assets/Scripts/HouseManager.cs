@@ -14,7 +14,8 @@ public class HouseManager : MonoBehaviour
     [SerializeField] private float wateringTime = 3.0f;
     [SerializeField] private float wateringSpeed = 3;
 
-    [FormerlySerializedAs("pointsOnBurning")] [SerializeField] private float pointsOnBurn = 1;
+    [FormerlySerializedAs("pointsOnBurning")] [SerializeField]
+    private float pointsOnBurn = 1;
     // [SerializeField] private Slider healthBarObj;
     // [SerializeField] private Slider wateringBarObj;
 
@@ -47,14 +48,14 @@ public class HouseManager : MonoBehaviour
         _t = transform;
         _collider = GetComponent<BoxCollider2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        
-        
+
+
         // ** time to burn and to water **
         _maxBurningTime = healthBarLife;
         _maxWateringTime = wateringTime;
         _timeToBurn = _maxBurningTime;
         _timeToWater = _maxWateringTime;
-        
+
 
         // controlling health bar for this house
         if (!_healthBar.IsUnityNull())
@@ -62,18 +63,17 @@ public class HouseManager : MonoBehaviour
             _healthBarObj.maxValue = _maxBurningTime;
             _healthBarObj.value = _maxBurningTime;
         }
-        
+
         // controlling watering bar for this house
         // wateringBarObj.maxValue = _maxWateringTime;
         // wateringBarObj.value = 0;
-        
+
         // saving all surrounding houses to an array
         _overlappingResults = new Collider2D[8];
         _housesSurrounding = new HouseManager[8];
-        
+
         // initial color
         _initialColor = _spriteRenderer.material.color;
-
     }
 
     // Update is called once per frame
@@ -83,17 +83,18 @@ public class HouseManager : MonoBehaviour
             return;
         if (!_setOrNot)
             SetSurroundings();
-        
+
         if (_healthBar.IsUnityNull())
             return;
-        
+
         switch (currentStatus)
         {
             case GameManager.HouseStatus.Burning when _timeToBurn > 0:
             {
-                if ((_healthBarObj.maxValue - _healthBarObj.value) / _healthBarObj.maxValue >= _percentToInfect && !_madeInfection)
+                if ((_healthBarObj.maxValue - _healthBarObj.value) / _healthBarObj.maxValue >= _percentToInfect &&
+                    !_madeInfection)
                 {
-                    var numOfNeighborToBurn = (int)Mathf.Ceil((float)_housesSurrounding.Length / 3); 
+                    var numOfNeighborToBurn = (int)Mathf.Ceil((float)_housesSurrounding.Length / 3);
                     foreach (var building in _housesSurrounding)
                     {
                         if (!building.IsUnityNull() && building.GetStatus().Equals(GameManager.HouseStatus.Normal))
@@ -101,6 +102,7 @@ public class HouseManager : MonoBehaviour
                             building.SetStatus(GameManager.HouseStatus.Burning);
                             numOfNeighborToBurn--;
                         }
+
                         if (numOfNeighborToBurn <= 0)
                             break;
                     }
@@ -129,18 +131,20 @@ public class HouseManager : MonoBehaviour
                 _timeToBurn += Time.deltaTime;
                 // wateringBarObj.value += Time.deltaTime;
                 _healthBarObj.value += Time.deltaTime * wateringSpeed;
-                
+
                 _spriteRenderer.material.color = Color.Lerp(_spriteRenderer.material.color, _initialColor,
                     wateringSpeed * Time.deltaTime / _timeToWater);
-                
-                _healthBarImage.color = Color.Lerp(_healthBarImage.color, Color.green, wateringSpeed * Time.deltaTime / _timeToWater);
-                
-                if(_healthBarObj.value >= _healthBarObj.maxValue)
+
+                _healthBarImage.color = Color.Lerp(_healthBarImage.color, Color.green,
+                    wateringSpeed * Time.deltaTime / _timeToWater);
+
+                if (_healthBarObj.value >= _healthBarObj.maxValue)
                 {
                     SetStatus(GameManager.HouseStatus.Normal);
                     _timeToBurn = _maxBurningTime;
                     _timeToWater = _maxWateringTime;
                 }
+
                 // if (_timeToWater <= 0)
                 // {
                 //     SetStatus(GameManager.HouseStatus.Normal);
@@ -148,7 +152,9 @@ public class HouseManager : MonoBehaviour
                 // }
                 break;
             }
-            case GameManager.HouseStatus.Normal when _healthBarObj.value < _healthBarObj.maxValue: // when _timeToWater > 0 && _timeToWater < _maxWateringTime:
+            case GameManager.HouseStatus.Normal
+                when _healthBarObj.value < _healthBarObj.maxValue
+                : // when _timeToWater > 0 && _timeToWater < _maxWateringTime:
             {
                 SetStatus(GameManager.HouseStatus.Burning);
                 break;
@@ -168,27 +174,27 @@ public class HouseManager : MonoBehaviour
     private void SetSurroundings()
     {
         _setOrNot = true;
-        
-        Physics2D.OverlapBox( _collider.bounds.center,  _collider.size + Vector2.one,
-            0, new ContactFilter2D { layerMask = Singleton<GameManager>.Instance.HousesMask }, _overlappingResults);
-        
+
+        Physics2D.OverlapBox(_collider.bounds.center, _collider.size + Vector2.one, 0,
+            new ContactFilter2D { layerMask = Singleton<GameManager>.Instance.HousesMask }, _overlappingResults);
+
         if (_overlappingResults.Length == 0) return;
-        
+
         for (int i = 0; i < _overlappingResults.Length; i++)
         {
             if (_overlappingResults[i].IsUnityNull()) continue;
-            
+
             if (_overlappingResults[i].name.Equals(_collider.name))
             {
                 _housesSurrounding[i] = null;
                 continue;
             }
-                
+
             // it is not expensive! it called once for each house, see _setOrNot variable...
             _housesSurrounding[i] = _overlappingResults[i].GetComponent<HouseManager>();
         }
     }
-    
+
     public Vector2 GetBuildingPos()
     {
         return _t.position;
@@ -203,7 +209,7 @@ public class HouseManager : MonoBehaviour
     {
         currentStatus = newStatus;
     }
-    
+
     // public void StartGame()
     // {
     //     _spriteRenderer.material.color = _initialColor;
