@@ -17,13 +17,13 @@ public class WetShoes : MonoBehaviour
     // adding a second footstep when we are standing still
     private bool _secondLegInserted;
     private float _timerForSecondLeg;
-    private const float FixedTimeToInsertSecondLeg = 1f;
+    private const float FixedTimeToInsertSecondLeg = 0.5f;
 
     // previous cycle info
     private Vector3Int _previousPos;
     private Vector3 _previousDirection;
 
-    private List<FootStep> _stepsToStartCoroutine = new List<FootStep>();
+    private List<FootStep> _stepsToStartCoroutine = new ();
     public enum Legs { Left, Right }
     private Legs _nextLegToUse;
     void Start()
@@ -36,11 +36,13 @@ public class WetShoes : MonoBehaviour
 
     void Update()
     {
-        var currentPos= GameManager.Instance.WaterFireTilemap.WorldToCell(_t.position);
-        if(!GameManager.Instance.WaterFireTilemap.HasTile(currentPos)) return;     // dunno just keep it
-        var currentTile = GameManager.Instance.WaterFireTilemap.GetTile(currentPos);
+        var position = _t.position;
+        var waterWorldPos= GameManager.Instance.WaterFireTilemap.WorldToCell(position);
+        var groundWorldPos= GameManager.Instance.GroundBaseTilemap.WorldToCell(position);
+        if(!GameManager.Instance.GroundBaseTilemap.HasTile(groundWorldPos)) return;     // dunno just keep it
 
-        if (currentTile.Equals(GameManager.Instance.WaterTile))
+        // if (currentTile.Equals(GameManager.Instance.WaterTile))     // keep this for now, if we want to create fire tile!
+        if (GameManager.Instance.WaterFireTilemap.HasTile(waterWorldPos))      // if we have a water tile
         {
             _isWetShoes = true;
             _currentNumOfWetCellsMade = 0;
@@ -55,10 +57,10 @@ public class WetShoes : MonoBehaviour
                 _stepsToStartCoroutine.Clear();
             }
         }
-        else // not on water tile
+        else // not on water tile (anything else)
         {
             if (!_isWetShoes) return;   // if not wet shoes, nothing to do here
-            if (_previousPos.Equals(currentPos)) // we are on same position as last time
+            if (_previousPos.Equals(waterWorldPos)) // we are on same position as last time
             {
                 if (!_secondLegInserted && _timerForSecondLeg > FixedTimeToInsertSecondLeg)
                 {
@@ -78,7 +80,7 @@ public class WetShoes : MonoBehaviour
             {
                 // we moved to another tile, which is NOT WATER TILE
                 // get footstep direction
-                _previousDirection = Vector3.Normalize(currentPos - _previousPos);
+                _previousDirection = Vector3.Normalize(waterWorldPos - _previousPos);
 
                 // setup the new footstep
                 var footStep = _footStepPool.Get();
@@ -110,7 +112,7 @@ public class WetShoes : MonoBehaviour
             }
         }
         
-        _previousPos = currentPos;
+        _previousPos = waterWorldPos;
     }
 
 

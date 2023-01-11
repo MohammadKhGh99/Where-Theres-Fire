@@ -54,12 +54,9 @@ public class GameManager : Singleton<GameManager>
     private Image _imageWaterWon;
     private Image _imageFireWon;
 
-    // the game is running or not
-    public static bool IsGameRunning;
-
-    // the game is over or not
-    public static bool IsGameOver;
-
+    // *** game important flags ***
+    public static bool IsGameRunning;    // the game is running or not
+    public static bool IsGameOver;     // the game is over or not
 
     // this is a declaration for the singleton, maybe it's not needed, keep it for now. 
 
@@ -114,6 +111,7 @@ public class GameManager : Singleton<GameManager>
     public Tilemap GroundBaseTilemap; 
     public Tilemap WaterFireTilemap; 
     public RuleTile WaterTile;
+    public TileBase GroundTile;
 
 
     // **** "Molotov" pool and functions ****
