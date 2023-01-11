@@ -8005,6 +8005,7 @@ GameObject:
   - component: {fileID: 1121103934}
   - component: {fileID: 1121103935}
   - component: {fileID: 1121103936}
+  - component: {fileID: 1121103937}
   m_Layer: 0
   m_Name: FireMan
   m_TagString: Untagged
@@ -8042,7 +8043,7 @@ MonoBehaviour:
   movingSpeed: 10
   moveByGrid: 1
   fourDirection: 1
-  gridMoveDuration: 0
+  gridMoveDuration: 0.2
   numGridMove: 1
 --- !u!50 &1121103931
 Rigidbody2D:
@@ -8184,6 +8185,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &1121103937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1121103925}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cf824def33b8884e800ce91b0884f69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startInvisible: 0
 --- !u!1001 &1126140960
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10535,8 +10549,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281663232
-  m_fontColor: {r: 0, g: 1, b: 0.20482206, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
