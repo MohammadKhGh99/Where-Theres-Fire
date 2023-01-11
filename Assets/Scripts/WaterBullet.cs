@@ -235,10 +235,6 @@ public class WaterBullet : MonoBehaviour
     
     private void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.CompareTag("Tree"))
-        {
-            print("");
-        }
         if (col.gameObject.TryGetComponent(out Flammable res))
         {
             res.SetSelfWatering(true);
@@ -264,11 +260,6 @@ public class WaterBullet : MonoBehaviour
     
     private void OnTriggerStay2D(Collider2D col)
     {
-        
-        if (col.CompareTag("Tree"))
-        {
-            print("");
-        }
         if (col.gameObject.TryGetComponent(out Flammable res))
         {
             res.SetSelfWatering(true);
@@ -292,11 +283,6 @@ public class WaterBullet : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D col)
     {
-        if (col.CompareTag("Tree"))
-        {
-            print("");
-        }
-        
         if (col.gameObject.TryGetComponent(out Flammable res))
         {
             res.SetSelfWatering(false);
