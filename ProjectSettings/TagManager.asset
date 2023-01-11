@@ -8,6 +8,7 @@ TagManager:
   - Molotov
   - WaterBullet
   - House
+  - Tree
   layers:
   - Default
   - TransparentFX

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 339029448283884258}
   - component: {fileID: 489105816378202097}
   - component: {fileID: 8432937252253579443}
+  - component: {fileID: -8737571849734237810}
   - component: {fileID: 7196890699618283024}
   - component: {fileID: 3173127440840066045}
   m_Layer: 3
@@ -100,9 +101,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   status: Normal
+  currentStatus: 0
   healthBarLife: 20
   wateringTime: 8
   wateringSpeed: 3
+  pointsOnBurn: 1
+--- !u!114 &-8737571849734237810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4436703046860456311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c0a497be0f18bf4f830e3540e589d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  numOfPoints: 5
+  isHouse: 1
+  isFireSource: 0
+  initialTimeUntilBurnOut: 15
+  initialChanceOfInflammation: 60
+  extinguishingSpeed: 15
+  increaseChancePercentage: 5
+  ratioOfRadiusBySize: 4
+  cooldownToBurn: 1
 --- !u!61 &7196890699618283024
 BoxCollider2D:
   m_ObjectHideFlags: 0
