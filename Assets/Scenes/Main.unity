@@ -5550,7 +5550,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerText: {fileID: 1442118295}
-  gameTimeInSeconds: 0
+  gameTimeInSeconds: 120
   winPercent: 0.5
   fireMan: {fileID: 1121103925}
   extinguisher: {fileID: 1682657992}
@@ -8043,6 +8043,7 @@ MonoBehaviour:
   movingSpeed: 10
   moveByGrid: 1
   fourDirection: 1
+  speed: 3
   gridMoveDuration: 0.2
   numGridMove: 1
   unHideWhenFire: 1
@@ -8126,7 +8127,7 @@ SpriteRenderer:
   m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 3fa38510b4510194fbfe2aeec6db6e0a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 0.32, y: 0.32}
@@ -11078,7 +11079,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!70 &1682657997
 CapsuleCollider2D:

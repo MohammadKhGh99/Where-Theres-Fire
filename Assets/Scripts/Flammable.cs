@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
+using Unity.VisualScripting;
 
 public class Flammable : MonoBehaviour
 {
@@ -44,6 +46,13 @@ public class Flammable : MonoBehaviour
     // burning objects around us
     [SerializeField] private float cooldownToBurn = 3f;
     private float _passedTimeForCooldown;
+    
+    // health bar
+    private GameObject _healthBar;
+    private Image _healthBarImage;
+    private Slider _healthBarObj;
+    private Color _healthBarColor;
+    
 
 
     // current status
@@ -60,6 +69,16 @@ public class Flammable : MonoBehaviour
         _objectsAroundUs = new HashSet<Flammable>();
         _objectsAroundUsSorted = new SortedList<float, Flammable>();
 
+        // initializing health bar
+        if (!_healthBar.IsUnityNull())
+        {
+            _healthBarObj = _healthBar.GetComponent<Slider>();
+            _healthBarObj.maxValue = initialTimeUntilBurnOut;
+            _healthBarObj.value = initialTimeUntilBurnOut;
+            _healthBarImage = _healthBarObj.transform.GetChild(0).GetComponent<Image>();
+            _healthBarColor = _healthBarImage.color;
+        }
+        
         if (isFireSource)
         {
             _currentChanceOfInflammation = 0;
@@ -95,6 +114,8 @@ public class Flammable : MonoBehaviour
         if (!CurrentStatus.Equals(Status.OnFire)) return;
         
         _timeUntilBurnOut -= Time.deltaTime;
+        if (isHouse)
+            _healthBarObj.value -= Time.deltaTime;
         if (_timeUntilBurnOut <= 0f)
         {
             // the object is completely burnt!
@@ -165,6 +186,22 @@ public class Flammable : MonoBehaviour
     private void ChangingSpriteColorBecauseOfFireOrWater()
     {
         _spriteRenderer.color = Color.Lerp(_spriteRenderer.color, Color.black, Time.deltaTime / _timeUntilBurnOut);
+        if (!isHouse) return;
+        if (CurrentStatus.Equals(Status.OnFire))
+            _healthBarImage.color = Color.Lerp(_healthBarImage.color, Color.red, Time.deltaTime / _timeUntilBurnOut);
+        else
+            _healthBarImage.color = Color.Lerp(_healthBarImage.color, _healthBarColor, Time.deltaTime / _timeUntilBurnOut);
+        // _healthBarObj.value -= Time.deltaTime;
+    }
+    
+    public void SetHealthBar(GameObject other)
+    {
+        _healthBar = other;
+        _healthBarObj = _healthBar.GetComponent<Slider>();
+        _healthBarObj.maxValue = initialTimeUntilBurnOut;
+        _healthBarObj.value = initialTimeUntilBurnOut;
+        _healthBarImage = _healthBarObj.transform.GetChild(0).GetComponent<Image>();
+        _healthBarColor = _healthBarImage.color;
     }
 
 
@@ -205,6 +242,8 @@ public class Flammable : MonoBehaviour
     private void GettingExtinguished()
     {
         _timeUntilBurnOut += Time.deltaTime * extinguishingSpeed;
+        if (!_healthBar.IsUnityNull())
+            _healthBarObj.value += Time.deltaTime * extinguishingSpeed;
         if (!(_timeUntilBurnOut >= initialTimeUntilBurnOut)) return;
         // we watered the object
         initialTimeUntilBurnOut = _timeUntilBurnOut;
@@ -212,6 +251,10 @@ public class Flammable : MonoBehaviour
         CurrentStatus = Status.NotOnFire;
     }
 
+    public Vector2 GetPosition()
+    {
+        return _t.position;
+    }
 
     private void GetFlammableObjectsAroundUs()
     {

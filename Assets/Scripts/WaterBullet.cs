@@ -246,7 +246,8 @@ public class WaterBullet : MonoBehaviour
         if (col.CompareTag("House"))
         {
             // watering
-            col.GetComponent<HouseManager>().SetStatus(GameManager.HouseStatus.Watering);
+            // todo
+            // col.GetComponent<Flammable>().CurrentStatus = GameManager.HouseStatus.Watering;
         }
         else if (col.CompareTag("FireMolotov"))
         {
@@ -269,7 +270,8 @@ public class WaterBullet : MonoBehaviour
         if (col.CompareTag("House"))
         {
             // watering
-            col.GetComponent<HouseManager>().SetStatus(GameManager.HouseStatus.Watering);
+            // todo 
+            // col.GetComponent<HouseManager>().SetStatus(GameManager.HouseStatus.Watering);
         }
         else if (col.CompareTag("FireMolotov"))
         {
@@ -291,7 +293,8 @@ public class WaterBullet : MonoBehaviour
         if (col.CompareTag("House"))
         {
             // print("*HOUSE* stops watering");
-            col.GetComponent<HouseManager>().SetStatus(GameManager.HouseStatus.Normal);
+            // todo
+            // col.GetComponent<HouseManager>().SetStatus(GameManager.HouseStatus.Normal);
             
         }
     }

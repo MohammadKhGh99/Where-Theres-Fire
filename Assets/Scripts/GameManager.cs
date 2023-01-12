@@ -92,7 +92,10 @@ public class GameManager : Singleton<GameManager>
 
     // Houses mask
     public LayerMask HousesMask { get; private set; }
+    // Borders mask
     public LayerMask BordersMask { get; private set; }
+    // Trees mask
+    public LayerMask TreesMask { get; private set; }
 
     // Burned Building
     public static int NumBurnedHouses = 0;
@@ -102,7 +105,7 @@ public class GameManager : Singleton<GameManager>
 
     // Types of Houses we have
     private string[] _housesTypes = { "House1", "House2" };
-    private HouseManager[] _houses;
+    private Flammable[] _houses;
     public Slider burnedHousesBar;
     [SerializeField] private float maxBurnedPoints = 10;
 
@@ -236,10 +239,10 @@ public class GameManager : Singleton<GameManager>
         // ** houses **
         var housesParentTransform = housesParent.transform;
         _numHouses = housesParentTransform.childCount;
-        _houses = new HouseManager[_numHouses];
+        _houses = new Flammable[_numHouses];
         for (var i = 0; i < _numHouses; i++)
         {
-            _houses[i] = housesParentTransform.GetChild(i).GetComponent<HouseManager>();
+            _houses[i] = housesParentTransform.GetChild(i).GetComponent<Flammable>();
             var healthBar = Instantiate(Resources.Load("HealthBar"), _houses[i].transform.position + Vector3.up * 2.3f,
                 Quaternion.identity, barsParent.transform) as GameObject;
             if (healthBar == null)
@@ -248,6 +251,7 @@ public class GameManager : Singleton<GameManager>
             }
 
             _houses[i].SetHealthBar(healthBar);
+            // print("HealthBarSetted!");
         }
 
         InitializeGame();
@@ -278,6 +282,7 @@ public class GameManager : Singleton<GameManager>
 
         HousesMask = LayerMask.GetMask("Houses");
         BordersMask = LayerMask.GetMask("Borders");
+        TreesMask =  LayerMask.GetMask("Trees");
 
         _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
         if (!controlHousesPos)

@@ -59,9 +59,17 @@ public class Extinguisher : MonoBehaviour
         var yDirection = Input.GetAxis("Vertical");
         var xDirection = Input.GetAxis("Horizontal");
 
-        _moveDirection.x = xDirection;
-        _moveDirection.y = yDirection;
-
+        if (!Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow) && 
+            !Input.GetKey(KeyCode.DownArrow) && !Input.GetKey(KeyCode.UpArrow)) // && !Input.GetKey(Extinguish))
+        {
+            _moveDirection = Vector2.zero;
+        }
+        else
+        {
+            _moveDirection.x = xDirection;
+            _moveDirection.y = yDirection;
+        }
+        
         _animator.SetInteger("XSpeed", (int)_moveDirection.x);
         _animator.SetInteger("YSpeed", (int)_moveDirection.y);
         

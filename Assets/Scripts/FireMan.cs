@@ -16,6 +16,7 @@ public class FireMan : MonoBehaviour
     [SerializeField] private float movingSpeed;
     [SerializeField] private bool moveByGrid = true;
     [SerializeField] private bool fourDirection = true;
+    [SerializeField] private float speed = 3;
     private Vector2 _moveDirection;
     private Vector2 _lookAtDirection;
 
@@ -46,6 +47,10 @@ public class FireMan : MonoBehaviour
     // ** unHide the fireman when he throw a molotov **
     [SerializeField] private bool unHideWhenFire;
     private Hideable _hideable;
+    
+    //**don't move to these objects
+    private LayerMask _forbiddenLayers = GameManager.Instance.HousesMask | GameManager.Instance.BordersMask |
+                                         GameManager.Instance.TreesMask;
 
     // Start is called before the first frame update
     void Start()
@@ -57,7 +62,7 @@ public class FireMan : MonoBehaviour
         _currentGridPos = GameManager.Instance.GroundBaseTilemap.WorldToCell(transform.position);
         _animator = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        _spriteRenderer.flipX = !_spriteRenderer.flipX;
+        // _spriteRenderer.flipX = !_spriteRenderer.flipX;
         _hideable = GetComponent<Hideable>();
     }
 
@@ -146,9 +151,7 @@ public class FireMan : MonoBehaviour
         {
             _lookAtDirection = Vector3.up;
             _throwDirection = Vector2.up;
-            // var tmp = new Vector3Int(_currentGridPos.x , _currentGridPos.y + numGridMove, 0);
-            // var temp = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(tmp);
-            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
+            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: _forbiddenLayers);
             if(!_hit)
                 _currentGridPos.y += numGridMove;
         }
@@ -156,7 +159,7 @@ public class FireMan : MonoBehaviour
         {
             _lookAtDirection = Vector3.down;
             _throwDirection = Vector2.down;
-            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
+            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: _forbiddenLayers);
             if(!_hit)
                 _currentGridPos.y -= numGridMove;
         }
@@ -164,24 +167,23 @@ public class FireMan : MonoBehaviour
         {
             _lookAtDirection = Vector3.right;
             _throwDirection = Vector2.right;
-            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
-            print(_hit.collider);
+            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: _forbiddenLayers);
             if(!_hit)
                 _currentGridPos.x += numGridMove;
-            if (_spriteRenderer.flipX)
-                _spriteRenderer.flipX = false;
+            if (!_spriteRenderer.flipX)
+                _spriteRenderer.flipX = true;
         }
         else if (Input.GetKeyDown(Left))
         {
             _lookAtDirection = Vector3.left;
             _throwDirection = Vector2.left;
-            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: GameManager.Instance.HousesMask | GameManager.Instance.BordersMask);
+            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: _forbiddenLayers);
             if(!_hit)
                 _currentGridPos.x -= numGridMove;
-            if (!_spriteRenderer.flipX)
-                _spriteRenderer.flipX = true;
+            if (_spriteRenderer.flipX)
+                _spriteRenderer.flipX = false;
         }
-        else if (!Input.GetKeyDown(Fire))
+        else //if (!Input.GetKeyDown(Fire))
         {
             _lookAtDirection = Vector3.zero;
         }
@@ -191,7 +193,7 @@ public class FireMan : MonoBehaviour
         
         // Update the position of the object in world space
         _t.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos);
-        // _t.position = Vector3.Lerp(_t.position, GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos), Time.deltaTime);
+        // _t.position = Vector3.Lerp(_t.position, GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos), Time.deltaTime * speed);
         // }
     }
 
@@ -221,9 +223,9 @@ public class FireMan : MonoBehaviour
         else
         {
             // we will drop molotov fire at Building
-            var building = checkWhereDropCollider2D.GetComponent<HouseManager>();
-            molotovDropPos = building.GetBuildingPos();
-            building.SetStatus(GameManager.HouseStatus.Burning);
+            var building = checkWhereDropCollider2D.GetComponent<Flammable>();
+            molotovDropPos = building.GetPosition();
+            building.SetSelfOnFire();
         }
         
         
