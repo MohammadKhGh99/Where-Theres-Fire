@@ -49,8 +49,7 @@ public class FireMan : MonoBehaviour
     private Hideable _hideable;
     
     //**don't move to these objects
-    private LayerMask _forbiddenLayers = GameManager.Instance.HousesMask | GameManager.Instance.BordersMask |
-                                         GameManager.Instance.TreesMask;
+    private LayerMask _forbiddenLayers;
 
     // Start is called before the first frame update
     void Start()
@@ -64,6 +63,8 @@ public class FireMan : MonoBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
         // _spriteRenderer.flipX = !_spriteRenderer.flipX;
         _hideable = GetComponent<Hideable>();
+        _forbiddenLayers = GameManager.Instance.HousesMask | GameManager.Instance.BordersMask |
+                           GameManager.Instance.TreesMask;
     }
 
     private void Update()
