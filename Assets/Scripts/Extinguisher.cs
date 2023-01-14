@@ -86,25 +86,6 @@ public class Extinguisher : MonoBehaviour
         }
         else
         {
-            // if (xDirection > 0)
-            //     // _waterSplash.transform.Rotate(Vector3.forward, 180);
-            // {
-            //     var transformRotation = _waterSplash.transform.rotation;
-            //     transformRotation.eulerAngles = _rightAngle;
-            // }
-            // else if (xDirection < 0)
-            // {
-            //     var transformRotation = _waterSplash.transform.rotation;
-            //     transformRotation.eulerAngles = _leftAngle;
-            // }
-
-            // _waterSplash.transform.Rotate(Vector3.forward, -180);
-            //     _waterSplash.transform.rotation = _leftAngle;
-            // else if (yDirection > 0 && xDirection == 0)
-            //     _waterSplash.transform.rotation = _upAngle;
-            // else if (yDirection < 0 && xDirection == 0)
-            //     _waterSplash.transform.rotation = _downAngle;
-            
             _throwDirection.x = xDirection;
             _throwDirection.y = yDirection;
             
