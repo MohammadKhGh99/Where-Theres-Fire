@@ -79,27 +79,72 @@ public class Extinguisher : MonoBehaviour
         var xDirection = Input.GetAxis("Horizontal");
         // print(xDirection + " " + yDirection);
 
-        if (!Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow) && 
-            !Input.GetKey(KeyCode.DownArrow) && !Input.GetKey(KeyCode.UpArrow)) // && !Input.GetKey(Extinguish))
+        // if (!Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow) && 
+        //     !Input.GetKey(KeyCode.DownArrow) && !Input.GetKey(KeyCode.UpArrow))
+        // {
+        //     _moveDirection = Vector2.zero;
+        // }
+        // else
+        // {
+        //     _throwDirection.x = xDirection;
+        //     _throwDirection.y = yDirection;
+        //     
+        _moveDirection.x = xDirection;
+        _moveDirection.y = yDirection;
+        // }
+
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            // if (_waterSplash.isPlaying && _throwDirection.x > -1)
+            //     _waterSplash.Stop();
+            _throwDirection.x = -1;
+            _throwDirection.y = 0;
+            if (_spriteRenderer.flipX)
+                _spriteRenderer.flipX = false;
+            var temp = _waterSplash.transform;
+            temp.position = _t.position + _leftPos;
+            temp.rotation = _leftAngle;
+        }else if (Input.GetKey(KeyCode.RightArrow))
+        {
+            // if (_waterSplash.isPlaying && _throwDirection.x < 1)
+            //     _waterSplash.Stop();
+            _throwDirection.x = 1;
+            _throwDirection.y = 0;
+            if (!_spriteRenderer.flipX)
+                _spriteRenderer.flipX = true;
+            var temp = _waterSplash.transform;
+            temp.position = _t.position + _rightPos;
+            temp.rotation = _rightAngle;
+        }else if (Input.GetKey(KeyCode.DownArrow))
+        {
+            // if (_waterSplash.isPlaying && _throwDirection.y > -1)
+            //     _waterSplash.Stop();
+            _throwDirection.x = 0;
+            _throwDirection.y = -1;
+            var temp = _waterSplash.transform;
+            temp.position = _t.position;
+            temp.rotation = _downAngle;
+        }else if (Input.GetKey(KeyCode.UpArrow))
+        {
+            // if (_waterSplash.isPlaying && _throwDirection.y < 1)
+            //     _waterSplash.Stop();
+            _throwDirection.x = 0;
+            _throwDirection.y = 1;
+            var temp = _waterSplash.transform;
+            temp.position = _t.position + _upPos;
+            temp.rotation = _upAngle;
+        }else if (!Input.GetKey(Extinguish))
         {
             _moveDirection = Vector2.zero;
+            _throwDirection = Vector2.zero;
         }
-        else
-        {
-            _throwDirection.x = xDirection;
-            _throwDirection.y = yDirection;
-            
-            _moveDirection.x = xDirection;
-            _moveDirection.y = yDirection;
-        }
-        
-        _animator.SetInteger("XSpeed", (int)_moveDirection.x);
-        _animator.SetInteger("YSpeed", (int)_moveDirection.y);
+        _animator.SetInteger("XSpeed", (int)_throwDirection.x);
+        _animator.SetInteger("YSpeed", (int)_throwDirection.y);
         
         var snapping = fourDirection ? 90.0f : 45.0f;
         if (_moveDirection.sqrMagnitude > 0)
         {
-            RotatingAndPositioningWaterStream();
+            // RotatingAndPositioningWaterStream();
             
             _isMoving = true;
             var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
@@ -149,8 +194,6 @@ public class Extinguisher : MonoBehaviour
             // moving right
             case > 0:
             {
-                if (!_spriteRenderer.flipX)
-                    _spriteRenderer.flipX = true;
                 var temp = _waterSplash.transform;
                 temp.position = _t.position + _rightPos;
                 temp.rotation = _rightAngle;
@@ -159,8 +202,6 @@ public class Extinguisher : MonoBehaviour
             // moving left
             case < 0:
             {
-                if (_spriteRenderer.flipX)
-                    _spriteRenderer.flipX = false;
                 var temp = _waterSplash.transform;
                 temp.position = _t.position + _leftPos;
                 temp.rotation = _leftAngle;
