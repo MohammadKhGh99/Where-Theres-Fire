@@ -26,7 +26,7 @@ public class WaterBullet : MonoBehaviour
     
     // information from player
     private Vector3 _previousPosition;          // the frame before this of the player position
-    private float _previousAngel;          // the frame before this of the player position
+    private float _previousAngle;          // the frame before this of the player position
     private Vector3 _previousStartPosition;     // the frame before this of the position of where the bullet should start
     private Vector3 _direction;     // the frame before this of the position of where the bullet should start
 
@@ -73,9 +73,9 @@ public class WaterBullet : MonoBehaviour
         
         // rotate
         var angle = Vector2.SignedAngle(playerLookAtDirection, Vector2.right);
-        if (!_previousAngel.Equals(angle))
-            _t.RotateAround(_previousPosition, Vector3.forward, angle - _previousAngel);
-        _previousAngel = angle;
+        if (!_previousAngle.Equals(angle))
+            _t.RotateAround(_previousPosition, Vector3.forward, angle - _previousAngle);
+        _previousAngle = angle;
 
 
         // reposition
@@ -253,9 +253,10 @@ public class WaterBullet : MonoBehaviour
         {
             col.GetComponent<FireMolotov>().Extinguish();
         }
-        else if (!col.attachedRigidbody.IsUnityNull())
+        else if (col.name.Equals("FireMan")) //!col.attachedRigidbody.IsUnityNull()))
         {
-            col.attachedRigidbody.AddForce(_direction * waterBulletPower * bulletSpeed, ForceMode2D.Force);
+            print("Triggered");
+            col.GetComponent<Rigidbody2D>().AddForce(_direction * waterBulletPower / 10 * bulletSpeed, ForceMode2D.Force);
         }
     }
     
@@ -277,10 +278,10 @@ public class WaterBullet : MonoBehaviour
         {
             col.GetComponent<FireMolotov>().Extinguish();
         }
-        else if (!col.attachedRigidbody.IsUnityNull())
-        {
-            col.attachedRigidbody.AddForce(_direction * waterBulletPower * bulletSpeed, ForceMode2D.Force);
-        }
+        // else if (col.name.Equals("FireMan")) //!col.attachedRigidbody.IsUnityNull())
+        // {
+        //     col.GetComponent<Rigidbody2D>().AddForce(_direction * waterBulletPower * bulletSpeed, ForceMode2D.Force);
+        // }
     }
 
     private void OnTriggerExit2D(Collider2D col)

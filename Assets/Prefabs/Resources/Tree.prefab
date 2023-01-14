@@ -115,7 +115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c0a497be0f18bf4f830e3540e589d50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numOfPoints: 0
+  numOfPoints: 1
   isHouse: 0
   isFireSource: 0
   initialTimeUntilBurnOut: 15

@@ -623,7 +623,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &298348378
 Transform:
   m_ObjectHideFlags: 0
@@ -632,7 +632,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 298348377}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.1, y: -0.1, z: 0}
+  m_LocalPosition: {x: -0.4, y: 0.4, z: 0}
   m_LocalScale: {x: 2.5, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -794,7 +794,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.3
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -847,7 +847,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 4
+      scalar: 6
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -1422,7 +1422,7 @@ ParticleSystem:
     m_TextureColorAffectsParticles: 1
     m_TextureAlphaAffectsParticles: 1
     m_TextureBilinearFiltering: 0
-    randomDirectionAmount: 0.2
+    randomDirectionAmount: 0.35
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
@@ -1545,7 +1545,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 50
+      scalar: 100
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -5550,7 +5550,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerText: {fileID: 1442118295}
-  gameTimeInSeconds: 120
+  gameTimeInSeconds: 300
   winPercent: 0.5
   fireMan: {fileID: 1121103925}
   extinguisher: {fileID: 1682657992}
@@ -5574,7 +5574,7 @@ MonoBehaviour:
   - 14.75,-13.5
   - 29,-13.5
   burnedHousesBar: {fileID: 0}
-  maxBurnedPoints: 10
+  maxBurnedPoints: 40
   GroundBaseTilemap: {fileID: 1337867454}
   WaterFireTilemap: {fileID: 1837429881}
   WaterTile: {fileID: 11400000, guid: d5c54c41ba3d1244eb1268bb05d1f127, type: 2}
@@ -8006,7 +8006,7 @@ GameObject:
   - component: {fileID: 1121103935}
   - component: {fileID: 1121103937}
   - component: {fileID: 1121103936}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: FireMan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8020,14 +8020,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1121103925}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -20.981, y: -1.158, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1818901675}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1121103928
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8127,7 +8127,7 @@ SpriteRenderer:
   m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 3fa38510b4510194fbfe2aeec6db6e0a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 1
+  m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 0.32, y: 0.32}

@@ -234,7 +234,7 @@ public class GameManager : Singleton<GameManager>
         burnedHousesBar.value = 0;
         var transform1 = burnedHousesBar.transform;
         var scale = transform1.localScale;
-        transform1.localScale = new Vector3(scale.x + 3, scale.y, 0);
+        transform1.localScale = new Vector3(scale.x + 3, scale.y + 2, 0);
 
         // ** houses **
         var housesParentTransform = housesParent.transform;

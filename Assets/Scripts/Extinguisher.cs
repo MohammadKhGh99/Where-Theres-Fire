@@ -35,6 +35,22 @@ public class Extinguisher : MonoBehaviour
     private Animator _animator;
     private SpriteRenderer _spriteRenderer;
 
+    private Vector2 _throwDirection;
+
+    // ** rotating and positioning particle system
+    private Quaternion _leftAngle = Quaternion.identity;
+    private Quaternion _rightAngle = Quaternion.Euler(0, 0, 180);
+    private Quaternion _downAngle = Quaternion.Euler(0, 0, 90);
+    private Quaternion _upAngle = Quaternion.Euler(0, 0, 270);
+    private Vector3 _leftPos = new(-0.4f, 0.4f, 0);
+    private Vector3 _rightPos = new(0.6f, 0.4f, 0);
+    private Vector3 _upPos = Vector3.up;
+
+    private float _prevRotation;
+    private Vector3 _prevWaterSplashPos;
+    
+    // private Vector2 _lookAtDirection;
+
 
     // Start is called before the first frame update
     void Start()
@@ -47,6 +63,9 @@ public class Extinguisher : MonoBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _lookAtDirection = Vector2.left;
         _startPosition = _t.position;
+        _moveDirection = _startPosition;
+        _throwDirection = Vector2.left;
+        _prevWaterSplashPos = _startPosition + 0.2f * Vector3.up + 0.2f * Vector3.right;
     }
 
     private void Update()
@@ -58,6 +77,7 @@ public class Extinguisher : MonoBehaviour
         // *** Movement ***
         var yDirection = Input.GetAxis("Vertical");
         var xDirection = Input.GetAxis("Horizontal");
+        // print(xDirection + " " + yDirection);
 
         if (!Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow) && 
             !Input.GetKey(KeyCode.DownArrow) && !Input.GetKey(KeyCode.UpArrow)) // && !Input.GetKey(Extinguish))
@@ -66,6 +86,28 @@ public class Extinguisher : MonoBehaviour
         }
         else
         {
+            // if (xDirection > 0)
+            //     // _waterSplash.transform.Rotate(Vector3.forward, 180);
+            // {
+            //     var transformRotation = _waterSplash.transform.rotation;
+            //     transformRotation.eulerAngles = _rightAngle;
+            // }
+            // else if (xDirection < 0)
+            // {
+            //     var transformRotation = _waterSplash.transform.rotation;
+            //     transformRotation.eulerAngles = _leftAngle;
+            // }
+
+            // _waterSplash.transform.Rotate(Vector3.forward, -180);
+            //     _waterSplash.transform.rotation = _leftAngle;
+            // else if (yDirection > 0 && xDirection == 0)
+            //     _waterSplash.transform.rotation = _upAngle;
+            // else if (yDirection < 0 && xDirection == 0)
+            //     _waterSplash.transform.rotation = _downAngle;
+            
+            _throwDirection.x = xDirection;
+            _throwDirection.y = yDirection;
+            
             _moveDirection.x = xDirection;
             _moveDirection.y = yDirection;
         }
@@ -76,6 +118,8 @@ public class Extinguisher : MonoBehaviour
         var snapping = fourDirection ? 90.0f : 45.0f;
         if (_moveDirection.sqrMagnitude > 0)
         {
+            RotatingAndPositioningWaterStream();
+            
             _isMoving = true;
             var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
             angle = Mathf.Round(angle / snapping) * snapping;
@@ -83,73 +127,25 @@ public class Extinguisher : MonoBehaviour
             // _moveDirection = Quaternion.AngleAxis( angle, Vector3.forward) * Vector3.right;
             _moveDirection = new Vector3(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad), 0);
             _lookAtDirection = _moveDirection;
-            if (_moveDirection.x >= 1) // moving right
-            {
-                if (!_spriteRenderer.flipX)
-                    _spriteRenderer.flipX = true;
-            }else if (_moveDirection.x <= -1) // moving left
-            {
-                if (_spriteRenderer.flipX)
-                    _spriteRenderer.flipX = false;
-            }
         }
         else
         {
             _isMoving = false;
-            
         }
-
-        // if (Input.GetKey(KeyCode.LeftArrow))
-        // {
-        //     _t.rotation = Quaternion.identity;
-        //     // _t.Rotate(Vector3.up, -180);
-        //     _animator.SetBool("ExtinguisherIdleLeft", false);
-        //     _animator.SetBool("ExtinguisherWalkingUp", false);
-        //     _animator.SetBool("ExtinguisherWalkingDown", false);
-        //     _animator.SetBool("ExtinguisherWalkingLeft", true);
-        // }
-        // else if (Input.GetKey(KeyCode.RightArrow))
-        // {
-        //     _t.Rotate(Vector3.up, 180);
-        //     _animator.SetBool("ExtinguisherIdleLeft", false);
-        //     _animator.SetBool("ExtinguisherWalkingUp", false);
-        //     _animator.SetBool("ExtinguisherWalkingDown", false);
-        //     _animator.SetBool("ExtinguisherWalkingLeft", true);
-        // }
-        // else if (Input.GetKey(KeyCode.UpArrow))
-        // {
-        //     _animator.SetBool("ExtinguisherIdleLeft", false);
-        //     _animator.SetBool("ExtinguisherWalkingLeft", false);
-        //     _animator.SetBool("ExtinguisherWalkingDown", false);
-        //     _animator.SetBool("ExtinguisherWalkingUp", true);
-        // }
-        // else if (Input.GetKey(KeyCode.DownArrow))
-        // {
-        //     _animator.SetBool("ExtinguisherIdleLeft", false);
-        //     _animator.SetBool("ExtinguisherWalkingLeft", false);
-        //     _animator.SetBool("ExtinguisherWalkingUp", false);
-        //     _animator.SetBool("ExtinguisherWalkingDown", true);
-        // }
-        // else if (!Input.GetKey(Extinguish))
-        // {
-        //     // _t.rotation = _lookAtDirection.x 
-        //     // _t.Rotate(Vector3.up, _lookAtDirection.x == 1 ? 180 : -180);
-        //     _animator.SetBool("ExtinguisherWalkingLeft", false);
-        //     _animator.SetBool("ExtinguisherWalkingUp", false);
-        //     _animator.SetBool("ExtinguisherWalkingDown", false);
-        //     _animator.SetBool("ExtinguisherIdleLeft", true);
-        // }
 
         // *** shooting ability ***
         if (Input.GetKey(Extinguish)) // we started holding the button
         {
-            _waterSplash.Play();
+            // _prevWaterSplashPos = _waterSplash.transform.position;
+            if (_waterSplash.isStopped)
+                _waterSplash.Play();
             _waterGun.EnlargeWaterStream(_t.position, _lookAtDirection, waterGunLocalPos.position, _waterKeyDown);
             _waterKeyDown = true;
         }
         else if (Input.GetKeyUp(Extinguish)) // we stopped clicking the button
         {
-            _waterSplash.Stop();
+            if (_waterSplash.isPlaying)
+                _waterSplash.Stop();
             _waterGun.ShootWaterStream();
             _waterKeyHoldingTime = 0f;
             _waterKeyDown = false;
@@ -163,6 +159,55 @@ public class Extinguisher : MonoBehaviour
     {
         // _rb.MovePosition(_rb.position + _moveDirection * (35.0f * Time.fixedDeltaTime));
         _rb.velocity = _moveDirection.normalized * (movingSpeed * Time.fixedDeltaTime);
+    }
+
+    private void RotatingAndPositioningWaterStream()
+    {
+        switch (_moveDirection.x)
+        {
+            // moving right
+            case > 0:
+            {
+                if (!_spriteRenderer.flipX)
+                    _spriteRenderer.flipX = true;
+                var temp = _waterSplash.transform;
+                temp.position = _t.position + _rightPos;
+                temp.rotation = _rightAngle;
+                break;
+            }
+            // moving left
+            case < 0:
+            {
+                if (_spriteRenderer.flipX)
+                    _spriteRenderer.flipX = false;
+                var temp = _waterSplash.transform;
+                temp.position = _t.position + _leftPos;
+                temp.rotation = _leftAngle;
+                break;
+            }
+            default:
+                switch (_moveDirection.y)
+                {
+                    // moving down
+                    case < 0:
+                    {
+                        var temp = _waterSplash.transform;
+                        temp.position = _t.position;
+                        temp.rotation = _downAngle;
+                        break;
+                    }
+                    // moving up
+                    case > 0:
+                    {
+                        var temp = _waterSplash.transform;
+                        temp.position = _t.position + _upPos;
+                        temp.rotation = _upAngle;
+                        break;
+                    }
+                }
+
+                break;
+        }
     }
 
     public void StartGame()

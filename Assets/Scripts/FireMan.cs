@@ -58,7 +58,7 @@ public class FireMan : MonoBehaviour
         _t = GetComponent<Transform>();
         _lookAtDirection = Vector2.zero;
         _throwDirection = Vector2.zero;
-        _currentGridPos = GameManager.Instance.GroundBaseTilemap.WorldToCell(transform.position);
+        _currentGridPos = GameManager.Instance.GroundBaseTilemap.WorldToCell(_t.position);
         _animator = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
         // _spriteRenderer.flipX = !_spriteRenderer.flipX;
@@ -78,6 +78,9 @@ public class FireMan : MonoBehaviour
         var yDirection = Input.GetAxisRaw("Vertical2");
         _moveDirection.x = xDirection;
         _moveDirection.y = yDirection;
+
+        
+        
         if(!moveByGrid)
             SnappingMovement();
         else
@@ -137,6 +140,8 @@ public class FireMan : MonoBehaviour
     
     private void GridMovement()
     {
+        var tempGridPos = _currentGridPos;
+        _currentGridPos = GameManager.Instance.GroundBaseTilemap.WorldToCell(_t.position);
         // Update the timer
         _gridMoveTimer += Time.deltaTime;
 
@@ -171,8 +176,8 @@ public class FireMan : MonoBehaviour
             _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: _forbiddenLayers);
             if(!_hit)
                 _currentGridPos.x += numGridMove;
-            if (!_spriteRenderer.flipX)
-                _spriteRenderer.flipX = true;
+            if (_spriteRenderer.flipX)
+                _spriteRenderer.flipX = false;
         }
         else if (Input.GetKeyDown(Left))
         {
@@ -181,8 +186,8 @@ public class FireMan : MonoBehaviour
             _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: _forbiddenLayers);
             if(!_hit)
                 _currentGridPos.x -= numGridMove;
-            if (_spriteRenderer.flipX)
-                _spriteRenderer.flipX = false;
+            if (!_spriteRenderer.flipX)
+                _spriteRenderer.flipX = true;
         }
         else //if (!Input.GetKeyDown(Fire))
         {
@@ -193,7 +198,8 @@ public class FireMan : MonoBehaviour
         // StartCoroutine(DelayForFireManMovement());
         
         // Update the position of the object in world space
-        _t.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos);
+        if (!_currentGridPos.Equals(tempGridPos))
+            _t.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos);
         // _t.position = Vector3.Lerp(_t.position, GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos), Time.deltaTime * speed);
         // }
     }
