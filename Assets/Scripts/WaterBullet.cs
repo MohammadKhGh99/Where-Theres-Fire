@@ -8,8 +8,6 @@ public class WaterBullet : MonoBehaviour
 {
     // components
     private Transform _t;
-    private BoxCollider2D _boxCollider;
-    [SerializeField] private LayerMask layerMask;
     
     // shooting force
     [SerializeField] private float waterBulletPower = 100f;
@@ -49,7 +47,6 @@ public class WaterBullet : MonoBehaviour
         if (!_hasInitialized)
         {
             _t = GetComponent<Transform>();
-            _boxCollider = GetComponent<BoxCollider2D>();
             _hasInitialized = true;
         }
         gameObject.SetActive(true);
@@ -128,7 +125,7 @@ public class WaterBullet : MonoBehaviour
             // var bulletDirection = new Vector3(Mathf.Cos(_previousAngel * Mathf.Deg2Rad), Mathf.Sin(_previousAngel * Mathf.Deg2Rad), 0);
             var bulletDirection = _direction;
             
-            RaycastHit2D hit = Physics2D.Raycast(_previousStartPosition, bulletDirection, _currentSizeX, layerMask);
+            RaycastHit2D hit = Physics2D.Raycast(_previousStartPosition, bulletDirection, _currentSizeX, GameManager.Instance.forbiddenLayers);
             if (!hit.collider.IsUnityNull())
             {
                 // our target shouldn't cross it, should stay at this size! or shrink a bit
@@ -163,7 +160,7 @@ public class WaterBullet : MonoBehaviour
         {
             var target = _diePosition;
             var tempStartPoint = _t.position - _direction * _currentSizeX / 2;  
-            RaycastHit2D hit = Physics2D.Raycast(tempStartPoint, _direction, _currentSizeX, layerMask);
+            RaycastHit2D hit = Physics2D.Raycast(tempStartPoint, _direction, _currentSizeX, GameManager.Instance.forbiddenLayers);
             if (!hit.collider.IsUnityNull())
             {
                 //  our target shouldn't cross it, should stay at this size! or shrink a bit

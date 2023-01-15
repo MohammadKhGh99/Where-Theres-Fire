@@ -38,7 +38,6 @@ public class FireMan : MonoBehaviour
     private const KeyCode Up = KeyCode.W, Down = KeyCode.S, Left = KeyCode.A, Right = KeyCode.D;
 
     private RaycastHit2D _hit;
-    private LayerMask _buildingsMask;
     
     //**Animation**
     private Animator _animator;
@@ -63,8 +62,7 @@ public class FireMan : MonoBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
         // _spriteRenderer.flipX = !_spriteRenderer.flipX;
         _hideable = GetComponent<Hideable>();
-        _forbiddenLayers = GameManager.Instance.HousesMask | GameManager.Instance.BordersMask |
-                           GameManager.Instance.TreesMask;
+        _forbiddenLayers = GameManager.Instance.forbiddenLayers;
     }
 
     private void Update()
@@ -221,22 +219,6 @@ public class FireMan : MonoBehaviour
 
     private IEnumerator StartFire(Vector3 molotovDropPos)
     {
-        var checkWhereDropCollider2D = Physics2D.OverlapPoint(molotovDropPos, layerMask: GameManager.Instance.HousesMask);
-        
-        if (checkWhereDropCollider2D.IsUnityNull())
-        {
-            // we will drop the molotovFire on street
-        }
-        else
-        {
-            // we will drop molotov fire at Building
-            // var building = checkWhereDropCollider2D.GetComponent<Flammable>();
-            // molotovDropPos = building.GetPosition();
-            // building.SetSelfOnFire();
-        }
-        
-        
-        
         var molotovFire = GameManager.Instance.FireMolotovPool.Get();
         molotovFire.Burn(molotovDropPos);
         
