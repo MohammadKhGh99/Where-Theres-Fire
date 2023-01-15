@@ -24,6 +24,7 @@ public class Flammable : MonoBehaviour
     private SpriteRenderer _spriteRenderer;
 
     // onFire and Extinguishing others variables
+    private float _currentHealth;
     private float _timeUntilBurnOut;
     [SerializeField] private float extinguishingSpeed;
     private bool _gettingExtinguished;
@@ -33,7 +34,6 @@ public class Flammable : MonoBehaviour
     [SerializeField] private float increaseChancePercentage = 5f;
     private float _currentChanceOfInflammation;
 
-
     // objects around us and radius to capture them
     [SerializeField] private float ratioOfRadiusBySize = 4f;
     private float _maxDistanceFromOrigin;
@@ -41,17 +41,16 @@ public class Flammable : MonoBehaviour
     private SortedList<float, Flammable> _objectsAroundUsSorted;
     private bool _inOrder;
     private bool _notFoundSomethingToBurn;
-
-
+    
     // burning objects around us
     [SerializeField] private float cooldownToBurn = 3f;
     private float _passedTimeForCooldown;
     
     // health bar
-    private GameObject _healthBar;
     private Image _healthBarImage;
+    private Image _healthBarBorder;
     private Slider _healthBarObj;
-    private Color _healthBarColor;
+    private bool isImageVisible;
     
 
 
@@ -69,25 +68,19 @@ public class Flammable : MonoBehaviour
         _objectsAroundUs = new HashSet<Flammable>();
         _objectsAroundUsSorted = new SortedList<float, Flammable>();
 
-        // initializing health bar
-        if (!_healthBar.IsUnityNull())
-        {
-            _healthBarObj = _healthBar.GetComponent<Slider>();
-            _healthBarObj.maxValue = initialTimeUntilBurnOut;
-            _healthBarObj.value = initialTimeUntilBurnOut;
-            _healthBarImage = _healthBarObj.transform.GetChild(0).GetComponent<Image>();
-            _healthBarColor = _healthBarImage.color;
-        }
-        
         if (isFireSource)
         {
             _currentChanceOfInflammation = 0;
             _timeUntilBurnOut = Mathf.Infinity;
+            _currentHealth = Mathf.Infinity;
         }
         else
         {
+            InitializeHealthBar();
+
             _currentChanceOfInflammation = initialChanceOfInflammation;
             _timeUntilBurnOut = initialTimeUntilBurnOut;
+            _currentHealth = initialTimeUntilBurnOut;
         }
         
         CurrentStatus = Status.NotOnFire;
@@ -101,7 +94,45 @@ public class Flammable : MonoBehaviour
         // *** experimental testing ***
         _inOrder = true;
     }
-    
+
+    private void InitializeHealthBar()
+    {
+        // get size of _sprite
+        var bounds = _spriteRenderer.bounds;
+        var healthBarPos= bounds.center + Vector3.up * bounds.extents.y;
+        
+        
+        var healthBar = Instantiate(Resources.Load("HealthBar"), healthBarPos,
+            Quaternion.identity, GameManager.Instance.barsParent) as GameObject;
+        
+        // putting the healthbar at specific location with specific size!
+        var rectTransform = healthBar.GetComponent<RectTransform>();
+        var percentageToKeepInMind = rectTransform.lossyScale.x;
+        rectTransform.position += (Vector3.up * GameManager.HealthBarHeight / 2)*percentageToKeepInMind;
+        var healthBarWidthPercentage = (GameManager.HealthBarWidthPercentage/100 * bounds.size.x)/percentageToKeepInMind;
+        rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, healthBarWidthPercentage);
+        rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, GameManager.HealthBarHeight);
+        
+        // some initializings
+        _healthBarObj = healthBar.GetComponent<Slider>();
+        _healthBarObj.maxValue = initialTimeUntilBurnOut;
+        _healthBarObj.value = initialTimeUntilBurnOut;
+        _healthBarImage = _healthBarObj.transform.GetChild(0).GetComponent<Image>();
+        _healthBarBorder = _healthBarObj.transform.GetChild(1).GetComponent<Image>();
+        
+        // making the healthbar hidden until first shot:
+        isImageVisible = false;
+        MakeImageInvisibleOrVisible(_healthBarImage, false);
+        MakeImageInvisibleOrVisible(_healthBarBorder, false);
+
+    }
+
+    private static void MakeImageInvisibleOrVisible(Image image, bool makeVisible)
+    {
+        float visibility = makeVisible ? 1 : 0;
+        image.color = new Color(image.color.r, image.color.g, image.color.b, visibility);
+    }
+
     private Vector2 GetSizeOfArea()
     {
         var objectSize = _collider.bounds.size;
@@ -114,9 +145,8 @@ public class Flammable : MonoBehaviour
         if (!CurrentStatus.Equals(Status.OnFire)) return;
         
         _timeUntilBurnOut -= Time.deltaTime;
-        if (isHouse)
-            _healthBarObj.value -= Time.deltaTime;
-        if (_timeUntilBurnOut <= 0f)
+        
+        if (_currentHealth <= 0f)
         {
             // the object is completely burnt!
             CurrentStatus = Status.FinishedBurning;
@@ -170,6 +200,20 @@ public class Flammable : MonoBehaviour
         {
             GettingExtinguished();
         }
+        else
+        {
+            _currentHealth -= Time.deltaTime;       // we decrease the health only if we are on fire without being extinguished
+            if (!isFireSource)
+            {
+                _healthBarObj.value = _currentHealth;
+                if (!isImageVisible)
+                {
+                    isImageVisible = true;
+                    MakeImageInvisibleOrVisible(_healthBarImage, true);
+                    MakeImageInvisibleOrVisible(_healthBarBorder, true);
+                }
+            }
+        }
     }
 
 
@@ -186,25 +230,11 @@ public class Flammable : MonoBehaviour
     private void ChangingSpriteColorBecauseOfFireOrWater()
     {
         _spriteRenderer.color = Color.Lerp(_spriteRenderer.color, Color.black, Time.deltaTime / _timeUntilBurnOut);
-        if (!isHouse) return;
+        if (isFireSource) return;
         if (CurrentStatus.Equals(Status.OnFire))
             _healthBarImage.color = Color.Lerp(_healthBarImage.color, Color.red, Time.deltaTime / _timeUntilBurnOut);
-        else
-            _healthBarImage.color = Color.Lerp(_healthBarImage.color, _healthBarColor, Time.deltaTime / _timeUntilBurnOut);
-        // _healthBarObj.value -= Time.deltaTime;
     }
     
-    public void SetHealthBar(GameObject other)
-    {
-        _healthBar = other;
-        _healthBarObj = _healthBar.GetComponent<Slider>();
-        _healthBarObj.maxValue = initialTimeUntilBurnOut;
-        _healthBarObj.value = initialTimeUntilBurnOut;
-        _healthBarImage = _healthBarObj.transform.GetChild(0).GetComponent<Image>();
-        _healthBarColor = _healthBarImage.color;
-    }
-
-
     public bool TryToBurn(int chanceFromDistance, int chanceFromBurnTime)
     {
         // this is the main function that other people call when they try to burn object.
@@ -242,8 +272,6 @@ public class Flammable : MonoBehaviour
     private void GettingExtinguished()
     {
         _timeUntilBurnOut += Time.deltaTime * extinguishingSpeed;
-        if (!_healthBar.IsUnityNull())
-            _healthBarObj.value += Time.deltaTime * extinguishingSpeed;
         if (!(_timeUntilBurnOut >= initialTimeUntilBurnOut)) return;
         // we watered the object
         initialTimeUntilBurnOut = _timeUntilBurnOut;
@@ -251,11 +279,11 @@ public class Flammable : MonoBehaviour
         CurrentStatus = Status.NotOnFire;
     }
 
-    public Vector2 GetPosition()
+    private void AddFireOnObject()
     {
-        return _t.position;
+        
     }
-
+    
     private void GetFlammableObjectsAroundUs()
     {
         var area = GetSizeOfArea();

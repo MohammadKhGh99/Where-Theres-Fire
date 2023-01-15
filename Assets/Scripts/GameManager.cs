@@ -28,8 +28,8 @@ public class GameManager : Singleton<GameManager>
 
 
     //  **** Housing.. ****
-    [SerializeField] private GameObject housesParent;    // where to store the houses Parent
-    [SerializeField] private GameObject barsParent;
+    [SerializeField] private Transform housesParent;    // where to store the houses Parent
+    public Transform barsParent;
     [SerializeField] private bool controlHousesPos;
 
     [SerializeField] private string[] housesPositions =
@@ -69,16 +69,6 @@ public class GameManager : Singleton<GameManager>
 
 
     //  *** Constants ***:
-    // buildingStatus
-    public enum HouseStatus
-    {
-        Normal,
-        Burning,
-        Burned,
-        Watering,
-        WasBurned
-    }
-
     // WaterBullet Stasuses
     public enum WaterBulletStatus
     {
@@ -108,6 +98,11 @@ public class GameManager : Singleton<GameManager>
     private Flammable[] _houses;
     public Slider burnedHousesBar;
     [SerializeField] private float maxBurnedPoints = 10;
+
+
+    // *** HealthBar Info. ****
+    public const float HealthBarHeight = 10f;
+    public const float HealthBarWidthPercentage = 75f;
 
 
     // **** TileMap and Tiles ****
@@ -221,6 +216,31 @@ public class GameManager : Singleton<GameManager>
     {
         Destroy(fireMolotov.gameObject);
     }
+    
+    // **** "FireObject" pool and functions ****
+    public ObjectPool<FireObject> FireObjectPool =
+        new(CreateFireObject, OnGetFireObject, OnReleaseFireObject, OnDestroyFireObject, false, 15, 20);
+
+    private static FireObject CreateFireObject()
+    {
+        var fireObject = Instantiate(Resources.Load("FireObject")) as GameObject;
+        return fireObject.GetComponent<FireObject>();
+    }
+
+    private static void OnGetFireObject(FireObject fireObject)
+    {
+        fireObject.FakeStart();
+    }
+
+    private static void OnReleaseFireObject(FireObject fireObject)
+    {
+        fireObject.FakeRelease();
+    }
+
+    private static void OnDestroyFireObject(FireObject fireObject)
+    {
+        Destroy(fireObject.gameObject);
+    }
 
     void Start()
     {
@@ -237,23 +257,7 @@ public class GameManager : Singleton<GameManager>
         transform1.localScale = new Vector3(scale.x + 3, scale.y + 2, 0);
 
         // ** houses **
-        var housesParentTransform = housesParent.transform;
-        _numHouses = housesParentTransform.childCount;
-        _houses = new Flammable[_numHouses];
-        for (var i = 0; i < _numHouses; i++)
-        {
-            _houses[i] = housesParentTransform.GetChild(i).GetComponent<Flammable>();
-            var healthBar = Instantiate(Resources.Load("HealthBar"), _houses[i].transform.position + Vector3.up * 2.3f,
-                Quaternion.identity, barsParent.transform) as GameObject;
-            if (healthBar == null)
-            {
-                throw new NullReferenceException("There is no Health Bar in the Prefabs!");
-            }
-
-            _houses[i].SetHealthBar(healthBar);
-            // print("HealthBarSetted!");
-        }
-
+        _numHouses = housesParent.childCount;
         InitializeGame();
 
         // getting the canvas and images of the start and end screens...
@@ -294,7 +298,7 @@ public class GameManager : Singleton<GameManager>
             float x = float.Parse(temp[0]), y = float.Parse(temp[1]);
             var curPos = new Vector3(x, y, 0);
             var houseType = _housesTypes[Random.Range(0, 2)];
-            Instantiate(Resources.Load(houseType), curPos, Quaternion.identity, housesParent.transform);
+            Instantiate(Resources.Load(houseType), curPos, Quaternion.identity, housesParent);
         }
     }
 

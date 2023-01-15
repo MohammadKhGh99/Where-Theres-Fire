@@ -230,9 +230,9 @@ public class FireMan : MonoBehaviour
         else
         {
             // we will drop molotov fire at Building
-            var building = checkWhereDropCollider2D.GetComponent<Flammable>();
-            molotovDropPos = building.GetPosition();
-            building.SetSelfOnFire();
+            // var building = checkWhereDropCollider2D.GetComponent<Flammable>();
+            // molotovDropPos = building.GetPosition();
+            // building.SetSelfOnFire();
         }
         
         
