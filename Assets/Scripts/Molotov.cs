@@ -36,7 +36,8 @@ public class Molotov : MonoBehaviour
     
     // initializing and Statuses
     private bool _hasInitialized = false;
-    
+    private RaycastHit2D _hit;
+
     public void FakeStart()
     {
         // if we already did this, don't do it again (just to make the code a bit faster :#
@@ -56,7 +57,16 @@ public class Molotov : MonoBehaviour
         // Initializing things before shooting
         _startPos = position;
         _t.position = _startPos;
-        _targetPos = molotovTravelDistance * throwDirection + _startPos;
+        
+        _hit = Physics2D.Raycast(_t.position, throwDirection, molotovTravelDistance, GameManager.Instance.forbiddenLayers);
+        if (!_hit)
+        {
+            _targetPos = molotovTravelDistance * throwDirection + _startPos;
+        }
+        else
+        {
+            _targetPos = _hit.point;
+        }
 
         //  shoot now!
         _hasBeenShot = true;

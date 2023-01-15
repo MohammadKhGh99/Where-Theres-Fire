@@ -80,12 +80,14 @@ public class GameManager : Singleton<GameManager>
     }
 
 
-    // Houses mask
-    public LayerMask HousesMask { get; private set; }
-    // Borders mask
-    public LayerMask BordersMask { get; private set; }
-    // Trees mask
-    public LayerMask TreesMask { get; private set; }
+    // // Houses mask
+    // public LayerMask HousesMask { get; private set; }
+    // // Borders mask
+    // public LayerMask BordersMask { get; private set; }
+    // // Trees mask
+    // public LayerMask TreesMask { get; private set; }
+    
+    [SerializeField] public LayerMask forbiddenLayers;
 
     // Burned Building
     public static int NumBurnedHouses = 0;
@@ -283,11 +285,6 @@ public class GameManager : Singleton<GameManager>
 
         // ** the game didn't start yet **
         IsGameRunning = false;
-
-        HousesMask = LayerMask.GetMask("Houses");
-        BordersMask = LayerMask.GetMask("Borders");
-        TreesMask =  LayerMask.GetMask("Trees");
-
         _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
         if (!controlHousesPos)
             return;

@@ -123,7 +123,7 @@ MonoBehaviour:
   extinguishingSpeed: 20
   increaseChancePercentage: 5
   ratioOfRadiusBySize: 4
-  cooldownToBurn: 2
+  cooldownToBurn: 1
   timeBetweenAddingNewFire: 3
 --- !u!50 &4927365285428662755
 Rigidbody2D:
