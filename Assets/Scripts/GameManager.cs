@@ -420,7 +420,7 @@ public class GameManager : Singleton<GameManager>
     {
         Color c = text.color;
 
-        for (float i = 0.25f; i >= 0; i -= Time.deltaTime)
+        for (float i = 0.5f; i >= 0; i -= Time.deltaTime)
         {
             text.color = new Color(c.r, c.g, c.b, i * 4);
             yield return null;
@@ -434,7 +434,7 @@ public class GameManager : Singleton<GameManager>
     {
         text.enabled = true;
         Color c = text.color;
-        for (float i = 0; i <= 0.25f; i += Time.deltaTime)
+        for (float i = 0; i <= 0.5f; i += Time.deltaTime)
         {
             text.color = new Color(c.r, c.g, c.b, i * 4);
             yield return null;

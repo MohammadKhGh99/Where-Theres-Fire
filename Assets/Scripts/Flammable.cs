@@ -62,7 +62,9 @@ public class Flammable : MonoBehaviour
 
     // ** points on burn out **
     private TextMeshProUGUI _points;
-    private float _pointsTravelY = 3;
+    // private float _pointsTravelY = 3;
+    private float _targetPointsX = -19;
+    private float _targetPointsY = -19;
 
     // current status
     public enum Status
@@ -172,20 +174,21 @@ public class Flammable : MonoBehaviour
 
     private void Update()
     {
-        if (!_points.IsUnityNull() && _points.enabled && _pointsTravelY > 0)
+        if (!_points.IsUnityNull() && _points.enabled)
         {
-            print("Hello1");
-            _points.transform.position += 0.05f * Vector3.up;
-            _pointsTravelY -= 0.05f;
-        }
-        else if (!_points.IsUnityNull() && _pointsTravelY <= 0)
-        {
-            print("Hello");
-            StartCoroutine(GameManager.Instance.FadeOut(_points));
+            var temp = _points.transform.position; 
+            if (temp.x > _targetPointsX && temp.y > _targetPointsY)
+            {
+                _points.transform.position = Vector3.MoveTowards(temp,  _targetPointsY * Vector3.up + 
+                    _targetPointsX * Vector3.right, 0.2f);
+            }
+            else
+            {
+                StartCoroutine(GameManager.Instance.FadeOut(_points));
+            }
         }
 
         if (!CurrentStatus.Equals(Status.OnFire)) return;
-
 
         _timeUntilBurnOut -= Time.deltaTime;
         _currentTimerToAddReleaseFire += Time.deltaTime;
@@ -298,8 +301,11 @@ public class Flammable : MonoBehaviour
     private void BurnedOutEffectAndPoints()
     {
         _spriteRenderer.color = Color.black;
-        GameManager.Instance.burnedHousesBar.value += numOfPoints;
-        _points.text = "-" + numOfPoints;
+        print("bar process");
+        GameManager.Instance.burnedHousesBar.value = Mathf.Lerp(GameManager.Instance.burnedHousesBar.value, 
+            GameManager.Instance.burnedHousesBar.value + numOfPoints, Time.deltaTime * 2);
+        // GameManager.Instance.burnedHousesBar.value += numOfPoints;
+        _points.text = "+" + numOfPoints;
         StartCoroutine(GameManager.Instance.FadeIn(_points));
         if (isHouse)
         {
