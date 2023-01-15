@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -112,7 +113,10 @@ public class GameManager : Singleton<GameManager>
     public Tilemap WaterFireTilemap; 
     public RuleTile WaterTile;
     public TileBase GroundTile;
-
+    
+    // *** Burned Points ***
+    public int numBurnedPoints;
+    [SerializeField] private TextMeshProUGUI burnedPointsText;
 
     // **** "Molotov" pool and functions ****
     public const float MolotovCooldownTime = 0f;
@@ -246,7 +250,7 @@ public class GameManager : Singleton<GameManager>
 
     void Start()
     {
-        var temp = Instantiate(Resources.Load("HealthBar"), new Vector3(-22, 0, 0), Quaternion.identity,
+        var temp = Instantiate(Resources.Load("HealthBar"), new Vector3(-22.5f, 0, 0), Quaternion.identity,
             barsParent.transform) as GameObject;
         if (temp == null)
             throw new NullReferenceException("You cannot build new burned points bar, there is no such bar in Prefabs!");
@@ -256,7 +260,7 @@ public class GameManager : Singleton<GameManager>
         burnedHousesBar.value = 0;
         var transform1 = burnedHousesBar.transform;
         var scale = transform1.localScale;
-        transform1.localScale = new Vector3(scale.x + 3, scale.y + 2, 0);
+        transform1.localScale = new Vector3(scale.x + 2, scale.y + 2, 0);
 
         // ** houses **
         _numHouses = housesParent.childCount;
@@ -275,6 +279,8 @@ public class GameManager : Singleton<GameManager>
         _imageFireWon = _fireWonCanvas.GetComponent<Transform>().GetChild(0).GetComponent<Image>();
 
         _initialTextScale = timerText.transform.localScale;
+
+        burnedPointsText.text = numBurnedPoints + "/" + maxBurnedPoints;
     }
 
     private void InitializeGame()
@@ -346,7 +352,7 @@ public class GameManager : Singleton<GameManager>
             // ** fire man won **
             var allBurned = _currentSeconds < _gameTimer && NumBurnedHouses == _numHouses;
             var winPercentReached = _currentSeconds >= _gameTimer && (float)NumBurnedHouses / _numHouses >= winPercent;
-            if (allBurned || winPercentReached)
+            if (allBurned || winPercentReached || numBurnedPoints >= maxBurnedPoints)
             {
                 StartCoroutine(FadeOut(_imageStartGame));
                 StartCoroutine(FadeIn(_imageFireWon));
@@ -417,7 +423,7 @@ public class GameManager : Singleton<GameManager>
     {
         Color c = text.color;
 
-        for (float i = 0.5f; i >= 0; i -= Time.deltaTime)
+        for (float i = 0.25f; i >= 0; i -= Time.deltaTime)
         {
             text.color = new Color(c.r, c.g, c.b, i * 4);
             yield return null;
@@ -431,7 +437,7 @@ public class GameManager : Singleton<GameManager>
     {
         text.enabled = true;
         Color c = text.color;
-        for (float i = 0; i <= 0.5f; i += Time.deltaTime)
+        for (float i = 0; i <= 0.25f; i += Time.deltaTime)
         {
             text.color = new Color(c.r, c.g, c.b, i * 4);
             yield return null;
@@ -464,5 +470,11 @@ public class GameManager : Singleton<GameManager>
         }
 
         spriteRenderer.color = new Color(c.r, c.g, c.b, 1);
+    }
+
+    public void UpdateCurBurnedPoints()
+    {
+        burnedPointsText.text = numBurnedPoints + "/" + maxBurnedPoints;
+        burnedHousesBar.value = numBurnedPoints;
     }
 }

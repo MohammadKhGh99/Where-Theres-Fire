@@ -11,7 +11,7 @@ using Unity.VisualScripting;
 public class Flammable : MonoBehaviour
 {
     // points on item
-    [SerializeField] private float numOfPoints;
+    [SerializeField] private int numOfPoints;
     [SerializeField] private bool isHouse;
 
     // initializing variables
@@ -63,8 +63,8 @@ public class Flammable : MonoBehaviour
     // ** points on burn out **
     private TextMeshProUGUI _points;
     // private float _pointsTravelY = 3;
-    private float _targetPointsX = -19;
-    private float _targetPointsY = -19;
+    private float _targetPointsX = -20.5f;
+    private float _targetPointsY = -7;
 
     // current status
     public enum Status
@@ -301,10 +301,13 @@ public class Flammable : MonoBehaviour
     private void BurnedOutEffectAndPoints()
     {
         _spriteRenderer.color = Color.black;
-        print("bar process");
-        GameManager.Instance.burnedHousesBar.value = Mathf.Lerp(GameManager.Instance.burnedHousesBar.value, 
-            GameManager.Instance.burnedHousesBar.value + numOfPoints, Time.deltaTime * 2);
-        // GameManager.Instance.burnedHousesBar.value += numOfPoints;
+        // print(GameManager.Instance.burnedHousesBar.value);
+        // print("bar process");
+        // GameManager.Instance.burnedHousesBar.value = Mathf.Lerp(GameManager.Instance.burnedHousesBar.value, 
+        //     GameManager.Instance.burnedHousesBar.value + numOfPoints, Time.deltaTime);
+        GameManager.Instance.numBurnedPoints += numOfPoints;
+        GameManager.Instance.UpdateCurBurnedPoints();
+        // print(GameManager.Instance.burnedHousesBar.value);
         _points.text = "+" + numOfPoints;
         StartCoroutine(GameManager.Instance.FadeIn(_points));
         if (isHouse)
