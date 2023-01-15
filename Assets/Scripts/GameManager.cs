@@ -415,6 +415,32 @@ public class GameManager : Singleton<GameManager>
         spriteRenderer.enabled = false;
         // image.gameObject.SetActive(false);
     }
+    
+    public IEnumerator FadeOut(TextMeshProUGUI text)
+    {
+        Color c = text.color;
+
+        for (float i = 0.25f; i >= 0; i -= Time.deltaTime)
+        {
+            text.color = new Color(c.r, c.g, c.b, i * 4);
+            yield return null;
+        }
+
+        text.enabled = false;
+        // image.gameObject.SetActive(false);
+    }
+    
+    public IEnumerator FadeIn(TextMeshProUGUI text)
+    {
+        text.enabled = true;
+        Color c = text.color;
+        for (float i = 0; i <= 0.25f; i += Time.deltaTime)
+        {
+            text.color = new Color(c.r, c.g, c.b, i * 4);
+            yield return null;
+        }
+        text.color = new Color(c.r, c.g, c.b, 1);
+    }
 
     // function that make fade in effect on image
     private IEnumerator FadeIn(Image image)

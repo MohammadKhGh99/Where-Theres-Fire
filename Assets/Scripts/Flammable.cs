@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -28,7 +29,7 @@ public class Flammable : MonoBehaviour
     private float _timeUntilBurnOut;
     [SerializeField] private float extinguishingSpeed;
     private bool _gettingExtinguished;
-    
+
     // NotOnFire variables
     [SerializeField] private float increaseChancePercentage = 5f;
     private float _currentChanceOfInflammation;
@@ -40,32 +41,39 @@ public class Flammable : MonoBehaviour
     private SortedList<float, Flammable> _objectsAroundUsSorted;
     private bool _inOrder;
     private bool _notFoundSomethingToBurn;
-    
+
     // burning objects around us
     [SerializeField] private float cooldownToBurn = 3f;
     private float _passedTimeForCooldown;
-    
+
     // health bar
     private Image _healthBarImage;
     private Image _healthBarBorder;
     private Slider _healthBarObj;
     private bool _isImageVisible;
-    
+
     // adding fire object to flammable image
     [SerializeField] private float timeBetweenAddingNewFire = 5f;
     private float _currentTimerToAddReleaseFire;
     private float _addFireTime;
     private float _releaseFireTime;
     private Bounds _bounds;
-    private HashSet<FireObject> _firesOnImage = new ();
+    private HashSet<FireObject> _firesOnImage = new();
 
-
+    // ** points on burn out **
+    private TextMeshProUGUI _points;
+    private float _pointsTravelY = 3;
 
     // current status
-    public enum Status { NotOnFire, OnFire, FinishedBurning }
+    public enum Status
+    {
+        NotOnFire,
+        OnFire,
+        FinishedBurning
+    }
 
     public Status CurrentStatus { get; set; }
-    
+
     private void Start()
     {
         _t = GetComponent<Transform>();
@@ -75,7 +83,7 @@ public class Flammable : MonoBehaviour
         _objectsAroundUs = new HashSet<Flammable>();
         _objectsAroundUsSorted = new SortedList<float, Flammable>();
         _bounds = _spriteRenderer.bounds;
-        
+
         // adding fire object
         _addFireTime = 0f;
         _currentTimerToAddReleaseFire = 0f;
@@ -89,51 +97,64 @@ public class Flammable : MonoBehaviour
         }
         else
         {
+            _bounds = _spriteRenderer.bounds;
             InitializeHealthBar();
+            InitializePointsText();
 
             _currentChanceOfInflammation = initialChanceOfInflammation;
             _timeUntilBurnOut = initialTimeUntilBurnOut;
             _currentHealth = initialTimeUntilBurnOut;
-            
+
             GetFlammableObjectsAroundUs();
         }
-        
+
         CurrentStatus = Status.NotOnFire;
-        
+
         // *** experimental testing ***
         _inOrder = true;
+    }
+
+    private void InitializePointsText()
+    {
+        var pointsPos = _bounds.center + Vector3.up * _bounds.extents.y + 2 * Vector3.right;
+        var temp = Instantiate(Resources.Load("Points"), pointsPos, Quaternion.identity,
+            GameManager.Instance.barsParent) as GameObject;
+        if (temp == null)
+            throw new NullReferenceException("There is not Prefab for points text!");
+        _points = temp.GetComponent<TextMeshProUGUI>();
+        _points.enabled = false;
     }
 
     private void InitializeHealthBar()
     {
         // get size of _sprite
-        _bounds = _spriteRenderer.bounds;
-        var healthBarPos= _bounds.center + Vector3.up * _bounds.extents.y;
-        
-        
+
+        var healthBarPos = _bounds.center + Vector3.up * _bounds.extents.y;
+
+
         var healthBar = Instantiate(Resources.Load("HealthBar"), healthBarPos,
             Quaternion.identity, GameManager.Instance.barsParent) as GameObject;
-        
+
         // putting the healthbar at specific location with specific size!
         var rectTransform = healthBar.GetComponent<RectTransform>();
         var percentageToKeepInMind = rectTransform.lossyScale.x;
-        rectTransform.position += (Vector3.up * GameManager.HealthBarHeight / 2)*percentageToKeepInMind;
-        var healthBarWidthPercentage = (GameManager.HealthBarWidthPercentage/100 * _bounds.size.x)/percentageToKeepInMind;
+        rectTransform.position += (Vector3.up * GameManager.HealthBarHeight / 2) * percentageToKeepInMind;
+        var healthBarWidthPercentage =
+            (GameManager.HealthBarWidthPercentage / 100 * _bounds.size.x) / percentageToKeepInMind;
         rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, healthBarWidthPercentage);
         rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, GameManager.HealthBarHeight);
-        
+
         // some initializings
         _healthBarObj = healthBar.GetComponent<Slider>();
         _healthBarObj.maxValue = initialTimeUntilBurnOut;
         _healthBarObj.value = initialTimeUntilBurnOut;
         _healthBarImage = _healthBarObj.transform.GetChild(0).GetComponent<Image>();
         _healthBarBorder = _healthBarObj.transform.GetChild(1).GetComponent<Image>();
-        
+
         // making the healthbar hidden until first shot:
         _isImageVisible = false;
         MakeImageInvisibleOrVisible(_healthBarImage, false);
         MakeImageInvisibleOrVisible(_healthBarBorder, false);
-
     }
 
     private static void MakeImageInvisibleOrVisible(Image image, bool makeVisible)
@@ -148,14 +169,27 @@ public class Flammable : MonoBehaviour
         objectSize += objectSize / ratioOfRadiusBySize;
         return objectSize;
     }
-    
+
     private void Update()
     {
+        if (!_points.IsUnityNull() && _points.enabled && _pointsTravelY > 0)
+        {
+            print("Hello1");
+            _points.transform.position += 0.05f * Vector3.up;
+            _pointsTravelY -= 0.05f;
+        }
+        else if (!_points.IsUnityNull() && _pointsTravelY <= 0)
+        {
+            print("Hello");
+            StartCoroutine(GameManager.Instance.FadeOut(_points));
+        }
+
         if (!CurrentStatus.Equals(Status.OnFire)) return;
-        
+
+
         _timeUntilBurnOut -= Time.deltaTime;
         _currentTimerToAddReleaseFire += Time.deltaTime;
-        
+
         if (_currentHealth <= 0f)
         {
             // the object is completely burnt!
@@ -173,7 +207,7 @@ public class Flammable : MonoBehaviour
         }
 
         ChangingSpriteColorBecauseOfFireOrWater();
-        
+
         // burn something around you
         if (_passedTimeForCooldown >= cooldownToBurn)
         {
@@ -191,14 +225,16 @@ public class Flammable : MonoBehaviour
             // we can now try to burn something around us
             if (_inOrder)
             {
-                foreach (var (distance, otherFlameScript) in _objectsAroundUsSorted)    // todo make sure we go from negative (small) to positive (big)
+                foreach (var (distance, otherFlameScript) in
+                         _objectsAroundUsSorted) // todo make sure we go from negative (small) to positive (big)
                 {
                     if (!otherFlameScript.CurrentStatus.Equals(Status.NotOnFire)) continue;
-                        
+
                     // we want this, try to burn it!, else move to another one.. (distance < _maxDistanceFromOrigin)
                     var chanceFromDistance = (int)((1 - distance / _maxDistanceFromOrigin) * 100);
 
-                    otherFlameScript.TryToBurn(chanceFromDistance, chanceFromBurnTime);     // true if it burned, false if not
+                    otherFlameScript.TryToBurn(chanceFromDistance,
+                        chanceFromBurnTime); // true if it burned, false if not
                 }
             }
             else
@@ -206,12 +242,13 @@ public class Flammable : MonoBehaviour
                 foreach (var otherFlameScript in _objectsAroundUs)
                 {
                     if (!otherFlameScript.CurrentStatus.Equals(Status.NotOnFire)) continue;
-                        
+
                     // we want this, try to burn it!, else move to another one..
-                    otherFlameScript.TryToBurn(50, chanceFromBurnTime);     // true if it burned, false if not
+                    otherFlameScript.TryToBurn(50, chanceFromBurnTime); // true if it burned, false if not
                 }
             }
         }
+
         _passedTimeForCooldown += Time.deltaTime;
 
         if (_gettingExtinguished)
@@ -220,7 +257,8 @@ public class Flammable : MonoBehaviour
         }
         else
         {
-            _currentHealth -= Time.deltaTime;       // we decrease the health only if we are on fire without being extinguished
+            _currentHealth -=
+                Time.deltaTime; // we decrease the health only if we are on fire without being extinguished
             if (!isFireSource)
             {
                 _healthBarObj.value = _currentHealth;
@@ -249,6 +287,7 @@ public class Flammable : MonoBehaviour
                 _releaseFireTime = _currentTimerToAddReleaseFire - timeBetweenAddingNewFire;
 
                 var fire = _firesOnImage.LastOrDefault();
+                if (fire.IsUnityNull()) return;
                 _firesOnImage.Remove(fire);
                 GameManager.Instance.FireObjectPool.Release(fire);
             }
@@ -260,6 +299,8 @@ public class Flammable : MonoBehaviour
     {
         _spriteRenderer.color = Color.black;
         GameManager.Instance.burnedHousesBar.value += numOfPoints;
+        _points.text = "-" + numOfPoints;
+        StartCoroutine(GameManager.Instance.FadeIn(_points));
         if (isHouse)
         {
             GameManager.NumBurnedHouses++;
@@ -273,7 +314,7 @@ public class Flammable : MonoBehaviour
         if (CurrentStatus.Equals(Status.OnFire))
             _healthBarImage.color = Color.Lerp(_healthBarImage.color, Color.red, Time.deltaTime / _timeUntilBurnOut);
     }
-    
+
     public bool TryToBurn(int chanceFromDistance, int chanceFromBurnTime)
     {
         // this is the main function that other people call when they try to burn object.
@@ -282,23 +323,24 @@ public class Flammable : MonoBehaviour
         if (isFireSource)
             return false;
 
-        var realChance = (chanceFromDistance * 2 + _currentChanceOfInflammation * 2 + chanceFromBurnTime) / 5.0f; 
+        var realChance = (chanceFromDistance * 2 + _currentChanceOfInflammation * 2 + chanceFromBurnTime) / 5.0f;
         if (Random.Range(0, 100) <= realChance)
         {
             // this object will get burned, call function that will make it burn, 
             SetSelfOnFire();
             return true;
         }
+
         _currentChanceOfInflammation = Mathf.Min(increaseChancePercentage + _currentChanceOfInflammation, 100);
         return false;
     }
-    
-    
+
+
     public void SetSelfOnFire()
     {
         // now set it on fire 
         // todo things to make this object on fire, maybe call something from real code? idk
-        if(isFireSource)
+        if (isFireSource)
             GetFlammableObjectsAroundUs();
         CurrentStatus = Status.OnFire;
     }
@@ -307,7 +349,7 @@ public class Flammable : MonoBehaviour
     {
         _gettingExtinguished = status;
     }
-    
+
     private void GettingExtinguished()
     {
         _timeUntilBurnOut += Time.deltaTime * extinguishingSpeed;
@@ -333,7 +375,7 @@ public class Flammable : MonoBehaviour
             _bounds.center + Random.insideUnitSphere * Mathf.Min(_bounds.extents.x, _bounds.extents.y);
 
         fireObject.transform.position = randomPoint;
-            
+
         // **** keep it for now - maybe needed (it was wrong implemented ******
         // var results = new Collider2D [1];
         // Physics2D.OverlapCircleNonAlloc(randomPoint, 1f, results);
@@ -343,26 +385,25 @@ public class Flammable : MonoBehaviour
         //     // break;
         // }
     }
-    
+
     private void GetFlammableObjectsAroundUs()
     {
         var area = GetSizeOfArea();
         _maxDistanceFromOrigin = Mathf.Max(area.x, area.y);
         var direction = area.x >= area.y ? CapsuleDirection2D.Horizontal : CapsuleDirection2D.Vertical;
         var collider2Ds = Physics2D.OverlapCapsuleAll(_t.position, area, direction, 0);
-        
+
         // filter the colliders
         foreach (var col in collider2Ds)
         {
             // Flammable res;
             if (!col.gameObject.TryGetComponent(out Flammable res)) continue;
-            if(res.Equals(this)|| res.isFireSource) continue;
-            
+            if (res.Equals(this) || res.isFireSource) continue;
+
             _objectsAroundUs.Add(res);
-                
+
             // sort by distance of colliders (MAYBE DELETE IT LATER)
             _objectsAroundUsSorted.Add(Physics2D.Distance(_collider, col).distance, res);
-
         }
     }
 }
