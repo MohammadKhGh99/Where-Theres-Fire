@@ -108,6 +108,7 @@ MonoBehaviour:
   increaseChancePercentage: 5
   ratioOfRadiusBySize: 4
   cooldownToBurn: 1
+  timeBetweenAddingNewFire: 5
 --- !u!61 &7196890699618283024
 BoxCollider2D:
   m_ObjectHideFlags: 0

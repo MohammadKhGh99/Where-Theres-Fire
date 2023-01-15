@@ -118,12 +118,13 @@ MonoBehaviour:
   numOfPoints: 1
   isHouse: 0
   isFireSource: 0
-  initialTimeUntilBurnOut: 15
+  initialTimeUntilBurnOut: 5
   initialChanceOfInflammation: 70
   extinguishingSpeed: 20
   increaseChancePercentage: 5
   ratioOfRadiusBySize: 4
   cooldownToBurn: 2
+  timeBetweenAddingNewFire: 3
 --- !u!50 &4927365285428662755
 Rigidbody2D:
   serializedVersion: 4

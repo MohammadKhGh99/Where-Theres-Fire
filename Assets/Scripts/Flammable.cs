@@ -28,8 +28,7 @@ public class Flammable : MonoBehaviour
     private float _timeUntilBurnOut;
     [SerializeField] private float extinguishingSpeed;
     private bool _gettingExtinguished;
-
-
+    
     // NotOnFire variables
     [SerializeField] private float increaseChancePercentage = 5f;
     private float _currentChanceOfInflammation;
@@ -50,8 +49,16 @@ public class Flammable : MonoBehaviour
     private Image _healthBarImage;
     private Image _healthBarBorder;
     private Slider _healthBarObj;
-    private bool isImageVisible;
+    private bool _isImageVisible;
     
+    // adding fire object to flammable image
+    [SerializeField] private float timeBetweenAddingNewFire = 5f;
+    private float _currentTimerToAddReleaseFire;
+    private float _addFireTime;
+    private float _releaseFireTime;
+    private Bounds _bounds;
+    private HashSet<FireObject> _firesOnImage = new ();
+
 
 
     // current status
@@ -67,6 +74,12 @@ public class Flammable : MonoBehaviour
         _initialColor = _spriteRenderer.color;
         _objectsAroundUs = new HashSet<Flammable>();
         _objectsAroundUsSorted = new SortedList<float, Flammable>();
+        _bounds = _spriteRenderer.bounds;
+        
+        // adding fire object
+        _addFireTime = 0f;
+        _currentTimerToAddReleaseFire = 0f;
+        _releaseFireTime = -timeBetweenAddingNewFire;
 
         if (isFireSource)
         {
@@ -81,16 +94,12 @@ public class Flammable : MonoBehaviour
             _currentChanceOfInflammation = initialChanceOfInflammation;
             _timeUntilBurnOut = initialTimeUntilBurnOut;
             _currentHealth = initialTimeUntilBurnOut;
+            
+            GetFlammableObjectsAroundUs();
         }
         
         CurrentStatus = Status.NotOnFire;
         
-        // we need to collect all the objects around us now, and we randomly burn an object from the list
-        if (!isFireSource)
-        {
-            GetFlammableObjectsAroundUs();
-        }
-
         // *** experimental testing ***
         _inOrder = true;
     }
@@ -98,8 +107,8 @@ public class Flammable : MonoBehaviour
     private void InitializeHealthBar()
     {
         // get size of _sprite
-        var bounds = _spriteRenderer.bounds;
-        var healthBarPos= bounds.center + Vector3.up * bounds.extents.y;
+        _bounds = _spriteRenderer.bounds;
+        var healthBarPos= _bounds.center + Vector3.up * _bounds.extents.y;
         
         
         var healthBar = Instantiate(Resources.Load("HealthBar"), healthBarPos,
@@ -109,7 +118,7 @@ public class Flammable : MonoBehaviour
         var rectTransform = healthBar.GetComponent<RectTransform>();
         var percentageToKeepInMind = rectTransform.lossyScale.x;
         rectTransform.position += (Vector3.up * GameManager.HealthBarHeight / 2)*percentageToKeepInMind;
-        var healthBarWidthPercentage = (GameManager.HealthBarWidthPercentage/100 * bounds.size.x)/percentageToKeepInMind;
+        var healthBarWidthPercentage = (GameManager.HealthBarWidthPercentage/100 * _bounds.size.x)/percentageToKeepInMind;
         rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, healthBarWidthPercentage);
         rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, GameManager.HealthBarHeight);
         
@@ -121,7 +130,7 @@ public class Flammable : MonoBehaviour
         _healthBarBorder = _healthBarObj.transform.GetChild(1).GetComponent<Image>();
         
         // making the healthbar hidden until first shot:
-        isImageVisible = false;
+        _isImageVisible = false;
         MakeImageInvisibleOrVisible(_healthBarImage, false);
         MakeImageInvisibleOrVisible(_healthBarBorder, false);
 
@@ -145,12 +154,21 @@ public class Flammable : MonoBehaviour
         if (!CurrentStatus.Equals(Status.OnFire)) return;
         
         _timeUntilBurnOut -= Time.deltaTime;
+        _currentTimerToAddReleaseFire += Time.deltaTime;
         
         if (_currentHealth <= 0f)
         {
             // the object is completely burnt!
             CurrentStatus = Status.FinishedBurning;
             BurnedOutEffectAndPoints();
+
+            if (isFireSource) return;
+            // release all fires
+            foreach (var fire in _firesOnImage)
+            {
+                GameManager.Instance.FireObjectPool.Release(fire);
+            }
+
             return;
         }
 
@@ -206,12 +224,33 @@ public class Flammable : MonoBehaviour
             if (!isFireSource)
             {
                 _healthBarObj.value = _currentHealth;
-                if (!isImageVisible)
+                if (!_isImageVisible)
                 {
-                    isImageVisible = true;
+                    _isImageVisible = true;
                     MakeImageInvisibleOrVisible(_healthBarImage, true);
                     MakeImageInvisibleOrVisible(_healthBarBorder, true);
                 }
+            }
+        }
+
+        if (!isFireSource)
+        {
+            if (_currentTimerToAddReleaseFire >= _addFireTime)
+            {
+                // add a new fire object to image
+                _releaseFireTime = _addFireTime;
+                _addFireTime = _currentTimerToAddReleaseFire + timeBetweenAddingNewFire;
+                AddFireOnObject();
+            }
+            else if (_currentTimerToAddReleaseFire < _releaseFireTime)
+            {
+                // remove a fire object from image
+                _addFireTime = _releaseFireTime;
+                _releaseFireTime = _currentTimerToAddReleaseFire - timeBetweenAddingNewFire;
+
+                var fire = _firesOnImage.LastOrDefault();
+                _firesOnImage.Remove(fire);
+                GameManager.Instance.FireObjectPool.Release(fire);
             }
         }
     }
@@ -272,16 +311,37 @@ public class Flammable : MonoBehaviour
     private void GettingExtinguished()
     {
         _timeUntilBurnOut += Time.deltaTime * extinguishingSpeed;
+        _currentTimerToAddReleaseFire -= Time.deltaTime * extinguishingSpeed;
         if (!(_timeUntilBurnOut >= initialTimeUntilBurnOut)) return;
         // we watered the object
         initialTimeUntilBurnOut = _timeUntilBurnOut;
         _spriteRenderer.color = _initialColor;
         CurrentStatus = Status.NotOnFire;
+        if (isFireSource) return;
+        // release all fires
+        foreach (var fire in _firesOnImage)
+        {
+            GameManager.Instance.FireObjectPool.Release(fire);
+        }
     }
 
     private void AddFireOnObject()
     {
-        
+        var fireObject = GameManager.Instance.FireObjectPool.Get();
+        _firesOnImage.Add(fireObject);
+        Vector2 randomPoint =
+            _bounds.center + Random.insideUnitSphere * Mathf.Min(_bounds.extents.x, _bounds.extents.y);
+
+        fireObject.transform.position = randomPoint;
+            
+        // **** keep it for now - maybe needed (it was wrong implemented ******
+        // var results = new Collider2D [1];
+        // Physics2D.OverlapCircleNonAlloc(randomPoint, 1f, results);
+        // if (results[0].IsUnityNull())
+        // {
+        //     Instantiate(fireObject, randomPoint, Quaternion.identity);
+        //     // break;
+        // }
     }
     
     private void GetFlammableObjectsAroundUs()
