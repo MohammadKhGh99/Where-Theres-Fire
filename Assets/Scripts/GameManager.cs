@@ -351,8 +351,8 @@ public class GameManager : Singleton<GameManager>
 
             // ** fire man won **
             var allBurned = _currentSeconds < _gameTimer && NumBurnedHouses == _numHouses;
-            var winPercentReached = _currentSeconds >= _gameTimer && (float)NumBurnedHouses / _numHouses >= winPercent;
-            if (allBurned || winPercentReached || numBurnedPoints >= maxBurnedPoints)
+            // var winPercentReached = _currentSeconds >= _gameTimer && (float)NumBurnedHouses / _numHouses >= winPercent;
+            if (allBurned || numBurnedPoints >= maxBurnedPoints)
             {
                 StartCoroutine(FadeOut(_imageStartGame));
                 StartCoroutine(FadeIn(_imageFireWon));

@@ -8049,7 +8049,7 @@ MonoBehaviour:
   moveByGrid: 1
   fourDirection: 1
   speed: 3
-  gridMoveDuration: 0.2
+  gridMoveDuration: 0.5
   numGridMove: 1
   unHideWhenFire: 1
 --- !u!50 &1121103931
@@ -8553,7 +8553,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 339029448283884258, guid: a3b2840167b1d9745b9b34d612d819eb, type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 339029448283884258, guid: a3b2840167b1d9745b9b34d612d819eb, type: 3}
       propertyPath: m_LocalPosition.x
@@ -10422,8 +10422,8 @@ Transform:
   - {fileID: 2053006104}
   - {fileID: 2042158985}
   - {fileID: 1530235715}
-  - {fileID: 2132719005}
   - {fileID: 792092154}
+  - {fileID: 2132719005}
   - {fileID: 1568198258}
   m_Father: {fileID: 192820465}
   m_RootOrder: 1
@@ -11839,7 +11839,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: -10
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18867922, g: 0.18867922, b: 0.18867922, a: 1}
+  m_Color: {r: 0.15075971, g: 0.3490566, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -12016,7 +12016,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 339029448283884258, guid: f428bf33d953be64d870de8d6580cb48, type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 339029448283884258, guid: f428bf33d953be64d870de8d6580cb48, type: 3}
       propertyPath: m_LocalPosition.x

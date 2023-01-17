@@ -65,6 +65,9 @@ public class Flammable : MonoBehaviour
     // private float _pointsTravelY = 3;
     private float _targetPointsX = -20.5f;
     private float _targetPointsY = -7;
+    
+    // *** Smoke ***
+    private ParticleSystem _smoke;
 
     // current status
     public enum Status
@@ -99,6 +102,12 @@ public class Flammable : MonoBehaviour
         }
         else
         {
+            // var smokeRotate = new Quaternion(-90, 0, 0, 1);
+            var temp = Instantiate(Resources.Load("Smoke"), _t.position, Quaternion.identity, _t) as GameObject;
+            if (temp == null) throw new NullReferenceException("There is no Smoke Prefabs!");
+            _smoke = temp.GetComponent<ParticleSystem>();
+            _smoke.transform.Rotate(Vector3.right, -90);
+            
             _bounds = _spriteRenderer.bounds;
             InitializeHealthBar();
             InitializePointsText();
@@ -114,62 +123,6 @@ public class Flammable : MonoBehaviour
 
         // *** experimental testing ***
         _inOrder = true;
-    }
-
-    private void InitializePointsText()
-    {
-        var pointsPos = _bounds.center + Vector3.up * _bounds.extents.y + 2 * Vector3.right;
-        var temp = Instantiate(Resources.Load("Points"), pointsPos, Quaternion.identity,
-            GameManager.Instance.barsParent) as GameObject;
-        if (temp == null)
-            throw new NullReferenceException("There is not Prefab for points text!");
-        _points = temp.GetComponent<TextMeshProUGUI>();
-        _points.enabled = false;
-    }
-
-    private void InitializeHealthBar()
-    {
-        // get size of _sprite
-
-        var healthBarPos = _bounds.center + Vector3.up * _bounds.extents.y;
-
-
-        var healthBar = Instantiate(Resources.Load("HealthBar"), healthBarPos,
-            Quaternion.identity, GameManager.Instance.barsParent) as GameObject;
-
-        // putting the healthbar at specific location with specific size!
-        var rectTransform = healthBar.GetComponent<RectTransform>();
-        var percentageToKeepInMind = rectTransform.lossyScale.x;
-        rectTransform.position += (Vector3.up * GameManager.HealthBarHeight / 2) * percentageToKeepInMind;
-        var healthBarWidthPercentage =
-            (GameManager.HealthBarWidthPercentage / 100 * _bounds.size.x) / percentageToKeepInMind;
-        rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, healthBarWidthPercentage);
-        rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, GameManager.HealthBarHeight);
-
-        // some initializings
-        _healthBarObj = healthBar.GetComponent<Slider>();
-        _healthBarObj.maxValue = initialTimeUntilBurnOut;
-        _healthBarObj.value = initialTimeUntilBurnOut;
-        _healthBarImage = _healthBarObj.transform.GetChild(0).GetComponent<Image>();
-        _healthBarBorder = _healthBarObj.transform.GetChild(1).GetComponent<Image>();
-
-        // making the healthbar hidden until first shot:
-        _isImageVisible = false;
-        MakeImageInvisibleOrVisible(_healthBarImage, false);
-        MakeImageInvisibleOrVisible(_healthBarBorder, false);
-    }
-
-    private static void MakeImageInvisibleOrVisible(Image image, bool makeVisible)
-    {
-        float visibility = makeVisible ? 1 : 0;
-        image.color = new Color(image.color.r, image.color.g, image.color.b, visibility);
-    }
-
-    private Vector2 GetSizeOfArea()
-    {
-        var objectSize = _collider.bounds.size;
-        objectSize += objectSize / ratioOfRadiusBySize;
-        return objectSize;
     }
 
     private void Update()
@@ -188,8 +141,15 @@ public class Flammable : MonoBehaviour
             }
         }
 
-        if (!CurrentStatus.Equals(Status.OnFire)) return;
-
+        if (!CurrentStatus.Equals(Status.OnFire))
+        {
+            if (!_smoke.IsUnityNull() && _smoke.isPlaying && !isFireSource)
+                _smoke.Stop();
+            return;
+        }
+        
+        if (!_smoke.IsUnityNull() && _smoke.isStopped && !isFireSource)
+            _smoke.Play();
         _timeUntilBurnOut -= Time.deltaTime;
         _currentTimerToAddReleaseFire += Time.deltaTime;
 
@@ -415,4 +375,62 @@ public class Flammable : MonoBehaviour
             _objectsAroundUsSorted.Add(Physics2D.Distance(_collider, col).distance, res);
         }
     }
+    
+    
+    private void InitializePointsText()
+    {
+        var pointsPos = _bounds.center + Vector3.up * _bounds.extents.y + 2 * Vector3.right;
+        var temp = Instantiate(Resources.Load("Points"), pointsPos, Quaternion.identity,
+            GameManager.Instance.barsParent) as GameObject;
+        if (temp == null)
+            throw new NullReferenceException("There is not Prefab for points text!");
+        _points = temp.GetComponent<TextMeshProUGUI>();
+        _points.enabled = false;
+    }
+
+    private void InitializeHealthBar()
+    {
+        // get size of _sprite
+
+        var healthBarPos = _bounds.center + Vector3.up * _bounds.extents.y;
+
+
+        var healthBar = Instantiate(Resources.Load("HealthBar"), healthBarPos,
+            Quaternion.identity, GameManager.Instance.barsParent) as GameObject;
+
+        // putting the healthbar at specific location with specific size!
+        var rectTransform = healthBar.GetComponent<RectTransform>();
+        var percentageToKeepInMind = rectTransform.lossyScale.x;
+        rectTransform.position += (Vector3.up * GameManager.HealthBarHeight / 2) * percentageToKeepInMind;
+        var healthBarWidthPercentage =
+            (GameManager.HealthBarWidthPercentage / 100 * _bounds.size.x) / percentageToKeepInMind;
+        rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, healthBarWidthPercentage);
+        rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, GameManager.HealthBarHeight);
+
+        // some initializings
+        _healthBarObj = healthBar.GetComponent<Slider>();
+        _healthBarObj.maxValue = initialTimeUntilBurnOut;
+        _healthBarObj.value = initialTimeUntilBurnOut;
+        _healthBarImage = _healthBarObj.transform.GetChild(0).GetComponent<Image>();
+        _healthBarBorder = _healthBarObj.transform.GetChild(1).GetComponent<Image>();
+
+        // making the healthbar hidden until first shot:
+        _isImageVisible = false;
+        MakeImageInvisibleOrVisible(_healthBarImage, false);
+        MakeImageInvisibleOrVisible(_healthBarBorder, false);
+    }
+
+    private static void MakeImageInvisibleOrVisible(Image image, bool makeVisible)
+    {
+        float visibility = makeVisible ? 1 : 0;
+        image.color = new Color(image.color.r, image.color.g, image.color.b, visibility);
+    }
+
+    private Vector2 GetSizeOfArea()
+    {
+        var objectSize = _collider.bounds.size;
+        objectSize += objectSize / ratioOfRadiusBySize;
+        return objectSize;
+    }
+
 }

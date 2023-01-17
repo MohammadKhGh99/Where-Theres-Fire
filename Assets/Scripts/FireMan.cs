@@ -38,15 +38,16 @@ public class FireMan : MonoBehaviour
     private const KeyCode Up = KeyCode.W, Down = KeyCode.S, Left = KeyCode.A, Right = KeyCode.D;
 
     private RaycastHit2D _hit;
-    
+
     //**Animation**
     private Animator _animator;
     private SpriteRenderer _spriteRenderer;
-    
+    private float _jumpTime = 0.3f;
+
     // ** unHide the fireman when he throw a molotov **
     [SerializeField] private bool unHideWhenFire;
     private Hideable _hideable;
-    
+
     //**don't move to these objects
     private LayerMask _forbiddenLayers;
 
@@ -59,6 +60,7 @@ public class FireMan : MonoBehaviour
         _throwDirection = Vector2.zero;
         _currentGridPos = GameManager.Instance.GroundBaseTilemap.WorldToCell(_t.position);
         _animator = GetComponent<Animator>();
+        // _animator.speed = 0.5f;
         _spriteRenderer = GetComponent<SpriteRenderer>();
         // _spriteRenderer.flipX = !_spriteRenderer.flipX;
         _hideable = GetComponent<Hideable>();
@@ -77,9 +79,7 @@ public class FireMan : MonoBehaviour
         _moveDirection.x = xDirection;
         _moveDirection.y = yDirection;
 
-        
-        
-        if(!moveByGrid)
+        if (!moveByGrid)
             SnappingMovement();
         else
             GridMovement();
@@ -103,7 +103,7 @@ public class FireMan : MonoBehaviour
             _fireKeyHoldingTime = 0f;
             _fireKeyDown = false;
         }
-        
+
         if (_fireKeyDown)
         {
             _fireKeyHoldingTime += Time.deltaTime;
@@ -112,6 +112,7 @@ public class FireMan : MonoBehaviour
                 // start burning building animation 
                 _burningBuildingAnimationStarted = true;
             }
+
             if (_fireKeyHoldingTime >= 5f)
             {
                 // the torch is thrown in the -building- and it will start to burn - stop animation also
@@ -119,6 +120,7 @@ public class FireMan : MonoBehaviour
                 _fireKeyDown = false;
             }
         }
+
         _cooldownToMolotov = Mathf.Max(_cooldownToMolotov - Time.deltaTime, 0f);
     }
 
@@ -135,13 +137,13 @@ public class FireMan : MonoBehaviour
             _lookAtDirection = _moveDirection;
         }
     }
-    
+
     private void GridMovement()
     {
         var tempGridPos = _currentGridPos;
         _currentGridPos = GameManager.Instance.GroundBaseTilemap.WorldToCell(_t.position);
         // Update the timer
-        _gridMoveTimer += Time.deltaTime;
+        // _gridMoveTimer += Time.deltaTime;
 
         // Check if it's time to move to the next grid cell
         // if (_gridMoveTimer >= gridMoveDuration)
@@ -149,14 +151,26 @@ public class FireMan : MonoBehaviour
         // Reset the timer
         // _gridMoveTimer = 0;
         // _lookAtDirection = Vector3.zero;
-        
+        // if (_lookAtDirection.x == -1 || _lookAtDirection.x == 1 && _animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+        // {
+        //     print(_animator.GetCurrentAnimatorStateInfo(0).IsName("FireManJumps"));
+        //     print(_animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
+        //     return;
+        // }
+        // _jumpTime -= Time.deltaTime;
+        // if (_lookAtDirection.x == -1 || _lookAtDirection.x == 1)
+        // {
+        //     if (_jumpTime <= 0) _jumpTime = 0.3f;
+        //     else return;
+        // }
+
         // Check input and move in the corresponding direction
         if (Input.GetKeyDown(Up))
         {
             _lookAtDirection = Vector3.up;
             _throwDirection = Vector2.up;
             _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: _forbiddenLayers);
-            if(!_hit)
+            if (!_hit)
                 _currentGridPos.y += numGridMove;
         }
         else if (Input.GetKeyDown(Down))
@@ -164,7 +178,7 @@ public class FireMan : MonoBehaviour
             _lookAtDirection = Vector3.down;
             _throwDirection = Vector2.down;
             _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: _forbiddenLayers);
-            if(!_hit)
+            if (!_hit)
                 _currentGridPos.y -= numGridMove;
         }
         else if (Input.GetKeyDown(Right))
@@ -172,7 +186,7 @@ public class FireMan : MonoBehaviour
             _lookAtDirection = Vector3.right;
             _throwDirection = Vector2.right;
             _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: _forbiddenLayers);
-            if(!_hit)
+            if (!_hit)
                 _currentGridPos.x += numGridMove;
             if (_spriteRenderer.flipX)
                 _spriteRenderer.flipX = false;
@@ -182,7 +196,7 @@ public class FireMan : MonoBehaviour
             _lookAtDirection = Vector3.left;
             _throwDirection = Vector2.left;
             _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: _forbiddenLayers);
-            if(!_hit)
+            if (!_hit)
                 _currentGridPos.x -= numGridMove;
             if (!_spriteRenderer.flipX)
                 _spriteRenderer.flipX = true;
@@ -191,13 +205,21 @@ public class FireMan : MonoBehaviour
         {
             _lookAtDirection = Vector3.zero;
         }
+
         _animator.SetInteger("XSpeed", (int)_lookAtDirection.x);
         _animator.SetInteger("YSpeed", (int)_lookAtDirection.y);
-        // StartCoroutine(DelayForFireManMovement());
-        
+        // if (_lookAtDirection.x == 1 || _lookAtDirection.y == -1)
+        //     _animator.Play("FireManJumps");
+        // _animator.GetCurrentAnimatorStateInfo(0)
+        // yield return new WaitForSeconds(0.5f);
+
         // Update the position of the object in world space
-        if (!_currentGridPos.Equals(tempGridPos))
+        if (_lookAtDirection is not { x: 0, y: 0 }) //!_currentGridPos.Equals(tempGridPos))// return;
+        {
+            print("Hello");
             _t.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos);
+            // _t.position = Vector3.Lerp(_t.position, GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos), Time.deltaTime * 48);
+        }
         // _t.position = Vector3.Lerp(_t.position, GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos), Time.deltaTime * speed);
         // }
     }
@@ -221,10 +243,10 @@ public class FireMan : MonoBehaviour
     {
         var molotovFire = GameManager.Instance.FireMolotovPool.Get();
         molotovFire.Burn(molotovDropPos);
-        
+
         // todo this need to be more general (THIS IS WAY WRONG)
         Vector3Int gridPosition = GameManager.Instance.WaterFireTilemap.WorldToCell(molotovDropPos);
-        BoundsInt bounds = new BoundsInt(gridPosition , new Vector3Int(2, 2, 1));
+        BoundsInt bounds = new BoundsInt(gridPosition, new Vector3Int(2, 2, 1));
         var tiles = GameManager.Instance.WaterFireTilemap.GetTilesBlock(bounds);
         int i = 0;
         foreach (var tile in tiles)
@@ -237,16 +259,17 @@ public class FireMan : MonoBehaviour
                 Vector3Int tilePosition = new Vector3Int(x + bounds.x, y + bounds.y, bounds.z);
                 GameManager.Instance.WaterFireTilemap.SetTile(tilePosition, null);
             }
+
             i++;
         }
-        
+
         yield break;
     }
 
     // Update is called once per frame
     private void FixedUpdate()
     {
-        if(!moveByGrid)
+        if (!moveByGrid)
             _rb.MovePosition(_rb.position + _moveDirection * (movingSpeed * Time.fixedDeltaTime));
     }
 }
