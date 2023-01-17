@@ -7940,6 +7940,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1255506899}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (6)
@@ -8026,7 +8030,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1121103925}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -20.981, y: -1.158, z: 0}
+  m_LocalPosition: {x: -21.03, y: -0.64, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8045,12 +8049,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a122ff33c77212343b7746d8ea36f5ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movingSpeed: 10
+  movingSpeed: 0.3
   moveByGrid: 1
   fourDirection: 1
-  speed: 3
-  gridMoveDuration: 0.5
-  numGridMove: 1
+  gridMoveDuration: 0.2
+  numGridMove: 2
   unHideWhenFire: 1
 --- !u!50 &1121103931
 Rigidbody2D:
@@ -10435,6 +10438,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1255506899}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (5)
@@ -10883,6 +10890,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1255506899}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: initialChanceOfInflammation
+      value: 70
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (4)
@@ -11364,7 +11375,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!70 &1682657999
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

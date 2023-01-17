@@ -6,6 +6,7 @@ public class FireMolotov : MonoBehaviour
     [SerializeField] private float timeToEnlarge = 0.2f;
     [SerializeField] private float timeToReduce = 0.1f;
     private readonly Vector3 _startScale = Vector3.one;
+    private readonly Vector2 _dummyLocation = new(-100f, -100f);
 
     private Transform _t;
     private Flammable _flammable;
@@ -33,6 +34,10 @@ public class FireMolotov : MonoBehaviour
                 {
                     // we reached final state, burn
                     _flammable.SetSelfOnFire();
+                    //********************************
+                    //todo here add coroutine of the time until firemolotov finish, when it's finish,
+                    //todo change flammable status to not on fire, then change this status to extinguish
+                    //*********************************
                     _currentStatus = Status.Pause;
                     _elapsedTime = 0f;
                 }
@@ -67,6 +72,7 @@ public class FireMolotov : MonoBehaviour
         _elapsedTime = 0f;
         _currentStatus = Status.Pause;
         _flammable.CurrentStatus = Flammable.Status.NotOnFire;
+        _t.position = _dummyLocation;
         gameObject.SetActive(true);
         _hasInitialized = true;
     }
@@ -75,6 +81,7 @@ public class FireMolotov : MonoBehaviour
     {
         _currentStatus = Status.Pause;
         _elapsedTime = 0f;
+        _t.position = _dummyLocation;
         gameObject.SetActive(false);
     }
 

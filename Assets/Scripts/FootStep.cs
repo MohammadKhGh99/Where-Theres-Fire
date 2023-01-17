@@ -27,10 +27,10 @@ public class FootStep : MonoBehaviour
     {
         // todo make sure the direction is for directional and it's 01 only
         // Direction
-        // (0,1) - rotation 0
-        // (1,0) - rotation 270
-        // (0,-1) - rotation 180
-        // (-1,0) - rotation 90
+        // Right- (0,1) - rotation 0
+        // Up   - (1,0) - rotation 270
+        // Left - (0,-1) - rotation 180
+        // Down - (-1,0) - rotation 90
         
         // fix rotation
         var rotationAngle = Mathf.Abs(direction.x)>0.2 ?(180 + direction.x * 90) :(90 - direction.y * 90) ;
@@ -40,7 +40,11 @@ public class FootStep : MonoBehaviour
         
         // fix position
         var tempPos = position;
-        tempPos.x += currentLeg * legsWide;
+        if(direction.x == 0)
+            tempPos.x += currentLeg * legsWide;
+        else
+            tempPos.y += currentLeg * legsWide;
+        
         _t.position = tempPos;
         
         // fix leg direction (left leg or right leg)

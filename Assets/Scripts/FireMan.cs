@@ -16,13 +16,12 @@ public class FireMan : MonoBehaviour
     [SerializeField] private float movingSpeed;
     [SerializeField] private bool moveByGrid = true;
     [SerializeField] private bool fourDirection = true;
-    [SerializeField] private float speed = 3;
     private Vector2 _moveDirection;
     private Vector2 _lookAtDirection;
 
     // grid movement
     [SerializeField] private float gridMoveDuration;
-    [SerializeField] private int numGridMove = 1;
+    [SerializeField] private int numGridMove = 2;
     private Vector3Int _currentGridPos; // current position of the object in grid cells
     private float _gridMoveTimer; // timer for moving from one grid cell to the next
 
@@ -58,7 +57,7 @@ public class FireMan : MonoBehaviour
         _t = GetComponent<Transform>();
         _lookAtDirection = Vector2.zero;
         _throwDirection = Vector2.zero;
-        _currentGridPos = GameManager.Instance.GroundBaseTilemap.WorldToCell(_t.position);
+        _currentGridPos = Vector3Int.RoundToInt(_t.position);
         _animator = GetComponent<Animator>();
         // _animator.speed = 0.5f;
         _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -140,66 +139,58 @@ public class FireMan : MonoBehaviour
 
     private void GridMovement()
     {
-        var tempGridPos = _currentGridPos;
-        _currentGridPos = GameManager.Instance.GroundBaseTilemap.WorldToCell(_t.position);
-        // Update the timer
-        // _gridMoveTimer += Time.deltaTime;
-
-        // Check if it's time to move to the next grid cell
-        // if (_gridMoveTimer >= gridMoveDuration)
-        // {
-        // Reset the timer
-        // _gridMoveTimer = 0;
-        // _lookAtDirection = Vector3.zero;
-        // if (_lookAtDirection.x == -1 || _lookAtDirection.x == 1 && _animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
-        // {
-        //     print(_animator.GetCurrentAnimatorStateInfo(0).IsName("FireManJumps"));
-        //     print(_animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
-        //     return;
-        // }
-        // _jumpTime -= Time.deltaTime;
-        // if (_lookAtDirection.x == -1 || _lookAtDirection.x == 1)
-        // {
-        //     if (_jumpTime <= 0) _jumpTime = 0.3f;
-        //     else return;
-        // }
-
         // Check input and move in the corresponding direction
-        if (Input.GetKeyDown(Up))
+         if (Input.GetKeyDown(Up) && _moveDirection.x.Equals(0))
         {
+            _t.position = _currentGridPos;
             _lookAtDirection = Vector3.up;
             _throwDirection = Vector2.up;
-            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: _forbiddenLayers);
+            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2f, layerMask: _forbiddenLayers);
             if (!_hit)
+            {
                 _currentGridPos.y += numGridMove;
+                StartCoroutine(LerpRigidbody(_t.position, _currentGridPos, Time.time));
+            }
         }
-        else if (Input.GetKeyDown(Down))
+        else if (Input.GetKeyDown(Down) && _moveDirection.x.Equals(0))
         {
+            _t.position = _currentGridPos;
             _lookAtDirection = Vector3.down;
             _throwDirection = Vector2.down;
-            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: _forbiddenLayers);
+            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2f, layerMask: _forbiddenLayers);
             if (!_hit)
+            {
                 _currentGridPos.y -= numGridMove;
+                StartCoroutine(LerpRigidbody(_t.position, _currentGridPos, Time.time));
+            }
         }
-        else if (Input.GetKeyDown(Right))
+        else if (Input.GetKeyDown(Right) && _moveDirection.y.Equals(0))
         {
+            _t.position = _currentGridPos;
             _lookAtDirection = Vector3.right;
             _throwDirection = Vector2.right;
-            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: _forbiddenLayers);
-            if (!_hit)
-                _currentGridPos.x += numGridMove;
+            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2f, layerMask: _forbiddenLayers);
             if (_spriteRenderer.flipX)
                 _spriteRenderer.flipX = false;
+            if (!_hit)
+            {
+                _currentGridPos.x += numGridMove;
+                StartCoroutine(LerpRigidbody(_t.position, _currentGridPos, Time.time));
+            }
         }
-        else if (Input.GetKeyDown(Left))
+        else if (Input.GetKeyDown(Left) && _moveDirection.y.Equals(0))
         {
+            _t.position = _currentGridPos;
             _lookAtDirection = Vector3.left;
             _throwDirection = Vector2.left;
-            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2, layerMask: _forbiddenLayers);
-            if (!_hit)
-                _currentGridPos.x -= numGridMove;
+            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2f, layerMask: _forbiddenLayers);
             if (!_spriteRenderer.flipX)
                 _spriteRenderer.flipX = true;
+            if (!_hit)
+            {
+                _currentGridPos.x -= numGridMove;
+                StartCoroutine(LerpRigidbody(_t.position, _currentGridPos, Time.time));
+            }
         }
         else //if (!Input.GetKeyDown(Fire))
         {
@@ -208,25 +199,24 @@ public class FireMan : MonoBehaviour
 
         _animator.SetInteger("XSpeed", (int)_lookAtDirection.x);
         _animator.SetInteger("YSpeed", (int)_lookAtDirection.y);
-        // if (_lookAtDirection.x == 1 || _lookAtDirection.y == -1)
-        //     _animator.Play("FireManJumps");
-        // _animator.GetCurrentAnimatorStateInfo(0)
-        // yield return new WaitForSeconds(0.5f);
-
-        // Update the position of the object in world space
-        if (_lookAtDirection is not { x: 0, y: 0 }) //!_currentGridPos.Equals(tempGridPos))// return;
-        {
-            print("Hello");
-            _t.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos);
-            // _t.position = Vector3.Lerp(_t.position, GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos), Time.deltaTime * 48);
-        }
-        // _t.position = Vector3.Lerp(_t.position, GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos), Time.deltaTime * speed);
-        // }
     }
-
-    private IEnumerator DelayForFireManMovement()
+    
+    IEnumerator LerpRigidbody(Vector3 startPos, Vector3 endPos, float timeStartedLerping)
     {
-        yield return new WaitForSeconds(gridMoveDuration);
+        while (true)
+        {
+            var timeSinceStarted = Time.time - timeStartedLerping;
+            var percentageComplete = timeSinceStarted / gridMoveDuration;
+ 
+            _rb.MovePosition(Vector3.Lerp(startPos, endPos, percentageComplete));
+ 
+            if (percentageComplete >= 1f)
+            {
+                break;
+            }
+ 
+            yield return new WaitForFixedUpdate();
+        }
     }
 
     private IEnumerator ThrowMolotov()
