@@ -113,25 +113,19 @@ public class Flammable : MonoBehaviour
             GetFlammableObjectsAroundUs();
             
             
+            // *** Smoke Initializing ***
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            /// smmokkkkkekeeeeee 
             var temp = Instantiate(Resources.Load("Smoke"), _t.position, Quaternion.identity, _t) as GameObject;
             if (temp == null) throw new NullReferenceException("There is no Smoke Prefabs!");
             _smoke = temp.GetComponent<ParticleSystem>();
             _smoke.transform.Rotate(Vector3.right, -90);
+            if (!isHouse)
+            {
+                var newScale = new Vector3(0.5f, 1, 1);
+                _smoke.transform.localScale = newScale;
+                // var shapeModule = _smoke.shape;
+                // shapeModule.angle = 0;
+            }
         }
 
         CurrentStatus = Status.NotOnFire;

@@ -254,6 +254,7 @@ public class WaterBullet : MonoBehaviour
         {
             print("Triggered");
             col.GetComponent<Rigidbody2D>().AddForce(_direction * waterBulletPower / 10 * bulletSpeed, ForceMode2D.Force);
+            
         }
     }
     

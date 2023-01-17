@@ -291,6 +291,7 @@ public class GameManager : Singleton<GameManager>
 
         // ** the game didn't start yet **
         IsGameRunning = false;
+        IsGameOver = false;
         _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
         if (!controlHousesPos)
             return;
@@ -324,9 +325,9 @@ public class GameManager : Singleton<GameManager>
         if (Input.GetKeyDown(KeyCode.Escape) && !IsGameRunning)
         {
             Application.Quit();
-#if UNITY_EDITOR
+            #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
-#endif
+            #endif
         }
 
         // ** to start the game press any key to start

@@ -139,6 +139,8 @@ public class FireMan : MonoBehaviour
 
     private void GridMovement()
     {
+        // _currentGridPos = Vector3Int.RoundToInt(_t.position);
+        
         // Check input and move in the corresponding direction
          if (Input.GetKeyDown(Up) && _moveDirection.x.Equals(0))
         {
@@ -194,6 +196,11 @@ public class FireMan : MonoBehaviour
         }
         else //if (!Input.GetKeyDown(Fire))
         {
+            // _currentGridPos = Vector3Int.RoundToInt(_t.position);
+            // print(_rb.velocity);
+            // var temp = GameManager.Instance.GroundBaseTilemap.WorldToCell(_t.position);;
+            // if (_rb.velocity.sqrMagnitude > 0 && !_currentGridPos.Equals(temp))
+            //     _currentGridPos = temp;
             _lookAtDirection = Vector3.zero;
         }
 
