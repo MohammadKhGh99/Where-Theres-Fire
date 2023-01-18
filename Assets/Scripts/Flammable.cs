@@ -63,7 +63,7 @@ public class Flammable : MonoBehaviour
     // ** points on burn out **
     private TextMeshProUGUI _points;
     // private float _pointsTravelY = 3;
-    private float _targetPointsX = -20.5f;
+    private float _targetPointsX = -20f;
     private float _targetPointsY = -6.5f;
     
     // *** Smoke ***
@@ -142,8 +142,9 @@ public class Flammable : MonoBehaviour
             var temp = _points.transform.position; 
             if (temp.x > _targetPointsX && temp.y > _targetPointsY)
             {
+                // _points.transform.position = Vector3.MoveTowards(temp,  GameManager.Instance.burnedPointsFireToMoveTowards.position , 0.2f);
                 _points.transform.position = Vector3.MoveTowards(temp,  _targetPointsY * Vector3.up + 
-                                                                        _targetPointsX * Vector3.right, 0.2f);
+                _targetPointsX * Vector3.right, 0.2f);
             }
             else
             {

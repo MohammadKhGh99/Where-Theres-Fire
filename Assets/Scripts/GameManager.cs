@@ -81,12 +81,7 @@ public class GameManager : Singleton<GameManager>
     }
 
 
-    // // Houses mask
-    // public LayerMask HousesMask { get; private set; }
-    // // Borders mask
-    // public LayerMask BordersMask { get; private set; }
-    // // Trees mask
-    // public LayerMask TreesMask { get; private set; }
+
     
     [SerializeField] public LayerMask forbiddenLayers;
 
@@ -117,6 +112,7 @@ public class GameManager : Singleton<GameManager>
     // *** Burned Points ***
     public int numBurnedPoints;
     [SerializeField] private TextMeshProUGUI burnedPointsText;
+    [SerializeField] public Transform burnedPointsFireToMoveTowards;
 
     // **** "Molotov" pool and functions ****
     public const float MolotovCooldownTime = 0f;
