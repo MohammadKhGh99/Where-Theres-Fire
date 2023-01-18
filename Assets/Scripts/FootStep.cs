@@ -9,12 +9,18 @@ public class FootStep : MonoBehaviour
 {
     private bool _hasInitialized;
     private Transform _t;
+    private SpriteRenderer _sprite;
+    // private Color _onWaterColor = new Vector4(68f, 116f, 132, 255);
+    private readonly Color _onWaterColor = new (68f/255f, 116f/255f, 132f/255f, 255f/255f);
+    private readonly Color _onGroundColor = new (106f/255f, 154f/255f, 198f/255f, 255f/255f);
+
 
     public void FakeStart()
     {
         if (!_hasInitialized)
         {
             _t = transform;
+            _sprite = GetComponent<SpriteRenderer>();
         }
 
         var tempScale = _t.localScale;
@@ -23,7 +29,7 @@ public class FootStep : MonoBehaviour
         _hasInitialized = true;
     }
 
-    public void SetStep(Vector3 position, Vector2 direction, WetShoes.Legs step, float legsWide)
+    public void SetStep(Vector3 position, Vector2 direction, WetShoes.Legs step, float legsWide, bool isWaterTile)
     {
         // todo make sure the direction is for directional and it's 01 only
         // Direction
@@ -51,5 +57,8 @@ public class FootStep : MonoBehaviour
         var currentScale = _t.localScale;
         currentScale.x *= currentLeg;
         _t.localScale = currentScale;
+        
+        // fix color
+        _sprite.color = isWaterTile ? _onWaterColor : _onGroundColor;
     }
 }

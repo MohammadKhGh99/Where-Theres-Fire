@@ -9,7 +9,7 @@ public class WetShoes : MonoBehaviour
     [SerializeField] private int numOfWetCells;
     [SerializeField] private float legsWide;
     [SerializeField] private float timeBeforeDisappear;
-
+    
     private Transform _t;
     private bool _isWetShoes;
     private int _currentNumOfWetCellsMade;
@@ -47,15 +47,49 @@ public class WetShoes : MonoBehaviour
             _isWetShoes = true;
             _currentNumOfWetCellsMade = 0;
             
-            // release any steps that was made before
-            if (_stepsToStartCoroutine.Count > 0)
+            if (_previousPos.Equals(waterWorldPos)) // we are on same position as last time
             {
-                foreach (var footStepToRelease in _stepsToStartCoroutine)
+                if (!_secondLegInserted && _timerForSecondLeg > FixedTimeToInsertSecondLeg)
                 {
-                    StartCoroutine(FootStepTime(footStepToRelease));
+                    // we can now insert the second leg
+                    var secondFootStep = _footStepPool.Get();
+                    secondFootStep.SetStep(_t.position, _previousDirection, _nextLegToUse, legsWide, true);
+                    _nextLegToUse = _nextLegToUse.Equals(Legs.Right) ? Legs.Left : Legs.Right;
+                    _stepsToStartCoroutine.Add(secondFootStep);
+                    _secondLegInserted = true;
                 }
-                _stepsToStartCoroutine.Clear();
+                else
+                {
+                    _timerForSecondLeg += Time.deltaTime;
+                }
             }
+            else
+            {
+                // we moved to another tile, which is WATER TILE
+                // get footstep direction
+                _previousDirection = Vector3.Normalize(waterWorldPos - _previousPos);
+
+                // setup the new footstep
+                var footStep = _footStepPool.Get();
+                footStep.SetStep(_t.position, _previousDirection, _nextLegToUse, legsWide, true);
+                _nextLegToUse = _nextLegToUse.Equals(Legs.Right) ? Legs.Left : Legs.Right;
+                _stepsToStartCoroutine.Add(footStep);
+
+                // release any steps that was made before
+                if (_stepsToStartCoroutine.Count > 0)
+                {
+                    foreach (var footStepToRelease in _stepsToStartCoroutine)
+                    {
+                        StartCoroutine(FootStepTime(footStepToRelease));
+                    }
+                    _stepsToStartCoroutine.Clear();
+                }
+                
+                // reset second legs variables
+                _secondLegInserted = false;
+                _timerForSecondLeg = 0;
+            }
+            
         }
         else // not on water tile (anything else)
         {
@@ -66,7 +100,7 @@ public class WetShoes : MonoBehaviour
                 {
                     // we can now insert the second leg
                     var secondFootStep = _footStepPool.Get();
-                    secondFootStep.SetStep(_t.position, _previousDirection, _nextLegToUse, legsWide);
+                    secondFootStep.SetStep(_t.position, _previousDirection, _nextLegToUse, legsWide, false);
                     _nextLegToUse = _nextLegToUse.Equals(Legs.Right) ? Legs.Left : Legs.Right;
                     _stepsToStartCoroutine.Add(secondFootStep);
                     _secondLegInserted = true;
@@ -84,7 +118,7 @@ public class WetShoes : MonoBehaviour
 
                 // setup the new footstep
                 var footStep = _footStepPool.Get();
-                footStep.SetStep(_t.position, _previousDirection, _nextLegToUse, legsWide);
+                footStep.SetStep(_t.position, _previousDirection, _nextLegToUse, legsWide, false);
                 _nextLegToUse = _nextLegToUse.Equals(Legs.Right) ? Legs.Left : Legs.Right;
                 _stepsToStartCoroutine.Add(footStep);
 
@@ -104,8 +138,7 @@ public class WetShoes : MonoBehaviour
                     }
                     _stepsToStartCoroutine.Clear();
                 }
-
-
+                
                 // reset second legs variables
                 _secondLegInserted = false;
                 _timerForSecondLeg = 0;
