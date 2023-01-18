@@ -250,7 +250,7 @@ public class Extinguisher : MonoBehaviour
     {
         if (col.gameObject.name.Equals("FireMan"))
         {
-            print("HEllpasd");
+            // print("HEllpasd");
             col.gameObject.GetComponent<FireMan>().GetHideable().ShowOrHide(reShow: true);
         }
     }

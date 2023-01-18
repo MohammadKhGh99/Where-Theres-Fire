@@ -158,7 +158,8 @@ public class FireMan : MonoBehaviour
             _t.position = _currentGridPos;
             _lookAtDirection = Vector3.up;
             _throwDirection = Vector2.up;
-            _hit = Physics2D.CircleCast(_t.position, 1, _lookAtDirection, 1f, layerMask: _forbiddenLayers);
+
+            _hit = Physics2D.CircleCast(_t.position, 0.75f, _lookAtDirection, 1.5f, layerMask: _forbiddenLayers);
             if (!_hit)
             {
                 _currentGridPos.y += numGridMove;
@@ -170,8 +171,8 @@ public class FireMan : MonoBehaviour
             _t.position = _currentGridPos;
             _lookAtDirection = Vector3.down;
             _throwDirection = Vector2.down;
-            // Physics2D.CircleCast()
-            _hit = Physics2D.CircleCast(_t.position, 1, _lookAtDirection, 1f, layerMask: _forbiddenLayers);
+            
+            _hit = Physics2D.CircleCast(_t.position, 0.75f, _lookAtDirection, 1.5f, layerMask: _forbiddenLayers);
             if (!_hit)
             {
                 _currentGridPos.y -= numGridMove;
@@ -183,7 +184,7 @@ public class FireMan : MonoBehaviour
             _t.position = _currentGridPos;
             _lookAtDirection = Vector3.right;
             _throwDirection = Vector2.right;
-            _hit = Physics2D.CircleCast(_t.position, 1, _lookAtDirection, 1f, layerMask: _forbiddenLayers);
+            _hit = Physics2D.CircleCast(_t.position, 0.75f, _lookAtDirection, 1.5f, layerMask: _forbiddenLayers);
             if (_spriteRenderer.flipX)
                 _spriteRenderer.flipX = false;
             if (!_hit)
@@ -197,7 +198,7 @@ public class FireMan : MonoBehaviour
             _t.position = _currentGridPos;
             _lookAtDirection = Vector3.left;
             _throwDirection = Vector2.left;
-            _hit = Physics2D.CircleCast(_t.position, 1, _lookAtDirection, 1f, layerMask: _forbiddenLayers);
+            _hit = Physics2D.CircleCast(_t.position, 0.75f, _lookAtDirection, 1.5f, layerMask: _forbiddenLayers);
             if (!_spriteRenderer.flipX)
                 _spriteRenderer.flipX = true;
             if (!_hit)
