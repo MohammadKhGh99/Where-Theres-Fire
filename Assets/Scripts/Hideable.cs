@@ -24,8 +24,15 @@ public class Hideable : MonoBehaviour
             ShowOrHide();
     }
 
-    public void ShowOrHide()
+    public void ShowOrHide(bool reShow = false)
     {
+        if (reShow)
+        {
+            if (!_spriteRenderer.enabled)
+                StartCoroutine(GameManager.Instance.FadeIn(_spriteRenderer));
+            return;
+        }
+        
         StartCoroutine(_spriteRenderer.enabled
             ? GameManager.Instance.FadeOut(_spriteRenderer)
             : GameManager.Instance.FadeIn(_spriteRenderer));

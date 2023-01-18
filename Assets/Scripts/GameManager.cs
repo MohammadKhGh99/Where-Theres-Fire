@@ -99,7 +99,7 @@ public class GameManager : Singleton<GameManager>
     // Types of Houses we have
     private string[] _housesTypes = { "House1", "House2" };
     private Flammable[] _houses;
-    public Slider burnedHousesBar;
+    [FormerlySerializedAs("_burnedHousesBar")] public Slider burnedHousesBar;
     [SerializeField] private float maxBurnedPoints = 10;
 
 
@@ -250,17 +250,11 @@ public class GameManager : Singleton<GameManager>
 
     void Start()
     {
-        var temp = Instantiate(Resources.Load("HealthBar"), new Vector3(-22.5f, 0, 0), Quaternion.identity,
-            barsParent.transform) as GameObject;
-        if (temp == null)
-            throw new NullReferenceException("You cannot build new burned points bar, there is no such bar in Prefabs!");
-        temp.transform.Rotate(Vector3.forward, 90);
-        burnedHousesBar = temp.GetComponent<Slider>();
         burnedHousesBar.maxValue = maxBurnedPoints;
         burnedHousesBar.value = 0;
-        var transform1 = burnedHousesBar.transform;
-        var scale = transform1.localScale;
-        transform1.localScale = new Vector3(scale.x + 2, scale.y + 2, 0);
+        // var transform1 = burnedHousesBar.transform;
+        // var scale = transform1.localScale;
+        // transform1.localScale = new Vector3(scale.x + 2, scale.y + 2, 0);
 
         // ** houses **
         _numHouses = housesParent.childCount;

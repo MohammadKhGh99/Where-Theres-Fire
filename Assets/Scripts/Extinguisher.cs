@@ -19,9 +19,8 @@ public class Extinguisher : MonoBehaviour
     // shooting water
     [SerializeField] private Transform waterGunLocalPos;
     private WaterGun _waterGun;
-    private float _waterKeyHoldingTime = 0f;
-    private bool _waterKeyDown = false;
-    [SerializeField] private Vector3 waterGunLocalPosVec = new Vector3(0, -1.25f, 0);
+    private float _waterKeyHoldingTime;
+    private bool _waterKeyDown;
 
     // controls changing
     private const KeyCode Extinguish = KeyCode.Period;
@@ -48,7 +47,7 @@ public class Extinguisher : MonoBehaviour
 
     private float _prevRotation;
     private Vector3 _prevWaterSplashPos;
-    
+
     // private Vector2 _lookAtDirection;
 
 
@@ -95,8 +94,9 @@ public class Extinguisher : MonoBehaviour
 
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            // if (_waterSplash.isPlaying && _throwDirection.x > -1)
-            //     _waterSplash.Stop();
+            // if (!_throwDirection.x.Equals(-1) && _waterSplash.isPlaying)
+                // _waterSplash.Stop();
+            
             _throwDirection.x = -1;
             _throwDirection.y = 0;
             if (_spriteRenderer.flipX)
@@ -104,10 +104,12 @@ public class Extinguisher : MonoBehaviour
             var temp = _waterSplash.transform;
             temp.position = _t.position + _leftPos;
             temp.rotation = _leftAngle;
-        }else if (Input.GetKey(KeyCode.RightArrow))
+        }
+        else if (Input.GetKey(KeyCode.RightArrow))
         {
-            // if (_waterSplash.isPlaying && _throwDirection.x < 1)
-            //     _waterSplash.Stop();
+            // if (!_throwDirection.x.Equals(1) && _waterSplash.isPlaying)
+                // _waterSplash.Stop();
+            
             _throwDirection.x = 1;
             _throwDirection.y = 0;
             if (!_spriteRenderer.flipX)
@@ -115,37 +117,43 @@ public class Extinguisher : MonoBehaviour
             var temp = _waterSplash.transform;
             temp.position = _t.position + _rightPos;
             temp.rotation = _rightAngle;
-        }else if (Input.GetKey(KeyCode.DownArrow))
+        }
+        else if (Input.GetKey(KeyCode.DownArrow))
         {
-            // if (_waterSplash.isPlaying && _throwDirection.y > -1)
-            //     _waterSplash.Stop();
+            // if (!_throwDirection.y.Equals(-1) && _waterSplash.isPlaying)
+                // _waterSplash.Stop();
+            
             _throwDirection.x = 0;
             _throwDirection.y = -1;
             var temp = _waterSplash.transform;
             temp.position = _t.position;
             temp.rotation = _downAngle;
-        }else if (Input.GetKey(KeyCode.UpArrow))
+        }
+        else if (Input.GetKey(KeyCode.UpArrow))
         {
-            // if (_waterSplash.isPlaying && _throwDirection.y < 1)
+            // if (!_throwDirection.y.Equals(1) && _waterSplash.isPlaying)
             //     _waterSplash.Stop();
+            
             _throwDirection.x = 0;
             _throwDirection.y = 1;
             var temp = _waterSplash.transform;
             temp.position = _t.position + _upPos;
             temp.rotation = _upAngle;
-        }else if (!Input.GetKey(Extinguish))
+        }
+        else if (!Input.GetKey(Extinguish))
         {
             _moveDirection = Vector2.zero;
             _throwDirection = Vector2.zero;
         }
+
         _animator.SetInteger("XSpeed", (int)_throwDirection.x);
         _animator.SetInteger("YSpeed", (int)_throwDirection.y);
-        
+
         var snapping = fourDirection ? 90.0f : 45.0f;
         if (_moveDirection.sqrMagnitude > 0)
         {
             // RotatingAndPositioningWaterStream();
-            
+
             _isMoving = true;
             var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
             angle = Mathf.Round(angle / snapping) * snapping;
@@ -165,6 +173,7 @@ public class Extinguisher : MonoBehaviour
             // _prevWaterSplashPos = _waterSplash.transform.position;
             if (_waterSplash.isStopped)
                 _waterSplash.Play();
+            
             _waterGun.EnlargeWaterStream(_t.position, _lookAtDirection, waterGunLocalPos.position, _waterKeyDown);
             _waterKeyDown = true;
         }
@@ -235,5 +244,14 @@ public class Extinguisher : MonoBehaviour
     public void StartGame()
     {
         _t.position = _startPosition;
+    }
+
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.name.Equals("FireMan"))
+        {
+            print("HEllpasd");
+            col.gameObject.GetComponent<FireMan>().GetHideable().ShowOrHide(reShow: true);
+        }
     }
 }

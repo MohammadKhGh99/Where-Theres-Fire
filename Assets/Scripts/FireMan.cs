@@ -49,6 +49,10 @@ public class FireMan : MonoBehaviour
 
     //**don't move to these objects
     private LayerMask _forbiddenLayers;
+    
+    // *** fireman pushed
+    private Vector3 _pushedDirection;
+    public int gridToPush = 2;
 
     // Start is called before the first frame update
     void Start()
@@ -64,6 +68,7 @@ public class FireMan : MonoBehaviour
         // _spriteRenderer.flipX = !_spriteRenderer.flipX;
         _hideable = GetComponent<Hideable>();
         _forbiddenLayers = GameManager.Instance.forbiddenLayers;
+        _pushedDirection = Vector3.zero;
     }
 
     private void Update()
@@ -139,10 +144,16 @@ public class FireMan : MonoBehaviour
 
     private void GridMovement()
     {
-        // _currentGridPos = Vector3Int.RoundToInt(_t.position);
+        if (gridToPush == 0)
+        {
+            _pushedDirection = Vector3.zero;
+            gridToPush = 2;
+        }
+        if (!_pushedDirection.Equals(Vector3.zero))
+            gridToPush--;
         
         // Check input and move in the corresponding direction
-         if (Input.GetKeyDown(Up) && _moveDirection.x.Equals(0))
+         if ((Input.GetKeyDown(Up) && _moveDirection.x.Equals(0)) || _pushedDirection.Equals(Vector3.up))
         {
             _t.position = _currentGridPos;
             _lookAtDirection = Vector3.up;
@@ -154,7 +165,7 @@ public class FireMan : MonoBehaviour
                 StartCoroutine(LerpRigidbody(_t.position, _currentGridPos, Time.time));
             }
         }
-        else if (Input.GetKeyDown(Down) && _moveDirection.x.Equals(0))
+        else if ((Input.GetKeyDown(Down) && _moveDirection.x.Equals(0)) || _pushedDirection.Equals(Vector3.down))
         {
             _t.position = _currentGridPos;
             _lookAtDirection = Vector3.down;
@@ -166,7 +177,7 @@ public class FireMan : MonoBehaviour
                 StartCoroutine(LerpRigidbody(_t.position, _currentGridPos, Time.time));
             }
         }
-        else if (Input.GetKeyDown(Right) && _moveDirection.y.Equals(0))
+        else if ((Input.GetKeyDown(Right) && _moveDirection.y.Equals(0)) || _pushedDirection.Equals(Vector3.right))
         {
             _t.position = _currentGridPos;
             _lookAtDirection = Vector3.right;
@@ -180,7 +191,7 @@ public class FireMan : MonoBehaviour
                 StartCoroutine(LerpRigidbody(_t.position, _currentGridPos, Time.time));
             }
         }
-        else if (Input.GetKeyDown(Left) && _moveDirection.y.Equals(0))
+        else if ((Input.GetKeyDown(Left) && _moveDirection.y.Equals(0)) || _pushedDirection.Equals(Vector3.left))
         {
             _t.position = _currentGridPos;
             _lookAtDirection = Vector3.left;
@@ -199,11 +210,13 @@ public class FireMan : MonoBehaviour
             // _currentGridPos = Vector3Int.RoundToInt(_t.position);
             // print(_rb.velocity);
             // var temp = GameManager.Instance.GroundBaseTilemap.WorldToCell(_t.position);;
-            // if (_rb.velocity.sqrMagnitude > 0 && !_currentGridPos.Equals(temp))
+            // if (_rb.velocity.sqrMagnitude > 0 && !p)
+                
             //     _currentGridPos = temp;
             _lookAtDirection = Vector3.zero;
         }
 
+        if (!_pushedDirection.Equals(Vector3.zero)) return;
         _animator.SetInteger("XSpeed", (int)_lookAtDirection.x);
         _animator.SetInteger("YSpeed", (int)_lookAtDirection.y);
     }
@@ -263,6 +276,16 @@ public class FireMan : MonoBehaviour
         yield break;
     }
 
+    public void ChangePushDirection(Vector3 other)
+    {
+        _pushedDirection = other;
+    }
+
+    public Hideable GetHideable()
+    {
+        return _hideable;
+    }
+    
     // Update is called once per frame
     private void FixedUpdate()
     {

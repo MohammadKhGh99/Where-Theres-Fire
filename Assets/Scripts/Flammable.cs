@@ -64,7 +64,7 @@ public class Flammable : MonoBehaviour
     private TextMeshProUGUI _points;
     // private float _pointsTravelY = 3;
     private float _targetPointsX = -20.5f;
-    private float _targetPointsY = -7;
+    private float _targetPointsY = -6.5f;
     
     // *** Smoke ***
     private ParticleSystem _smoke;

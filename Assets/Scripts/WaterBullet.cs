@@ -236,10 +236,7 @@ public class WaterBullet : MonoBehaviour
         {
             res.SetSelfWatering(true);
         }
-
-
-
-            // print("there is trigger");
+        
         if (col.CompareTag("House"))
         {
             // watering
@@ -253,8 +250,13 @@ public class WaterBullet : MonoBehaviour
         else if (col.name.Equals("FireMan")) //!col.attachedRigidbody.IsUnityNull()))
         {
             print("Triggered");
-            col.GetComponent<Rigidbody2D>().AddForce(_direction * waterBulletPower / 10 * bulletSpeed, ForceMode2D.Force);
-            
+            var fireman = col.GetComponent<FireMan>();
+            fireman.ChangePushDirection(Vector3Int.RoundToInt(_direction));
+            fireman.GetHideable().ShowOrHide(reShow: true);
+            // var temp = col.gameObject.transform.position;
+            // fireman.transform.position = Vector3.Lerp(temp, temp + Vector3Int.RoundToInt(_direction) * fireman.gridToPush, Time.deltaTime);
+            // col.GetComponent<Rigidbody2D>().AddForce(_direction * waterBulletPower / 10 * bulletSpeed, ForceMode2D.Force);
+
         }
     }
     
