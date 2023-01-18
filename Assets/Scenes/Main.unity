@@ -9227,6 +9227,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree
@@ -17026,7 +17030,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: e4a600f01616fce46a8c75fc08511296, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 7811e7ff6df8c384e990d50b7b3c9343, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
