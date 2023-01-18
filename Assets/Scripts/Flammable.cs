@@ -405,7 +405,7 @@ public class Flammable : MonoBehaviour
             var distance = Physics2D.Distance(_collider, col).distance;
             while (_objectsAroundUsSorted.ContainsKey(distance))
             {
-                distance += Mathf.Epsilon;
+                distance += 0.01f;
             }
             _objectsAroundUsSorted.Add(distance, res);
         }
