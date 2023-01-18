@@ -110,6 +110,11 @@ public class GameManager : Singleton<GameManager>
     public int numBurnedPoints;
     [SerializeField] private TextMeshProUGUI burnedPointsText;
     [SerializeField] public Transform burnedPointsFireToMoveTowards;
+    
+    // *** Sounds
+    [SerializeField] private AudioSource burningSound;
+    [SerializeField] private AudioSource molotovSound;
+    [SerializeField] private AudioSource waterHoseSound;
 
     // **** "Molotov" pool and functions ****
     public const float MolotovCooldownTime = 0f;
@@ -464,5 +469,20 @@ public class GameManager : Singleton<GameManager>
     {
         burnedPointsText.text = numBurnedPoints + "/" + maxBurnedPoints;
         burnedHousesBar.value = numBurnedPoints;
+    }
+
+    public AudioSource GetBurningSound()
+    {
+        return burningSound;
+    }
+    
+    public AudioSource GetWaterHoseSound()
+    {
+        return waterHoseSound;
+    }
+    
+    public AudioSource GetMolotovSound()
+    {
+        return molotovSound;
     }
 }

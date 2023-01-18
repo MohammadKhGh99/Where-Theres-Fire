@@ -154,10 +154,14 @@ public class Flammable : MonoBehaviour
         
         if (!CurrentStatus.Equals(Status.OnFire))
         {
+            
             if (!_smoke.IsUnityNull() && _smoke.isPlaying && !isFireSource)
                 _smoke.Stop();
             return;
         }
+        
+        if (!GameManager.Instance.GetBurningSound().isPlaying)
+            GameManager.Instance.GetBurningSound().Play();
         
         // all the things under this line means they are on FIRE!!
         // remember this!!
@@ -346,6 +350,9 @@ public class Flammable : MonoBehaviour
         _currentTimerToAddReleaseFire -= Time.deltaTime * extinguishingSpeed;
         if (!(_timeUntilBurnOut >= initialTimeUntilBurnOut)) return;
         // we watered the object
+        if (GameManager.Instance.GetBurningSound().isPlaying)
+            GameManager.Instance.GetBurningSound().Stop();
+        
         initialTimeUntilBurnOut = _timeUntilBurnOut;
         CurrentStatus = Status.NotOnFire;
         if (isFireSource)

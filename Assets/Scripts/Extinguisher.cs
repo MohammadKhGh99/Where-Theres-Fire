@@ -174,6 +174,9 @@ public class Extinguisher : MonoBehaviour
             if (_waterSplash.isStopped)
                 _waterSplash.Play();
             
+            if (!GameManager.Instance.GetWaterHoseSound().isPlaying)
+                GameManager.Instance.GetWaterHoseSound().Play();
+            
             _waterGun.EnlargeWaterStream(_t.position, _lookAtDirection, waterGunLocalPos.position, _waterKeyDown);
             _waterKeyDown = true;
         }
@@ -181,6 +184,10 @@ public class Extinguisher : MonoBehaviour
         {
             if (_waterSplash.isPlaying)
                 _waterSplash.Stop();
+            
+            if (GameManager.Instance.GetWaterHoseSound().isPlaying)
+                GameManager.Instance.GetWaterHoseSound().Stop();
+            
             _waterGun.ShootWaterStream();
             _waterKeyHoldingTime = 0f;
             _waterKeyDown = false;

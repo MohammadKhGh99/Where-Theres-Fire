@@ -246,6 +246,8 @@ public class FireMan : MonoBehaviour
         var molotov = GameManager.Instance.MolotovPool.Get();
         yield return molotov.Shoot(_t.position, _throwDirection is { x: 0, y: 0 } ? Vector3.right : _throwDirection);
         // when we finish with the bomb, 
+        if (!GameManager.Instance.GetMolotovSound().isPlaying)
+            GameManager.Instance.GetMolotovSound().Play();
         var molotovDropPos = molotov.GetMolotovDropPos();
         GameManager.Instance.MolotovPool.Release(molotov);
         StartCoroutine(StartFire(molotovDropPos));
