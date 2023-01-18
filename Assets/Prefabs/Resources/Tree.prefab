@@ -118,7 +118,7 @@ MonoBehaviour:
   numOfPoints: 1
   isHouse: 0
   isFireSource: 0
-  initialTimeUntilBurnOut: 5
+  initialTimeUntilBurnOut: 2
   initialChanceOfInflammation: 70
   extinguishingSpeed: 20
   increaseChancePercentage: 5

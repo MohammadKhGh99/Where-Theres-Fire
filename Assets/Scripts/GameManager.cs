@@ -80,9 +80,6 @@ public class GameManager : Singleton<GameManager>
         Done
     }
 
-
-
-    
     [SerializeField] public LayerMask forbiddenLayers;
 
     // Burned Building
@@ -341,9 +338,9 @@ public class GameManager : Singleton<GameManager>
             }
 
             // ** fire man won **
-            var allBurned = _currentSeconds < _gameTimer && NumBurnedHouses == _numHouses;
+            // var allBurned = _currentSeconds < _gameTimer && NumBurnedHouses == _numHouses;
             // var winPercentReached = _currentSeconds >= _gameTimer && (float)NumBurnedHouses / _numHouses >= winPercent;
-            if (allBurned || numBurnedPoints >= maxBurnedPoints)
+            if (numBurnedPoints >= maxBurnedPoints) // allBurned || 
             {
                 StartCoroutine(FadeOut(_imageStartGame));
                 StartCoroutine(FadeIn(_imageFireWon));

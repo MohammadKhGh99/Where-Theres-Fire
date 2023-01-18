@@ -400,6 +400,8 @@ public class Flammable : MonoBehaviour
             _objectsAroundUs.Add(res);
 
             // sort by distance of colliders (MAYBE DELETE IT LATER)
+            // var tempDistance = Physics2D.Distance(_collider, col).distance;
+            // if (_objectsAroundUsSorted.ContainsKey(tempDistance))
             _objectsAroundUsSorted.Add(Physics2D.Distance(_collider, col).distance, res);
         }
     }

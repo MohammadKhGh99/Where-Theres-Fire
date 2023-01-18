@@ -170,7 +170,8 @@ public class FireMan : MonoBehaviour
             _t.position = _currentGridPos;
             _lookAtDirection = Vector3.down;
             _throwDirection = Vector2.down;
-            _hit = Physics2D.Raycast(_t.position, _lookAtDirection, 2f, layerMask: _forbiddenLayers);
+            // Physics2D.CircleCast()
+            _hit = Physics2D.CircleCast(_t.position, 1, _lookAtDirection, 2f, layerMask: _forbiddenLayers);
             if (!_hit)
             {
                 _currentGridPos.y -= numGridMove;
