@@ -20,6 +20,9 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private float winPercent = 0.5f;
     private const float DEFAULT_GAME_TIME = 5.0f * 60.0f; // 5 Minutes
     private float _gameTimer;
+    // timer countdown
+    private float _currentSeconds;
+    private float _pulsingTimer;
 
     // *** Players ***
     [SerializeField] private GameObject fireMan;
@@ -115,6 +118,12 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private AudioSource burningSound;
     [SerializeField] private AudioSource molotovSound;
     [SerializeField] private AudioSource waterHoseSound;
+    
+    // *** Buttons
+    private GameObject _startButton;
+    private GameObject _howToPlayButton;
+    private GameObject _exitButton;
+    public bool start, howToPlay, exit;
 
     // **** "Molotov" pool and functions ****
     public const float MolotovCooldownTime = 0f;
@@ -260,14 +269,18 @@ public class GameManager : Singleton<GameManager>
 
         // getting the canvas and images of the start and end screens...
         _startGameCanvas = transform.GetChild(0).gameObject;
+        _startButton = _startGameCanvas.transform.GetChild(1).gameObject;
+        _howToPlayButton = _startGameCanvas.transform.GetChild(2).gameObject;
+        _exitButton = _startGameCanvas.transform.GetChild(3).gameObject;
+        
         _imageStartGame = _startGameCanvas.GetComponent<Transform>().GetChild(0).GetComponent<Image>();
         if (!_startGameCanvas.activeInHierarchy)
             _startGameCanvas.SetActive(true);
 
-        _waterWonCanvas = transform.GetChild(1).gameObject;
+        _waterWonCanvas = transform.GetChild(2).gameObject;
         _imageWaterWon = _waterWonCanvas.GetComponent<Transform>().GetChild(0).GetComponent<Image>();
 
-        _fireWonCanvas = transform.GetChild(2).gameObject;
+        _fireWonCanvas = transform.GetChild(3).gameObject;
         _imageFireWon = _fireWonCanvas.GetComponent<Transform>().GetChild(0).GetComponent<Image>();
 
         _initialTextScale = timerText.transform.localScale;
@@ -278,6 +291,7 @@ public class GameManager : Singleton<GameManager>
     private void InitializeGame()
     {
         _gameTimer = gameTimeInSeconds != 0 ? gameTimeInSeconds : DEFAULT_GAME_TIME;
+        _currentSeconds = _gameTimer;
         // _extinguisherMan.StartGame();
         // _fireMan.StartGame();
 
@@ -314,7 +328,7 @@ public class GameManager : Singleton<GameManager>
         }
 
         // ** to quit the game press esc
-        if (Input.GetKeyDown(KeyCode.Escape) && !IsGameRunning)
+        if (exit) //Input.GetKeyDown(KeyCode.Escape) && !IsGameRunning)
         {
             Application.Quit();
             #if UNITY_EDITOR
@@ -323,7 +337,7 @@ public class GameManager : Singleton<GameManager>
         }
 
         // ** to start the game press any key to start
-        if (Input.GetKey(KeyCode.Space) && !IsGameRunning) // Input.anyKeyDown
+        if (start) // Input.GetKey(KeyCode.Space) && !IsGameRunning) // Input.anyKeyDown
         {
             StartCoroutine(FadeOut(_imageStartGame));
             IsGameRunning = true;
@@ -333,7 +347,7 @@ public class GameManager : Singleton<GameManager>
         if (!IsGameOver)
         {
             // ** water man won **
-            if (_currentSeconds >= _gameTimer && (float)NumBurnedHouses / _numHouses < winPercent)
+            if (_currentSeconds <= 0 && numBurnedPoints < maxBurnedPoints)// && (float)NumBurnedHouses / _numHouses < winPercent)
             {
                 StartCoroutine(FadeOut(_imageStartGame));
                 StartCoroutine(FadeIn(_imageWaterWon));
@@ -355,22 +369,18 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    // timer countdown
-    private float _currentSeconds;
-    private float _pulsingTimer;
-
     private void UpdateTheTimeOfTheGame()
     {
-        if (!IsGameRunning)
+        if (!IsGameRunning || _currentSeconds <= 0)
             return;
         // counter to end of game 
         // todo: IT doesn't stop.
         _pulsingTimer += Time.deltaTime;
-        _currentSeconds += Time.deltaTime;
-        var minutes = (int)(_currentSeconds / 60) % 60;
+        _currentSeconds -= Time.deltaTime;
+        var minutes = (int)(_currentSeconds / 60);
         var seconds = (int)_currentSeconds % 60;
-        minutes = (int)_gameTimer / 60 - minutes - 1;
-        seconds = 59 - seconds;
+        // minutes = (int)_gameTimer / 60 - minutes - 1;
+        // seconds = 59 - seconds;
         if (minutes == 1 && seconds == 0)
             timerText.color = Color.red;
 
@@ -484,5 +494,12 @@ public class GameManager : Singleton<GameManager>
     public AudioSource GetMolotovSound()
     {
         return molotovSound;
+    }
+
+    public void DestroyButtons()
+    {
+        Destroy(_startButton);
+        Destroy(_howToPlayButton);
+        Destroy(_exitButton);
     }
 }

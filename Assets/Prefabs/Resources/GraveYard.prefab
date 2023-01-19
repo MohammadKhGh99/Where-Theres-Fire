@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7429781908089002256}
   - component: {fileID: 7625626083904855941}
   m_Layer: 6
-  m_Name: GarveYard
+  m_Name: GraveYard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

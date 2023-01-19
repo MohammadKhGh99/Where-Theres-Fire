@@ -76,34 +76,21 @@ public class Extinguisher : MonoBehaviour
         // *** Movement ***
         var yDirection = Input.GetAxis("Vertical");
         var xDirection = Input.GetAxis("Horizontal");
-        // print(xDirection + " " + yDirection);
-
-        // if (!Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow) && 
-        //     !Input.GetKey(KeyCode.DownArrow) && !Input.GetKey(KeyCode.UpArrow))
-        // {
-        //     _moveDirection = Vector2.zero;
-        // }
-        // else
-        // {
-        //     _throwDirection.x = xDirection;
-        //     _throwDirection.y = yDirection;
-        //     
+        
         _moveDirection.x = xDirection;
         _moveDirection.y = yDirection;
-        // }
 
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            // if (!_throwDirection.x.Equals(-1) && _waterSplash.isPlaying)
-                // _waterSplash.Stop();
-            
             _throwDirection.x = -1;
             _throwDirection.y = 0;
+            
             if (_spriteRenderer.flipX)
                 _spriteRenderer.flipX = false;
             var temp = _waterSplash.transform;
             temp.position = _t.position + _leftPos;
-            temp.rotation = _leftAngle;
+            temp.rotation = Quaternion.Lerp(temp.rotation, _leftAngle, Time.time);
+            // temp.rotation = _leftAngle;
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
@@ -116,7 +103,8 @@ public class Extinguisher : MonoBehaviour
                 _spriteRenderer.flipX = true;
             var temp = _waterSplash.transform;
             temp.position = _t.position + _rightPos;
-            temp.rotation = _rightAngle;
+            temp.rotation = Quaternion.Lerp(temp.rotation, _rightAngle, Time.time);
+            // temp.rotation = _rightAngle;
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
@@ -127,7 +115,8 @@ public class Extinguisher : MonoBehaviour
             _throwDirection.y = -1;
             var temp = _waterSplash.transform;
             temp.position = _t.position;
-            temp.rotation = _downAngle;
+            temp.rotation = Quaternion.Lerp(temp.rotation, _downAngle, Time.time);
+            // temp.rotation = _downAngle;
         }
         else if (Input.GetKey(KeyCode.UpArrow))
         {
@@ -138,7 +127,8 @@ public class Extinguisher : MonoBehaviour
             _throwDirection.y = 1;
             var temp = _waterSplash.transform;
             temp.position = _t.position + _upPos;
-            temp.rotation = _upAngle;
+            temp.rotation = Quaternion.Lerp(temp.rotation, _upAngle, Time.time);
+            // temp.rotation = _upAngle;
         }
         else if (!Input.GetKey(Extinguish))
         {
@@ -258,7 +248,28 @@ public class Extinguisher : MonoBehaviour
         if (col.gameObject.name.Equals("FireMan"))
         {
             // print("HEllpasd");
-            col.gameObject.GetComponent<FireMan>().GetHideable().ShowOrHide(reShow: true);
+            var fireman = col.gameObject.GetComponent<FireMan>(); 
+            fireman.GetHideable().ShowOrHide(reShow: true);
+            fireman.SetPushed(true);
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.gameObject.name.Equals("FireMan"))
+        {
+            var fireman = collision.gameObject.GetComponent<FireMan>(); 
+            // fireman.GetHideable().ShowOrHide(reShow: true);
+            fireman.SetPushed(true);
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.gameObject.name.Equals("FireMan"))
+        {
+            var fireman = other.gameObject.GetComponent<FireMan>();
+            fireman.SetDonePush(true);
         }
     }
 }
