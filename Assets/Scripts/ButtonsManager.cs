@@ -19,18 +19,18 @@ public class ButtonsManager : MonoBehaviour
     public void OnStartButtonPressed()
     {
         GameManager.Instance.start = true;
-        GameManager.Instance.DestroyButtons();
+        GameManager.Instance.HideButtons();
     }
     
     public void OnHowToPlayButtonPressed()
     {
         GameManager.Instance.howToPlay = true;
-        GameManager.Instance.DestroyButtons();
+        GameManager.Instance.HideButtons();
     }
     
     public void OnExitButtonPressed()
     {
         GameManager.Instance.exit = true;
-        GameManager.Instance.DestroyButtons();
+        GameManager.Instance.HideButtons();
     }
 }

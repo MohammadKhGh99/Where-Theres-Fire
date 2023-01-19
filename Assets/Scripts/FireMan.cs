@@ -221,8 +221,9 @@ public class FireMan : MonoBehaviour
             _lookAtDirection = Vector3.zero;
             if (_pushedByExtinguisher)
             {
-                print("pushed");
+                // print("pushed");
                 _currentGridPos = Vector3Int.RoundToInt(_rb.position);
+                print(_currentGridPos);
                 // if (_doneExtinguisherPush)
                 // {
                 //     _t.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos);

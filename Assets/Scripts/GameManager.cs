@@ -51,12 +51,13 @@ public class GameManager : Singleton<GameManager>
     };
 
     // **** Start and End Pages ****
-    private GameObject _startGameCanvas;
-    private GameObject _waterWonCanvas;
-    private GameObject _fireWonCanvas;
+    // private GameObject startGameCanvas;
+    // private GameObject waterWonCanvas;
+    // private GameObject fireWonCanvas;
     private Image _imageStartGame;
-    private Image _imageWaterWon;
+    private Image _imageExtinguisherWon;
     private Image _imageFireWon;
+    private Image _imageHowToPlay;
 
     // *** game important flags ***
     public static bool IsGameRunning;    // the game is running or not
@@ -99,7 +100,7 @@ public class GameManager : Singleton<GameManager>
 
 
     // *** HealthBar Info. ****
-    public const float HealthBarHeight = 10f;
+    public const float HealthBarHeight = 5f;
     public const float HealthBarWidthPercentage = 75f;
 
 
@@ -259,58 +260,61 @@ public class GameManager : Singleton<GameManager>
     {
         burnedHousesBar.maxValue = maxBurnedPoints;
         burnedHousesBar.value = 0;
-        // var transform1 = burnedHousesBar.transform;
-        // var scale = transform1.localScale;
-        // transform1.localScale = new Vector3(scale.x + 2, scale.y + 2, 0);
 
-        // ** houses **
-        _numHouses = housesParent.childCount;
-        InitializeGame();
-
-        // getting the canvas and images of the start and end screens...
-        _startGameCanvas = transform.GetChild(0).gameObject;
-        _startButton = _startGameCanvas.transform.GetChild(1).gameObject;
-        _howToPlayButton = _startGameCanvas.transform.GetChild(2).gameObject;
-        _exitButton = _startGameCanvas.transform.GetChild(3).gameObject;
-        
-        _imageStartGame = _startGameCanvas.GetComponent<Transform>().GetChild(0).GetComponent<Image>();
-        if (!_startGameCanvas.activeInHierarchy)
-            _startGameCanvas.SetActive(true);
-
-        _waterWonCanvas = transform.GetChild(2).gameObject;
-        _imageWaterWon = _waterWonCanvas.GetComponent<Transform>().GetChild(0).GetComponent<Image>();
-
-        _fireWonCanvas = transform.GetChild(3).gameObject;
-        _imageFireWon = _fireWonCanvas.GetComponent<Transform>().GetChild(0).GetComponent<Image>();
-
-        _initialTextScale = timerText.transform.localScale;
-
-        burnedPointsText.text = numBurnedPoints + "/" + maxBurnedPoints;
-    }
-
-    private void InitializeGame()
-    {
         _gameTimer = gameTimeInSeconds != 0 ? gameTimeInSeconds : DEFAULT_GAME_TIME;
         _currentSeconds = _gameTimer;
-        // _extinguisherMan.StartGame();
-        // _fireMan.StartGame();
 
         // ** the game didn't start yet **
         IsGameRunning = false;
         IsGameOver = false;
-        _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
-        if (!controlHousesPos)
-            return;
+        
+        // // ** houses **
+        // _numHouses = housesParent.childCount;
+        // InitializeGame();
 
-        foreach (var t in _housesPosBackUp)
-        {
-            var temp = t.Split(',');
-            float x = float.Parse(temp[0]), y = float.Parse(temp[1]);
-            var curPos = new Vector3(x, y, 0);
-            var houseType = _housesTypes[Random.Range(0, 2)];
-            Instantiate(Resources.Load(houseType), curPos, Quaternion.identity, housesParent);
-        }
+        // getting the canvas and images of the start and end screens...
+        var startGameCanvas = transform.GetChild(0).gameObject;
+        
+        // Getting images of start, two ends and how to play screens
+        _imageStartGame = startGameCanvas.transform.GetChild(0).GetComponent<Image>();
+        
+        _imageExtinguisherWon = startGameCanvas.transform.GetChild(1).GetComponent<Image>();
+        _imageFireWon = startGameCanvas.transform.GetChild(2).GetComponent<Image>();
+        _imageHowToPlay = startGameCanvas.transform.GetChild(3).GetComponent<Image>();
+        
+        // Getting the buttons on start game screen
+        _startButton = _imageStartGame.transform.GetChild(0).gameObject;
+        _howToPlayButton = _imageStartGame.transform.GetChild(1).gameObject;
+        _exitButton = _imageStartGame.transform.GetChild(2).gameObject;
+
+        if (!_imageStartGame.gameObject.activeInHierarchy)
+            _imageStartGame.gameObject.SetActive(true);
+        
+        _initialTextScale = timerText.transform.localScale;
+        burnedPointsText.text = numBurnedPoints + "/" + maxBurnedPoints;
     }
+
+    // private void InitializeGame()
+    // {
+    //     _gameTimer = gameTimeInSeconds != 0 ? gameTimeInSeconds : DEFAULT_GAME_TIME;
+    //     _currentSeconds = _gameTimer;
+    //
+    //     // ** the game didn't start yet **
+    //     IsGameRunning = false;
+    //     IsGameOver = false;
+    //     _housesPosBackUp = controlHousesPos ? housesPositions : _housesPosBackUp;
+    //     if (!controlHousesPos)
+    //         return;
+    //
+    //     foreach (var t in _housesPosBackUp)
+    //     {
+    //         var temp = t.Split(',');
+    //         float x = float.Parse(temp[0]), y = float.Parse(temp[1]);
+    //         var curPos = new Vector3(x, y, 0);
+    //         var houseType = _housesTypes[Random.Range(0, 2)];
+    //         Instantiate(Resources.Load(houseType), curPos, Quaternion.identity, housesParent);
+    //     }
+    // }
 
     // Update is called once per frame
     void Update()
@@ -343,25 +347,30 @@ public class GameManager : Singleton<GameManager>
             IsGameRunning = true;
         }
 
+        if (howToPlay || (IsGameRunning && Input.GetKey(KeyCode.P)))
+        {
+            // StartCoroutine(FadeOut(_imageStartGame));
+            StartCoroutine(FadeIn(_imageHowToPlay));
+            IsGameRunning = false;
+        }
+
         // check which player won
-        if (!IsGameOver)
+        if (!IsGameOver && IsGameRunning)
         {
             // ** water man won **
-            if (_currentSeconds <= 0 && numBurnedPoints < maxBurnedPoints)// && (float)NumBurnedHouses / _numHouses < winPercent)
+            if (_currentSeconds <= 0 && numBurnedPoints < maxBurnedPoints)
             {
-                StartCoroutine(FadeOut(_imageStartGame));
-                StartCoroutine(FadeIn(_imageWaterWon));
+                // StartCoroutine(FadeOut(_imageStartGame));
+                StartCoroutine(FadeIn(_imageExtinguisherWon));
                 IsGameRunning = false;
                 IsGameOver = true;
                 return;
             }
 
             // ** fire man won **
-            // var allBurned = _currentSeconds < _gameTimer && NumBurnedHouses == _numHouses;
-            // var winPercentReached = _currentSeconds >= _gameTimer && (float)NumBurnedHouses / _numHouses >= winPercent;
-            if (numBurnedPoints >= maxBurnedPoints) // allBurned || 
+            if (numBurnedPoints >= maxBurnedPoints)
             {
-                StartCoroutine(FadeOut(_imageStartGame));
+                // StartCoroutine(FadeOut(_imageStartGame));
                 StartCoroutine(FadeIn(_imageFireWon));
                 IsGameRunning = false;
                 IsGameOver = true;
@@ -379,9 +388,8 @@ public class GameManager : Singleton<GameManager>
         _currentSeconds -= Time.deltaTime;
         var minutes = (int)(_currentSeconds / 60);
         var seconds = (int)_currentSeconds % 60;
-        // minutes = (int)_gameTimer / 60 - minutes - 1;
-        // seconds = 59 - seconds;
-        if (minutes == 1 && seconds == 0)
+        
+        if (((minutes == 1 && seconds == 0) || (minutes == 0)) && !timerText.color.Equals(Color.red))
             timerText.color = Color.red;
 
         if (minutes < 1 && seconds is <= 59 and > 0 && _pulsingTimer >= 0.5f)
@@ -419,7 +427,6 @@ public class GameManager : Singleton<GameManager>
         }
 
         spriteRenderer.enabled = false;
-        // image.gameObject.SetActive(false);
     }
     
     public IEnumerator FadeOut(TextMeshProUGUI text)
@@ -433,7 +440,6 @@ public class GameManager : Singleton<GameManager>
         }
 
         text.enabled = false;
-        // image.gameObject.SetActive(false);
     }
     
     public IEnumerator FadeIn(TextMeshProUGUI text)
@@ -496,10 +502,20 @@ public class GameManager : Singleton<GameManager>
         return molotovSound;
     }
 
-    public void DestroyButtons()
+    public void HideButtons()
     {
-        Destroy(_startButton);
-        Destroy(_howToPlayButton);
-        Destroy(_exitButton);
+        _startButton.SetActive(false);
+        _howToPlayButton.SetActive(false);
+        _exitButton.SetActive(false);
+        // Destroy(_startButton);
+        // Destroy(_howToPlayButton);
+        // Destroy(_exitButton);
+    }
+
+    private void UnHideButtons()
+    {
+        _startButton.SetActive(true);
+        _howToPlayButton.SetActive(true);
+        _exitButton.SetActive(true);
     }
 }

@@ -89,7 +89,7 @@ public class Extinguisher : MonoBehaviour
                 _spriteRenderer.flipX = false;
             var temp = _waterSplash.transform;
             temp.position = _t.position + _leftPos;
-            temp.rotation = Quaternion.Lerp(temp.rotation, _leftAngle, Time.time);
+            temp.rotation = Quaternion.Lerp(temp.rotation, _leftAngle, Time.time * 5);
             // temp.rotation = _leftAngle;
         }
         else if (Input.GetKey(KeyCode.RightArrow))
@@ -103,7 +103,7 @@ public class Extinguisher : MonoBehaviour
                 _spriteRenderer.flipX = true;
             var temp = _waterSplash.transform;
             temp.position = _t.position + _rightPos;
-            temp.rotation = Quaternion.Lerp(temp.rotation, _rightAngle, Time.time);
+            temp.rotation = Quaternion.Lerp(temp.rotation, _rightAngle, Time.time * 5);
             // temp.rotation = _rightAngle;
         }
         else if (Input.GetKey(KeyCode.DownArrow))
@@ -115,7 +115,7 @@ public class Extinguisher : MonoBehaviour
             _throwDirection.y = -1;
             var temp = _waterSplash.transform;
             temp.position = _t.position;
-            temp.rotation = Quaternion.Lerp(temp.rotation, _downAngle, Time.time);
+            temp.rotation = Quaternion.Lerp(temp.rotation, _downAngle, Time.time * 5);
             // temp.rotation = _downAngle;
         }
         else if (Input.GetKey(KeyCode.UpArrow))
@@ -127,7 +127,7 @@ public class Extinguisher : MonoBehaviour
             _throwDirection.y = 1;
             var temp = _waterSplash.transform;
             temp.position = _t.position + _upPos;
-            temp.rotation = Quaternion.Lerp(temp.rotation, _upAngle, Time.time);
+            temp.rotation = Quaternion.Lerp(temp.rotation, _upAngle, Time.time * 5);
             // temp.rotation = _upAngle;
         }
         else if (!Input.GetKey(Extinguish))
@@ -193,50 +193,50 @@ public class Extinguisher : MonoBehaviour
         _rb.velocity = _moveDirection.normalized * (movingSpeed * Time.fixedDeltaTime);
     }
 
-    private void RotatingAndPositioningWaterStream()
-    {
-        switch (_moveDirection.x)
-        {
-            // moving right
-            case > 0:
-            {
-                var temp = _waterSplash.transform;
-                temp.position = _t.position + _rightPos;
-                temp.rotation = _rightAngle;
-                break;
-            }
-            // moving left
-            case < 0:
-            {
-                var temp = _waterSplash.transform;
-                temp.position = _t.position + _leftPos;
-                temp.rotation = _leftAngle;
-                break;
-            }
-            default:
-                switch (_moveDirection.y)
-                {
-                    // moving down
-                    case < 0:
-                    {
-                        var temp = _waterSplash.transform;
-                        temp.position = _t.position;
-                        temp.rotation = _downAngle;
-                        break;
-                    }
-                    // moving up
-                    case > 0:
-                    {
-                        var temp = _waterSplash.transform;
-                        temp.position = _t.position + _upPos;
-                        temp.rotation = _upAngle;
-                        break;
-                    }
-                }
-
-                break;
-        }
-    }
+    // private void RotatingAndPositioningWaterStream()
+    // {
+    //     switch (_moveDirection.x)
+    //     {
+    //         // moving right
+    //         case > 0:
+    //         {
+    //             var temp = _waterSplash.transform;
+    //             temp.position = _t.position + _rightPos;
+    //             temp.rotation = _rightAngle;
+    //             break;
+    //         }
+    //         // moving left
+    //         case < 0:
+    //         {
+    //             var temp = _waterSplash.transform;
+    //             temp.position = _t.position + _leftPos;
+    //             temp.rotation = _leftAngle;
+    //             break;
+    //         }
+    //         default:
+    //             switch (_moveDirection.y)
+    //             {
+    //                 // moving down
+    //                 case < 0:
+    //                 {
+    //                     var temp = _waterSplash.transform;
+    //                     temp.position = _t.position;
+    //                     temp.rotation = _downAngle;
+    //                     break;
+    //                 }
+    //                 // moving up
+    //                 case > 0:
+    //                 {
+    //                     var temp = _waterSplash.transform;
+    //                     temp.position = _t.position + _upPos;
+    //                     temp.rotation = _upAngle;
+    //                     break;
+    //                 }
+    //             }
+    //
+    //             break;
+    //     }
+    // }
 
     public void StartGame()
     {
