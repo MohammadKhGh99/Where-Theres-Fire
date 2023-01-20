@@ -24,31 +24,9 @@ public class GameManager : Singleton<GameManager>
     private float _currentSeconds;
     private float _pulsingTimer;
 
-    // *** Players ***
-    [SerializeField] private GameObject fireMan;
-    [SerializeField] private GameObject extinguisher;
-    private Extinguisher _extinguisherMan;
-    private FireMan _fireMan;
-
 
     //  **** Housing.. ****
-    [SerializeField] private Transform housesParent;    // where to store the houses Parent
     public Transform barsParent;
-    [SerializeField] private bool controlHousesPos;
-
-    [SerializeField] private string[] housesPositions =
-    {
-        "-28.75,12.5", "-14.25,12.5", "0.25,12.5", "14.75,12.5", "29,12.5",
-        "-28.75,-0.5", "-14.25,-0.5", "0.25,-0.5", "14.75,-0.5", "29,-0.5",
-        "-28.75,-13.5", "-14.25,-13.5", "0.25,-13.5", "14.75,-13.5", "29,-13.5"
-    };
-
-    private string[] _housesPosBackUp =
-    {
-        "-28.75,12.5", "-14.25,12.5", "0.25,12.5", "14.75,12.5", "29,12.5",
-        "-28.75,-0.5", "-14.25,-0.5", "0.25,-0.5", "14.75,-0.5", "29,-0.5",
-        "-28.75,-13.5", "-14.25,-13.5", "0.25,-13.5", "14.75,-13.5", "29,-13.5"
-    };
 
     // **** Start and End Pages ****
     // private GameObject startGameCanvas;
@@ -93,7 +71,6 @@ public class GameManager : Singleton<GameManager>
     private static int _numHouses = 0;
 
     // Types of Houses we have
-    private string[] _housesTypes = { "House1", "House2" };
     private Flammable[] _houses;
     [FormerlySerializedAs("_burnedHousesBar")] public Slider burnedHousesBar;
     [SerializeField] private float maxBurnedPoints = 10;
@@ -108,8 +85,10 @@ public class GameManager : Singleton<GameManager>
     public Tilemap GroundBaseTilemap; 
     public Tilemap WaterFireTilemap; 
     public RuleTile WaterTile;
-    public TileBase GroundTile;
-    
+    [SerializeField] private const float TilesDisappearTime = 10f; // time it will take to water tile to dissapear after being in game
+    private const float CheckingRatio = 0.25f;
+    private float _checkingRatioTimer;
+
     // *** Burned Points ***
     public int numBurnedPoints;
     [SerializeField] private TextMeshProUGUI burnedPointsText;
@@ -184,14 +163,18 @@ public class GameManager : Singleton<GameManager>
     }
 
     // Functions
-
+    private static Dictionary<Vector3Int, float> _waterTileDisappearTimes = new();
     public static void SetTile(Vector3 worldPosition, Tilemap thisTilemap, TileBase newTile)
     {
         Vector3Int gridPosition = thisTilemap.WorldToCell(worldPosition);
 
         if (thisTilemap.HasTile(gridPosition))
         {
-            if (thisTilemap.GetTile(gridPosition) == newTile) return;
+            if (thisTilemap.GetTile(gridPosition) == newTile)
+            {
+                _waterTileDisappearTimes[gridPosition] = Time.time + TilesDisappearTime;
+                return;
+            }
         }
 
         thisTilemap.SetTile(gridPosition, newTile);
@@ -202,6 +185,35 @@ public class GameManager : Singleton<GameManager>
         {
             // Refresh the tile to apply the Rule Tile's rules
             thisTilemap.RefreshTile(gridPosition);
+            // setting the timer for:
+            _waterTileDisappearTimes[gridPosition] = Time.time + TilesDisappearTime;
+        }
+        else
+        {
+            // we want to delelte this waterTile, its unitynull so:
+            if (_waterTileDisappearTimes.ContainsKey(gridPosition))
+            {
+                _waterTileDisappearTimes.Remove(gridPosition);
+            }
+        }
+    }
+    
+    private void UpdateWaterTiles()
+    {
+        if (!(Time.time >= _checkingRatioTimer)) return;
+        _checkingRatioTimer = CheckingRatio + Time.time;
+        HashSet<Vector3Int> toDelete = new ();
+        foreach (var (gridPos, timeToDisappear) in _waterTileDisappearTimes)
+        {
+            if (!(timeToDisappear <= Time.time)) continue;
+            // time for this tile to disappear
+            Instance.WaterFireTilemap.SetTile(gridPos, null);
+            toDelete.Add(gridPos);
+        }
+
+        foreach (var gridToDelete in toDelete)
+        {
+            _waterTileDisappearTimes.Remove(gridToDelete);
         }
     }
 
@@ -320,7 +332,7 @@ public class GameManager : Singleton<GameManager>
     void Update()
     {
         UpdateTheTimeOfTheGame();
-
+        UpdateWaterTiles(); // this function is for waterTiles to make them dissapear after sometime, idk where to put it
         // ** if esc pressed while in game, we go to start page
         if ((Input.GetKey(KeyCode.Space) && IsGameOver) || (Input.GetKey(KeyCode.Escape) && IsGameRunning))
         {
