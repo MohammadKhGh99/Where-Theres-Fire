@@ -23,7 +23,8 @@ public class GameManager : Singleton<GameManager>
     // timer countdown
     private float _currentSeconds;
     private float _pulsingTimer;
-
+    
+    // ** bars parent (canvas)
     public Transform barsParent;
 
     // **** Start and End Pages ****
@@ -86,7 +87,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private const float TilesDisappearTime = 10f; // time it will take to water tile to dissapear after being in game
     private const float CheckingRatio = 0.25f;
     private float _checkingRatioTimer;
-    
+
     // *** Burned Points ***
     public int numBurnedPoints;
     [SerializeField] private TextMeshProUGUI burnedPointsText;
@@ -195,7 +196,7 @@ public class GameManager : Singleton<GameManager>
             }
         }
     }
-
+    
     private void UpdateWaterTiles()
     {
         if (!(Time.time >= _checkingRatioTimer)) return;
