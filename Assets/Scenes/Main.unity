@@ -2091,7 +2091,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 1000
+    maxNumParticles: 10000
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -2152,7 +2152,7 @@ ParticleSystem:
     serializedVersion: 6
     enabled: 1
     type: 5
-    angle: 25
+    angle: 50
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
@@ -2238,7 +2238,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 1
+      value: 3
       mode: 0
       spread: 0
       speed:
@@ -6486,7 +6486,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timerText: {fileID: 1442118295}
-  gameTimeInSeconds: 300
+  gameTimeInSeconds: 90
   winPercent: 0.5
   barsParent: {fileID: 2146168231}
   forbiddenLayers:
@@ -13482,11 +13482,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5529301946851938456, guid: 5764daa84b23e9944a98769013d44fbd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -12.954057
+      value: -12.963
       objectReference: {fileID: 0}
     - target: {fileID: 5529301946851938456, guid: 5764daa84b23e9944a98769013d44fbd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.085828304
+      value: 0.012
       objectReference: {fileID: 0}
     - target: {fileID: 5529301946851938456, guid: 5764daa84b23e9944a98769013d44fbd, type: 3}
       propertyPath: m_LocalPosition.z
@@ -19425,10 +19425,6 @@ PrefabInstance:
     - target: {fileID: 5529301946851938456, guid: 5764daa84b23e9944a98769013d44fbd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7624404545942682682, guid: 5764daa84b23e9944a98769013d44fbd, type: 3}
-      propertyPath: m_SortingOrder
-      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5764daa84b23e9944a98769013d44fbd, type: 3}

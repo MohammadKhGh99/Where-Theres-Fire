@@ -322,7 +322,7 @@ public class GameManager : Singleton<GameManager>
         }
 
         // ** to quit the game press esc
-        if (exit) //Input.GetKeyDown(KeyCode.Escape) && !IsGameRunning)
+        if (exit || (Input.GetKeyDown(KeyCode.Escape) && !IsGameRunning))
         {
             Application.Quit();
             #if UNITY_EDITOR
@@ -331,15 +331,16 @@ public class GameManager : Singleton<GameManager>
         }
 
         // ** to start the game press any key to start
-        if (start) // Input.GetKey(KeyCode.Space) && !IsGameRunning) // Input.anyKeyDown
+        if (start) // Input.GetKey(KeyCode.Space) && !IsGameRunning)
         {
             StartCoroutine(FadeOut(_imageStartGame));
             IsGameRunning = true;
         }
 
-        if (howToPlay || (IsGameRunning && Input.GetKey(KeyCode.P)))
+        if (howToPlay) // || (IsGameRunning && Input.GetKey(KeyCode.P)))
         {
-            // StartCoroutine(FadeOut(_imageStartGame));
+            if (_imageStartGame.gameObject.activeInHierarchy)
+                StartCoroutine(FadeOut(_imageStartGame));
             StartCoroutine(FadeIn(_imageHowToPlay));
             IsGameRunning = false;
         }

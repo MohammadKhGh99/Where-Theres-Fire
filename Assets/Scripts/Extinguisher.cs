@@ -44,6 +44,7 @@ public class Extinguisher : MonoBehaviour
     private Vector3 _leftPos = new(-0.4f, 0.4f, 0);
     private Vector3 _rightPos = new(0.6f, 0.4f, 0);
     private Vector3 _upPos = Vector3.up;
+    private float _rotateTime;
 
     private float _prevRotation;
     private Vector3 _prevWaterSplashPos;
@@ -82,6 +83,11 @@ public class Extinguisher : MonoBehaviour
 
         if (Input.GetKey(KeyCode.LeftArrow))
         {
+            if (_throwDirection.x <= -1)
+                _rotateTime += Time.deltaTime;
+            else
+                _rotateTime = Time.deltaTime;
+            
             _throwDirection.x = -1;
             _throwDirection.y = 0;
             
@@ -89,45 +95,50 @@ public class Extinguisher : MonoBehaviour
                 _spriteRenderer.flipX = false;
             var temp = _waterSplash.transform;
             temp.position = _t.position + _leftPos;
-            temp.rotation = Quaternion.Lerp(temp.rotation, _leftAngle, Time.time * 5);
+            temp.rotation = Quaternion.Lerp(temp.rotation, _leftAngle, _rotateTime * 0.5f);
+            
             // temp.rotation = _leftAngle;
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
-            // if (!_throwDirection.x.Equals(1) && _waterSplash.isPlaying)
-                // _waterSplash.Stop();
-            
+            if (_throwDirection.x >= 1)
+                _rotateTime += Time.deltaTime;
+            else
+                _rotateTime = Time.deltaTime;
             _throwDirection.x = 1;
             _throwDirection.y = 0;
             if (!_spriteRenderer.flipX)
                 _spriteRenderer.flipX = true;
             var temp = _waterSplash.transform;
             temp.position = _t.position + _rightPos;
-            temp.rotation = Quaternion.Lerp(temp.rotation, _rightAngle, Time.time * 5);
+            temp.rotation = Quaternion.Lerp(temp.rotation, _rightAngle, _rotateTime * 0.5f);
             // temp.rotation = _rightAngle;
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
-            // if (!_throwDirection.y.Equals(-1) && _waterSplash.isPlaying)
-                // _waterSplash.Stop();
-            
+            if (_throwDirection.y <= -1)
+                _rotateTime += Time.deltaTime;
+            else
+                _rotateTime = Time.deltaTime;
             _throwDirection.x = 0;
             _throwDirection.y = -1;
             var temp = _waterSplash.transform;
             temp.position = _t.position;
-            temp.rotation = Quaternion.Lerp(temp.rotation, _downAngle, Time.time * 5);
+            temp.rotation = Quaternion.Lerp(temp.rotation, _downAngle, _rotateTime * 0.5f);
             // temp.rotation = _downAngle;
         }
         else if (Input.GetKey(KeyCode.UpArrow))
         {
-            // if (!_throwDirection.y.Equals(1) && _waterSplash.isPlaying)
-            //     _waterSplash.Stop();
+            if (_throwDirection.y >= 1)
+                _rotateTime += Time.deltaTime;
+            else
+                _rotateTime = Time.deltaTime;
             
             _throwDirection.x = 0;
             _throwDirection.y = 1;
             var temp = _waterSplash.transform;
             temp.position = _t.position + _upPos;
-            temp.rotation = Quaternion.Lerp(temp.rotation, _upAngle, Time.time * 5);
+            temp.rotation = Quaternion.Lerp(temp.rotation, _upAngle, _rotateTime * 0.5f);
             // temp.rotation = _upAngle;
         }
         else if (!Input.GetKey(Extinguish))
