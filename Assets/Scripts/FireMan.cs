@@ -41,7 +41,6 @@ public class FireMan : MonoBehaviour
     //**Animation**
     private Animator _animator;
     private SpriteRenderer _spriteRenderer;
-    private float _jumpTime = 0.3f;
 
     // ** unHide the fireman when he throw a molotov **
     [SerializeField] private bool unHideWhenFire;
@@ -209,37 +208,19 @@ public class FireMan : MonoBehaviour
                 StartCoroutine(LerpRigidbody(_t.position, _currentGridPos, Time.time));
             }
         }
-        else //if (!Input.GetKeyDown(Fire))
+        else 
         {
-            // _currentGridPos = Vector3Int.RoundToInt(_t.position);
-            // print(_rb.velocity);
-            // var temp = GameManager.Instance.GroundBaseTilemap.WorldToCell(_t.position);;
-            // if (_rb.velocity.sqrMagnitude > 0 && !p)
-                
-            //     _currentGridPos = temp;
             _rb.velocity = Vector2.zero;
             _lookAtDirection = Vector3.zero;
             if (_pushedByExtinguisher)
             {
-                // print("pushed");
-                _currentGridPos = Vector3Int.RoundToInt(_rb.position);
-                print(_currentGridPos);
-                // if (_doneExtinguisherPush)
-                // {
-                //     _t.position = GameManager.Instance.GroundBaseTilemap.GetCellCenterWorld(_currentGridPos);
-                //     _doneExtinguisherPush = false;
-                // }
+                _currentGridPos = Vector3Int.RoundToInt(_t.position);
                 _pushedByExtinguisher = false;
             }
         }
 
         if (!_waterPushedDirection.Equals(Vector3.zero)) return;
-        // if (_lookAtDirection.Equals(Vector3.zero))
-        // {
-        //     print("What's happening");
-        //     _currentGridPos = GameManager.Instance.GroundBaseTilemap.WorldToCell(_t.position);
-        // }
-        
+
         _animator.SetInteger("XSpeed", (int)_lookAtDirection.x);
         _animator.SetInteger("YSpeed", (int)_lookAtDirection.y);
     }
