@@ -14,7 +14,6 @@ public class Extinguisher : MonoBehaviour
     [SerializeField] private bool fourDirection;
     private Vector2 _moveDirection;
     private Vector2 _lookAtDirection;
-    private bool _isMoving;
 
     // shooting water
     [SerializeField] private Transform waterGunLocalPos;
@@ -83,7 +82,7 @@ public class Extinguisher : MonoBehaviour
 
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            if (_throwDirection.x <= -1)
+            if (_throwDirection.Equals(Vector2.left))
                 _rotateTime += Time.deltaTime;
             else
                 _rotateTime = Time.deltaTime;
@@ -95,28 +94,29 @@ public class Extinguisher : MonoBehaviour
                 _spriteRenderer.flipX = false;
             var temp = _waterSplash.transform;
             temp.position = _t.position + _leftPos;
-            temp.rotation = Quaternion.Lerp(temp.rotation, _leftAngle, _rotateTime * 0.5f);
+            temp.rotation = Quaternion.Lerp(temp.rotation, _leftAngle, _rotateTime );
             
             // temp.rotation = _leftAngle;
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
-            if (_throwDirection.x >= 1)
+            if (_throwDirection.Equals(Vector2.right))
                 _rotateTime += Time.deltaTime;
             else
                 _rotateTime = Time.deltaTime;
+            
             _throwDirection.x = 1;
             _throwDirection.y = 0;
             if (!_spriteRenderer.flipX)
                 _spriteRenderer.flipX = true;
             var temp = _waterSplash.transform;
             temp.position = _t.position + _rightPos;
-            temp.rotation = Quaternion.Lerp(temp.rotation, _rightAngle, _rotateTime * 0.5f);
+            temp.rotation = Quaternion.Lerp(temp.rotation, _rightAngle, _rotateTime );
             // temp.rotation = _rightAngle;
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
-            if (_throwDirection.y <= -1)
+            if (_throwDirection.Equals(Vector2.down))
                 _rotateTime += Time.deltaTime;
             else
                 _rotateTime = Time.deltaTime;
@@ -124,12 +124,12 @@ public class Extinguisher : MonoBehaviour
             _throwDirection.y = -1;
             var temp = _waterSplash.transform;
             temp.position = _t.position;
-            temp.rotation = Quaternion.Lerp(temp.rotation, _downAngle, _rotateTime * 0.5f);
+            temp.rotation = Quaternion.Lerp(temp.rotation, _downAngle, _rotateTime );
             // temp.rotation = _downAngle;
         }
         else if (Input.GetKey(KeyCode.UpArrow))
         {
-            if (_throwDirection.y >= 1)
+            if (_throwDirection.Equals(Vector2.up))
                 _rotateTime += Time.deltaTime;
             else
                 _rotateTime = Time.deltaTime;
@@ -138,11 +138,20 @@ public class Extinguisher : MonoBehaviour
             _throwDirection.y = 1;
             var temp = _waterSplash.transform;
             temp.position = _t.position + _upPos;
-            temp.rotation = Quaternion.Lerp(temp.rotation, _upAngle, _rotateTime * 0.5f);
+            temp.rotation = Quaternion.Lerp(temp.rotation, _upAngle, _rotateTime );
             // temp.rotation = _upAngle;
         }
-        else if (!Input.GetKey(Extinguish))
+        else
         {
+            if (_throwDirection.Equals(Vector2.right) && !_waterSplash.transform.rotation.Equals(_rightAngle))
+                _waterSplash.transform.rotation = _rightAngle;
+            else if (_throwDirection.Equals(Vector2.left) && !_waterSplash.transform.rotation.Equals(_leftAngle))
+                _waterSplash.transform.rotation = _leftAngle;
+            else if (_throwDirection.Equals(Vector2.up) && !_waterSplash.transform.rotation.Equals(_upAngle))
+                _waterSplash.transform.rotation = _upAngle;
+            else if (_throwDirection.Equals(Vector2.down) && !_waterSplash.transform.rotation.Equals(_downAngle))
+                _waterSplash.transform.rotation = _downAngle;
+            
             _moveDirection = Vector2.zero;
             _throwDirection = Vector2.zero;
         }
@@ -153,19 +162,12 @@ public class Extinguisher : MonoBehaviour
         var snapping = fourDirection ? 90.0f : 45.0f;
         if (_moveDirection.sqrMagnitude > 0)
         {
-            // RotatingAndPositioningWaterStream();
-
-            _isMoving = true;
             var angle = Mathf.Atan2(_moveDirection.y, _moveDirection.x) * Mathf.Rad2Deg;
             angle = Mathf.Round(angle / snapping) * snapping;
             // transform.rotation = Quaternion.AngleAxis( 90 + angle, Vector3.forward);
             // _moveDirection = Quaternion.AngleAxis( angle, Vector3.forward) * Vector3.right;
             _moveDirection = new Vector3(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad), 0);
             _lookAtDirection = _moveDirection;
-        }
-        else
-        {
-            _isMoving = false;
         }
 
         // *** shooting ability ***
@@ -174,7 +176,7 @@ public class Extinguisher : MonoBehaviour
             // _prevWaterSplashPos = _waterSplash.transform.position;
             if (_waterSplash.isStopped)
                 _waterSplash.Play();
-            
+
             if (!GameManager.Instance.GetWaterHoseSound().isPlaying)
                 GameManager.Instance.GetWaterHoseSound().Play();
             
@@ -265,15 +267,15 @@ public class Extinguisher : MonoBehaviour
         }
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        if (collision.gameObject.name.Equals("FireMan"))
-        {
-            var fireman = collision.gameObject.GetComponent<FireMan>(); 
-            // fireman.GetHideable().ShowOrHide(reShow: true);
-            fireman.SetPushed(true);
-        }
-    }
+    // private void OnCollisionStay2D(Collision2D collision)
+    // {
+    //     if (collision.gameObject.name.Equals("FireMan"))
+    //     {
+    //         var fireman = collision.gameObject.GetComponent<FireMan>(); 
+    //         // fireman.GetHideable().ShowOrHide(reShow: true);
+    //         // fireman.SetPushed(true);
+    //     }
+    // }
 
     private void OnCollisionExit2D(Collision2D other)
     {
