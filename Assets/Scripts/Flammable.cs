@@ -468,7 +468,7 @@ public class Flammable : MonoBehaviour
     private Vector2 GetSizeOfArea()
     {
         var objectSize = _collider.bounds.size;
-        objectSize += objectSize / ratioOfRadiusBySize;
+        objectSize += 2 * objectSize / ratioOfRadiusBySize;
         return objectSize;
     }
 
