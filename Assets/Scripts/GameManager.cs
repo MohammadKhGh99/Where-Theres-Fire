@@ -85,6 +85,7 @@ public class GameManager : Singleton<GameManager>
     public Tilemap WaterFireTilemap; 
     public RuleTile WaterTile;
     [SerializeField] private const float TilesDisappearTime = 10f; // time it will take to water tile to dissapear after being in game
+    [SerializeField] private const float SprayToNextTileTime = 1f; // time it will take to water tile to dissapear after being in game
     private const float CheckingRatio = 0.25f;
     private float _checkingRatioTimer;
 
@@ -163,6 +164,7 @@ public class GameManager : Singleton<GameManager>
 
     // Functions
     private static Dictionary<Vector3Int, float> _waterTileDisappearTimes = new();
+    private static Dictionary<Vector3Int, float> _waterTileSprayNext = new();
     public static void SetTile(Vector3 worldPosition, Tilemap thisTilemap, TileBase newTile)
     {
         Vector3Int gridPosition = thisTilemap.WorldToCell(worldPosition);
@@ -197,6 +199,48 @@ public class GameManager : Singleton<GameManager>
         }
     }
     
+    public static void SetTile(Vector3 worldPosition, Tilemap thisTilemap, TileBase newTile, Vector3 sprayDirection, float increasingValue = 1f)
+    {
+        Vector3Int gridPosition = thisTilemap.WorldToCell(worldPosition);
+
+        if (thisTilemap.HasTile(gridPosition))
+        {
+            if (thisTilemap.GetTile(gridPosition) == newTile)
+            {
+                _waterTileDisappearTimes[gridPosition] = Time.time + TilesDisappearTime;
+                _waterTileSprayNext[gridPosition] += increasingValue * Time.deltaTime;
+                if (_waterTileSprayNext[gridPosition] >= SprayToNextTileTime)
+                {
+                    _waterTileSprayNext[gridPosition] = 0f;
+                    var nextTilePos = worldPosition + sprayDirection;
+                    SetTile(nextTilePos, thisTilemap, newTile, sprayDirection, increasingValue * 150);
+                }
+                return;
+            }
+        }
+
+        thisTilemap.SetTile(gridPosition, newTile);
+
+        // Check if the tile is a Rule Tile
+        RuleTile ruleTile = newTile as RuleTile;
+        if (!ruleTile.IsUnityNull())
+        {
+            // Refresh the tile to apply the Rule Tile's rules
+            thisTilemap.RefreshTile(gridPosition);
+            // setting the timer for:
+            _waterTileDisappearTimes[gridPosition] = Time.time + TilesDisappearTime;
+            _waterTileSprayNext[gridPosition] = Time.deltaTime;
+        }
+        else
+        {
+            // we want to delelte this waterTile, its unitynull so:
+            if (_waterTileDisappearTimes.ContainsKey(gridPosition))
+            {
+                _waterTileDisappearTimes.Remove(gridPosition);
+                _waterTileSprayNext[gridPosition] = 0;
+            }
+        }
+    }
     private void UpdateWaterTiles()
     {
         if (!(Time.time >= _checkingRatioTimer)) return;
@@ -213,6 +257,7 @@ public class GameManager : Singleton<GameManager>
         foreach (var gridToDelete in toDelete)
         {
             _waterTileDisappearTimes.Remove(gridToDelete);
+            _waterTileSprayNext[gridToDelete] = 0;
         }
     }
 
