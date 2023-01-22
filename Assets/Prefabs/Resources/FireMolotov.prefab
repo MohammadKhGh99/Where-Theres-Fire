@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2246694295596606062}
   - component: {fileID: 4411834864462824340}
   - component: {fileID: 6953555585847551447}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: FireMolotov
   m_TagString: FireMolotov
   m_Icon: {fileID: 0}
@@ -126,6 +126,7 @@ MonoBehaviour:
   increaseChancePercentage: 5
   ratioOfRadiusBySize: 4
   cooldownToBurn: 1
+  timeBetweenAddingNewFire: 5
 --- !u!114 &2246694295596606062
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -8,24 +8,27 @@ using UnityEngine.Tilemaps;
 public class FireHydrant : MonoBehaviour
 {
     [SerializeField] private float circleRadius;
-    private Flammable _flamable;
+    private Flammable _flammable;
     private Transform _t;
 
+    private LayerMask fireMolotovMask;
     private HashSet<Flammable> _objectsAroundUs;
 
     [SerializeField] private GameObject sprayHolder;
-    [SerializeField] private float rotationSpeed;
+    [SerializeField] private float rotationSpeed = 180f;
+    [SerializeField] private float timeSprayIsOn = 7f;
     private Transform _tSprayHolder;
     private bool _sprinklersStatus;
     private ParticleSystem _firstSpray, _secondSpray;
     
     void Start()
     {
-        _flamable = GetComponent<Flammable>();
+        _flammable = GetComponent<Flammable>();
         _t = GetComponent<Transform>();
         _sprinklersStatus = false;
         _objectsAroundUs = new HashSet<Flammable>();
-        
+
+        fireMolotovMask = LayerMask.GetMask("FireMolotov");
         GetFlammableObjectsAroundUs(circleRadius);
         
         _tSprayHolder = sprayHolder.GetComponent<Transform>();
@@ -36,16 +39,15 @@ public class FireHydrant : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (_flamable.CurrentStatus == Flammable.Status.OnFire)
+        if (_flammable.CurrentStatus == Flammable.Status.OnFire)
         {
             // the fire hydrant onfire, turn it on
             StartCoroutine(SprayWater());
-            _flamable.CurrentStatus = Flammable.Status.FinishedBurning;
+            _flammable.CurrentStatus = Flammable.Status.FinishedBurning;
         }
 
         if (_sprinklersStatus)
         {
-            // todo turn on sprays here
             if (_firstSpray.isStopped && _secondSpray.isStopped)
             {
                 _firstSpray.Play();
@@ -58,12 +60,22 @@ public class FireHydrant : MonoBehaviour
     private IEnumerator SprayWater()
     {
         _sprinklersStatus = true;
-        yield return new WaitForSeconds(1f);
-
-        FillAreaWithWaterTiles();
-        ExtinguishFire(true);
-
-        yield return new WaitForSeconds(7f);        // time that the water hydrant is on
+        yield return new WaitForSeconds(0.3f);
+        
+        // time that the water hydrant is on
+        for(var i = 0; i < timeSprayIsOn; i++)
+        {
+            // if we find firemolotov, turn it off!
+            var collider2Ds = Physics2D.OverlapCircleAll(_t.position, circleRadius, fireMolotovMask);
+            foreach (var col in collider2Ds)
+            {
+                col.gameObject.GetComponent<FireMolotov>().Extinguish();
+            }
+            
+            FillAreaWithWaterTiles(circleRadius + 0.25f*i);
+            ExtinguishFire(true);
+            yield return new WaitForSeconds(1f);
+        } 
 
         TurnOffSprinkles();
         ExtinguishFire(false);
@@ -88,10 +100,9 @@ public class FireHydrant : MonoBehaviour
     }
 
 
-    private void FillAreaWithWaterTiles()
+    private void FillAreaWithWaterTiles(float radius)
     {
         Vector2 center = _t.position; // center position of the circle
-        float radius = circleRadius; // radius of the circle
         Vector2 min = center - Vector2.one * radius;
         Vector2 max = center + Vector2.one * radius;
         for (int x = (int)min.x; x <= (int)max.x; x++)
@@ -120,7 +131,7 @@ public class FireHydrant : MonoBehaviour
         {
             // Flammable res;
             if (!col.gameObject.TryGetComponent(out Flammable res)) continue;
-            if (res.Equals(_flamable)) continue;
+            if (res.Equals(_flammable)) continue;
 
             _objectsAroundUs.Add(res);
         }
