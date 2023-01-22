@@ -99,7 +99,10 @@ public class FireHydrant : MonoBehaviour
             for (int y = (int)min.y; y <= (int)max.y; y++)
             {
                 Vector3Int pos = new Vector3Int(x, y, 0);
-                GameManager.SetTile(pos, GameManager.Instance.WaterFireTilemap, GameManager.Instance.WaterTile);
+                if ( Vector2.Distance(center, (Vector3) pos) <= radius)
+                {
+                    GameManager.SetTile(pos, GameManager.Instance.WaterFireTilemap, GameManager.Instance.WaterTile);
+                }
             }
         }
     }
