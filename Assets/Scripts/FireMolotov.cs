@@ -35,7 +35,7 @@ public class FireMolotov : MonoBehaviour
                     // we reached final state, burn
                     _flammable.SetSelfOnFire();
                     //********************************
-                    // todo here add coroutine of the time until firemolotov finish, when it's finish,
+                    // todo here add coroutine of the time until fire molotov finish, when it's finish,
                     // todo change flammable status to not on fire, then change this status to extinguish
                     //*********************************
                     _currentStatus = Status.Pause;

@@ -17,6 +17,7 @@ public class FireHydrant : MonoBehaviour
     [SerializeField] private float rotationSpeed;
     private Transform _tSprayHolder;
     private bool _sprinklersStatus;
+    private ParticleSystem _firstSpray, _secondSpray;
     
     void Start()
     {
@@ -24,9 +25,12 @@ public class FireHydrant : MonoBehaviour
         _t = GetComponent<Transform>();
         _sprinklersStatus = false;
         _objectsAroundUs = new HashSet<Flammable>();
+        
         GetFlammableObjectsAroundUs(circleRadius);
         
         _tSprayHolder = sprayHolder.GetComponent<Transform>();
+        _firstSpray = _tSprayHolder.GetChild(0).GetComponent<ParticleSystem>();
+        _secondSpray = _tSprayHolder.GetChild(1).GetComponent<ParticleSystem>();
     }
 
     // Update is called once per frame
@@ -42,6 +46,11 @@ public class FireHydrant : MonoBehaviour
         if (_sprinklersStatus)
         {
             // todo turn on sprays here
+            if (_firstSpray.isStopped && _secondSpray.isStopped)
+            {
+                _firstSpray.Play();
+                _secondSpray.Play();
+            }
             _tSprayHolder.Rotate(Vector3.forward, rotationSpeed * Time.deltaTime);
         }
     }
@@ -62,7 +71,12 @@ public class FireHydrant : MonoBehaviour
     
     private void TurnOffSprinkles()
     {
-        // todo turn on sprays here
+        // todo turn off sprays here
+        if (_firstSpray.isPlaying && _secondSpray.isPlaying)
+        {
+            _firstSpray.Stop();
+            _secondSpray.Stop();
+        }
         _sprinklersStatus = false;
     }
     private void ExtinguishFire(bool wateringMode)
