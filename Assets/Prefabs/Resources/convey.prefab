@@ -103,10 +103,10 @@ MonoBehaviour:
   isHouse: 1
   isFireSource: 0
   initialTimeUntilBurnOut: 30
-  initialChanceOfInflammation: 60
+  initialChanceOfInflammation: 40
   extinguishingSpeed: 15
-  increaseChancePercentage: 5
-  ratioOfRadiusBySize: 4
+  increaseChancePercentage: 10
+  ratioOfRadiusBySize: 2
   cooldownToBurn: 1
   timeBetweenAddingNewFire: 5
 --- !u!61 &7196890699618283024

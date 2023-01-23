@@ -138,7 +138,8 @@ public class WaterBullet : MonoBehaviour
                     
                     // add water to the end position
                     var waterDropPos = bulletDirection * _currentSizeX + _previousStartPosition;
-                    AddWaterToTile(waterDropPos);
+                    // AddWaterToTile(waterDropPos);
+                    AddWaterToTile(waterDropPos, _direction);
                     return;
                 }
             }
@@ -147,7 +148,8 @@ public class WaterBullet : MonoBehaviour
             {
                 // we Reached Full size! add water to the tile there
                 var waterDropPos = bulletDirection * _currentSizeX + _previousStartPosition;
-                AddWaterToTile(waterDropPos);
+                // AddWaterToTile(waterDropPos);
+                AddWaterToTile(waterDropPos, _direction);
                 // return;
             }
             
@@ -194,7 +196,8 @@ public class WaterBullet : MonoBehaviour
             var tempEndPosition = _t.position + _direction * _currentSizeX / 2;  
             
             // add water to the end position
-            AddWaterToTile(tempEndPosition);
+            // AddWaterToTile(tempEndPosition);
+            AddWaterToTile(tempEndPosition, _direction);
             
             _currentSizeX = Mathf.MoveTowards(_currentSizeX, InitialSizeX, Time.deltaTime * bulletSpeed);
             _t.position = tempEndPosition - _direction * (_currentSizeX / 2);
@@ -204,7 +207,8 @@ public class WaterBullet : MonoBehaviour
                 // we shrank down, now it's time to disappear!
                 currentStatus = GameManager.WaterBulletStatus.Done;
                 // add water to the end position
-                AddWaterToTile(tempEndPosition);
+                // AddWaterToTile(tempEndPosition);
+                AddWaterToTile(tempEndPosition, _direction);
                 GameManager.Instance.WaterBulletPool.Release(this);
             }
         }
@@ -229,6 +233,17 @@ public class WaterBullet : MonoBehaviour
         }
     }
     
+    private void AddWaterToTile(Vector3 waterDropPos, Vector3 currentDirection)
+    {
+        // Check if the timer has reached the "_checkingTileRatio"
+        if (_timer >= _checkingTileRatio)
+        {
+            // Reset the timer
+            _timer = 0.0f;
+            // Change the Tile if needed.
+            GameManager.SetTile(waterDropPos, GameManager.Instance.WaterFireTilemap, GameManager.Instance.WaterTile, currentDirection);
+        }
+    }
     
     private void OnTriggerEnter2D(Collider2D col)
     {
@@ -237,13 +252,7 @@ public class WaterBullet : MonoBehaviour
             res.SetSelfWatering(true);
         }
         
-        if (col.CompareTag("House"))
-        {
-            // watering
-            // todo
-            // col.GetComponent<Flammable>().CurrentStatus = GameManager.HouseStatus.Watering;
-        }
-        else if (col.CompareTag("FireMolotov"))
+        if (col.CompareTag("FireMolotov"))
         {
             col.GetComponent<FireMolotov>().Extinguish();
         }
@@ -267,14 +276,7 @@ public class WaterBullet : MonoBehaviour
             res.SetSelfWatering(true);
         }
         
-        // print("there is trigger");
-        if (col.CompareTag("House"))
-        {
-            // watering
-            // todo 
-            // col.GetComponent<HouseManager>().SetStatus(GameManager.HouseStatus.Watering);
-        }
-        else if (col.CompareTag("FireMolotov"))
+        if (col.CompareTag("FireMolotov"))
         {
             col.GetComponent<FireMolotov>().Extinguish();
         }
@@ -291,12 +293,5 @@ public class WaterBullet : MonoBehaviour
             res.SetSelfWatering(false);
         }
         
-        if (col.CompareTag("House"))
-        {
-            // print("*HOUSE* stops watering");
-            // todo
-            // col.GetComponent<HouseManager>().SetStatus(GameManager.HouseStatus.Normal);
-            
-        }
     }
 }
