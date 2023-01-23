@@ -24,9 +24,9 @@ public class WaterBullet : MonoBehaviour
     
     // information from player
     private Vector3 _previousPosition;          // the frame before this of the player position
-    private float _previousAngle;          // the frame before this of the player position
-    private Vector3 _previousStartPosition;     // the frame before this of the position of where the bullet should start
-    private Vector3 _direction;     // the frame before this of the position of where the bullet should start
+    private float _previousAngle;              // the frame before this of the player position
+    private Vector3 _previousStartPosition;   // the frame before this of the position of where the bullet should start
+    private Vector3 _direction;              // the frame before this of the position of where the bullet should start
 
     // shooting bullet and shrinking
     private Vector3 _diePosition;

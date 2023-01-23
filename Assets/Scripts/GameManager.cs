@@ -51,7 +51,7 @@ public class GameManager : Singleton<GameManager>
 
 
     //  *** Constants ***:
-    // WaterBullet Stasuses
+    // WaterBullet Statuses
     public enum WaterBulletStatus
     {
         Start,
@@ -103,6 +103,8 @@ public class GameManager : Singleton<GameManager>
     private GameObject _howToPlayButton;
     private GameObject _exitButton;
     public bool start, howToPlay, exit;
+
+    // [SerializeField] private static GameObject waterBulletsParent;
 
     // **** "Molotov" pool and functions ****
     public const float MolotovCooldownTime = 0f;
