@@ -32,14 +32,14 @@ public class WaterBullet : MonoBehaviour
     private Vector3 _diePosition;
 
     // initializing and Statuses
-    private bool _hasInitialized = false;
-    private bool _hasPositioned = false;
+    private bool _hasInitialized;
+    private bool _hasPositioned;
     public GameManager.WaterBulletStatus currentStatus;
 
 
     //dropping water on tiles
-    static float _timer = 0.0f;
-    private float _checkingTileRatio = 0.0f;  // this is how many times we check and change the tile to tile of water, because calling the function toomuch isn't good
+    private static float _timer;
+    private readonly float _checkingTileRatio = 0.0f;  // this is how many times we check and change the tile to tile of water, because calling the function toomuch isn't good
     
     // Start is called before the first frame update
     public void FakeStart()
