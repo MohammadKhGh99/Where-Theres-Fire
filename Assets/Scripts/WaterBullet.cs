@@ -252,7 +252,7 @@ public class WaterBullet : MonoBehaviour
             res.SetSelfWatering(true);
         }
         
-        else if (col.CompareTag("FireMolotov"))
+        if (col.CompareTag("FireMolotov"))
         {
             col.GetComponent<FireMolotov>().Extinguish();
         }
@@ -276,7 +276,7 @@ public class WaterBullet : MonoBehaviour
             res.SetSelfWatering(true);
         }
         
-        else if (col.CompareTag("FireMolotov"))
+        if (col.CompareTag("FireMolotov"))
         {
             col.GetComponent<FireMolotov>().Extinguish();
         }

@@ -123,8 +123,6 @@ public class Flammable : MonoBehaviour
             {
                 var newScale = new Vector3(0.5f, 1, 1);
                 _smoke.transform.localScale = newScale;
-                // var shapeModule = _smoke.shape;
-                // shapeModule.angle = 0;
             }
         }
 
