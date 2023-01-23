@@ -103,12 +103,12 @@ MonoBehaviour:
   isHouse: 1
   isFireSource: 0
   initialTimeUntilBurnOut: 10
-  initialChanceOfInflammation: 60
+  initialChanceOfInflammation: 40
   extinguishingSpeed: 15
-  increaseChancePercentage: 5
-  ratioOfRadiusBySize: 4
+  increaseChancePercentage: 10
+  ratioOfRadiusBySize: 2
   cooldownToBurn: 1
-  timeBetweenAddingNewFire: 5
+  timeBetweenAddingNewFire: 4
 --- !u!61 &5151519252988378217
 BoxCollider2D:
   m_ObjectHideFlags: 0

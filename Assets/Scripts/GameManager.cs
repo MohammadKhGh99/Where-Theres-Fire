@@ -289,7 +289,7 @@ public class GameManager : Singleton<GameManager>
     
     // **** "FireObject" pool and functions ****
     public ObjectPool<FireObject> FireObjectPool =
-        new(CreateFireObject, OnGetFireObject, OnReleaseFireObject, OnDestroyFireObject, false, 15, 20);
+        new(CreateFireObject, OnGetFireObject, OnReleaseFireObject, OnDestroyFireObject, false, 50, 70);
 
     private static FireObject CreateFireObject()
     {

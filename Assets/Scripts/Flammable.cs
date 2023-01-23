@@ -311,7 +311,7 @@ public class Flammable : MonoBehaviour
         if (isFireSource)
             return false;
 
-        var realChance = (chanceFromDistance * 2 + _currentChanceOfInflammation * 2 + chanceFromBurnTime) / 5.0f;
+        var realChance = (chanceFromDistance * 1 + _currentChanceOfInflammation * 2 + chanceFromBurnTime * 4) / 7.0f;
         if (Random.Range(0, 100) <= realChance)
         {
             // this object will get burned, call function that will make it burn, 
