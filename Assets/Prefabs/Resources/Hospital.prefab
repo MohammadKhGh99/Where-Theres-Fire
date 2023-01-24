@@ -99,14 +99,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c0a497be0f18bf4f830e3540e589d50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numOfPoints: 10
+  numOfPoints: 15
   isHouse: 1
   isFireSource: 0
-  initialTimeUntilBurnOut: 25
-  initialChanceOfInflammation: 40
+  initialTimeUntilBurnOut: 30
+  initialChanceOfInflammation: 60
   extinguishingSpeed: 15
-  increaseChancePercentage: 10
-  ratioOfRadiusBySize: 2
+  increaseChancePercentage: 5
+  ratioOfRadiusBySize: 4
   cooldownToBurn: 1
   timeBetweenAddingNewFire: 5
 --- !u!61 &7196890699618283024
