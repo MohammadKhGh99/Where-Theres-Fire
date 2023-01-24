@@ -67,7 +67,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -2555,10 +2555,10 @@ TextureImporter:
       NewWaterTiles 1_60: -2055583070
       NewWaterTiles 1_65: -827344544
       NewWaterTiles 1_5: -1141373799
-      NewWaterTiles 1_113: 1514215812
       NewWaterTiles 1_114: 343301889
       NewWaterTiles 1_87: 96252350
       NewWaterTiles 1_29: -2043364464
+      NewWaterTiles 1_92: -276761740
       NewWaterTiles 1_66: 1374579914
       NewWaterTiles 1_47: 1164566079
       NewWaterTiles 1_37: 888566134
@@ -2602,9 +2602,9 @@ TextureImporter:
       NewWaterTiles 1_28: -1723901806
       NewWaterTiles 1_6: -477119931
       NewWaterTiles 1_97: 766014629
-      NewWaterTiles 1_105: -905414711
-      NewWaterTiles 1_91: 205574960
       NewWaterTiles 1_108: 1148178060
+      NewWaterTiles 1_91: 205574960
+      NewWaterTiles 1_105: -905414711
       NewWaterTiles 1_3: -30356084
       NewWaterTiles 1_59: 1615568857
       NewWaterTiles 1_88: -1533558318
@@ -2616,12 +2616,12 @@ TextureImporter:
       NewWaterTiles 1_111: -346315374
       NewWaterTiles 1_7: -1859613125
       NewWaterTiles 1_2: -1716594027
-      NewWaterTiles 1_22: 787453884
-      NewWaterTiles 1_109: 189461559
       NewWaterTiles 1_39: 165797267
-      NewWaterTiles 1_11: 507785426
+      NewWaterTiles 1_22: 787453884
       NewWaterTiles 1_72: -266767199
+      NewWaterTiles 1_109: 189461559
       NewWaterTiles 1_76: 1725015485
+      NewWaterTiles 1_11: 507785426
       NewWaterTiles 1_71: 4073428
       NewWaterTiles 1_75: 1739805612
       NewWaterTiles 1_14: -2014931164
@@ -2663,9 +2663,9 @@ TextureImporter:
       NewWaterTiles 1_41: -875817458
       NewWaterTiles 1_46: -1457706131
       NewWaterTiles 1_99: -464373215
-      NewWaterTiles 1_38: 185028551
-      NewWaterTiles 1_92: -276761740
       NewWaterTiles 1_103: 1274048653
+      NewWaterTiles 1_113: 1514215812
+      NewWaterTiles 1_38: 185028551
       NewWaterTiles 1_83: -1647631669
   spritePackingTag: 
   pSDRemoveMatte: 0

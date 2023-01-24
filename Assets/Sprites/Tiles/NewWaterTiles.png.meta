@@ -67,7 +67,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -2632,7 +2632,6 @@ TextureImporter:
       NewWaterTiles_15: -967848996
       NewWaterTiles_97: -573571508
       NewWaterTiles_25: -1920599902
-      NewWaterTiles_114: -1052642986
       NewWaterTiles_51: -1584513883
       NewWaterTiles_48: -37606797
       NewWaterTiles_16: 611310764
@@ -2674,9 +2673,9 @@ TextureImporter:
       NewWaterTiles_60: 1082148460
       NewWaterTiles_34: -1571622872
       NewWaterTiles_27: 2073357864
-      NewWaterTiles_101: -726631314
-      NewWaterTiles_39: 1424222006
       NewWaterTiles_118: 1154341237
+      NewWaterTiles_39: 1424222006
+      NewWaterTiles_101: -726631314
       NewWaterTiles_41: 2048860910
       NewWaterTiles_5: 485417361
       NewWaterTiles_64: -346989399
@@ -2725,9 +2724,10 @@ TextureImporter:
       NewWaterTiles_42: -1834112144
       NewWaterTiles_20: 2096240893
       NewWaterTiles_77: 238683905
+      NewWaterTiles_114: -1052642986
       NewWaterTiles_79: -1844901765
-      NewWaterTiles_78: 525115379
       NewWaterTiles_63: 1855868640
+      NewWaterTiles_78: 525115379
       NewWaterTiles_21: 305729731
       NewWaterTiles_7: -931672674
       NewWaterTiles_24: 174698925
