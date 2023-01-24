@@ -133,7 +133,7 @@ public class FireMan : MonoBehaviour
         }
 
         _cooldownToMolotov = Mathf.Max(_cooldownToMolotov - Time.deltaTime, 0f);
-        cooldownBar.value = _cooldownToMolotov;
+        cooldownBar.value = GameManager.MolotovCooldownTime - _cooldownToMolotov;
     }
 
 
