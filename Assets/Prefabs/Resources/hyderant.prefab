@@ -9671,7 +9671,7 @@ GameObject:
   - component: {fileID: 2759589356985422700}
   - component: {fileID: 2321203536699333064}
   - component: {fileID: 3361228374551903517}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: hyderant
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9760,6 +9760,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   numOfPoints: 0
   isHouse: 0
+  isHorseHEEEE: 0
   isFireSource: 0
   initialTimeUntilBurnOut: 1
   initialChanceOfInflammation: 100
@@ -9820,3 +9821,4 @@ MonoBehaviour:
   circleRadius: 3.2
   sprayHolder: {fileID: 5110825895998209360}
   rotationSpeed: 20
+  timeSprayIsOn: 7

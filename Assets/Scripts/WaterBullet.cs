@@ -258,7 +258,6 @@ public class WaterBullet : MonoBehaviour
         }
         else if (col.name.Equals("FireMan")) //!col.attachedRigidbody.IsUnityNull()))
         {
-            print("Triggered");
             var fireman = col.GetComponent<FireMan>();
             fireman.ChangePushDirection(Vector3Int.RoundToInt(_direction));
             fireman.GetHideable().ShowOrHide(reShow: true);
