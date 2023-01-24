@@ -277,10 +277,7 @@ public class Flammable : MonoBehaviour
         {
             if (_currentTimerToAddReleaseFire >= _addFireTime)
             {
-                if (isHorseHEEEE)
-                {
-                    print("");
-                }
+
                 // add a new fire object to image
                 _releaseFireTime = _addFireTime;
                 _addFireTime += timeBetweenAddingNewFire;
@@ -288,10 +285,7 @@ public class Flammable : MonoBehaviour
             }
             else if (_currentTimerToAddReleaseFire < _releaseFireTime)
             {
-                if (isHorseHEEEE)
-                {
-                    print("");
-                }
+
                 // remove a fire object from image
                 _addFireTime = _releaseFireTime;
                 _releaseFireTime -= timeBetweenAddingNewFire;
@@ -337,11 +331,7 @@ public class Flammable : MonoBehaviour
         // return true if it got burned, false if not.
         if (isFireSource)
             return false;
-
-        if (isHorseHEEEE)
-        {
-            print("");
-        }
+        
         var realChance = (chanceFromDistance * 1 + _currentChanceOfInflammation * 2 + chanceFromBurnTime * 4) / 7.0f;
         if (Random.Range(0, 100) <= realChance)
         {
@@ -363,10 +353,6 @@ public class Flammable : MonoBehaviour
             _objectsAroundUsSorted.Clear();     // make sure they are empty :3
             GetFlammableObjectsAroundUs();
         }
-        if (isHorseHEEEE)
-        {
-            print("");
-        }
         CurrentStatus = Status.OnFire;
     }
 
@@ -377,10 +363,7 @@ public class Flammable : MonoBehaviour
 
     private void GettingExtinguished()
     {
-        if (isHorseHEEEE)
-        {
-            print("");
-        }
+
         _timeUntilBurnOut += Time.deltaTime * extinguishingSpeed;
         _currentTimerToAddReleaseFire -= Time.deltaTime * extinguishingSpeed;
         if (!(_timeUntilBurnOut >= initialTimeUntilBurnOut)) return;
