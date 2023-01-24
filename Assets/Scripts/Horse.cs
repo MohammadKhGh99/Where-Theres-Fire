@@ -9,6 +9,7 @@ public class Horse : MonoBehaviour
     private Transform _t;
     private SpriteRenderer _sr;
     private Rigidbody2D _rb;
+    private Animator _animator;
 
     private bool horseStartRuninning;
 
@@ -18,6 +19,8 @@ public class Horse : MonoBehaviour
         _t = GetComponent<Transform>();
         _sr = GetComponent<SpriteRenderer>();
         _rb = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
+        _animator.enabled = false;
         horseStartRuninning = false;
     }
 
@@ -32,7 +35,10 @@ public class Horse : MonoBehaviour
         {
             var isLeft = _sr.flipX ? -1 : 1;
             // _rb.velocity = horseSpeed * isLeft *  Vector2.left;
-            transform.Translate(horseSpeed * isLeft * Time.deltaTime *  Vector2.left);
+            if (!_animator.enabled)
+                _animator.enabled = true;
+            // _animator.SetBool("Running", true);
+            _t.Translate(horseSpeed * isLeft * Time.deltaTime *  Vector2.left);
 
         }
     }

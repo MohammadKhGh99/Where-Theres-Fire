@@ -9,9 +9,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5529301946851938456}
+  - component: {fileID: 9110808317159492358}
+  - component: {fileID: 9171444338605865561}
   - component: {fileID: 7624404545942682682}
   - component: {fileID: 4931289232766961131}
   - component: {fileID: 1065196728765429096}
+  - component: {fileID: 7812570889952658786}
+  - component: {fileID: 4891520439520547181}
   m_Layer: 0
   m_Name: Horse
   m_TagString: Untagged
@@ -34,6 +38,42 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9110808317159492358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4088577201017638335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b49deeda5af010f43bb4af64194430c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  horseSpeed: 7
+--- !u!114 &9171444338605865561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4088577201017638335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c0a497be0f18bf4f830e3540e589d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  numOfPoints: 0
+  isHouse: 0
+  isHorseHEEEE: 1
+  isFireSource: 0
+  initialTimeUntilBurnOut: 1000
+  initialChanceOfInflammation: 100
+  extinguishingSpeed: 1000
+  increaseChancePercentage: 5
+  ratioOfRadiusBySize: 1
+  cooldownToBurn: 1
+  timeBetweenAddingNewFire: 2
 --- !u!212 &7624404545942682682
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -99,8 +139,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.2, y: 0}
-  m_Size: {x: 2.8, y: 1.5}
+  m_Offset: {x: 0.020583961, y: -0.25}
+  m_Size: {x: 2.3588412, y: 1.1267145}
   m_Direction: 1
 --- !u!95 &1065196728765429096
 Animator:
@@ -122,3 +162,50 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!50 &7812570889952658786
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4088577201017638335}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!61 &4891520439520547181
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4088577201017638335}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.05796337, y: 0.17577851}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 3.1875, y: 2.25}
+    newSize: {x: 3.3125, y: 2.25}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 2.5603771, y: 3.6267354}
+  m_EdgeRadius: 0

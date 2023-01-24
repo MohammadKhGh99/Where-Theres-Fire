@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.U2D;
+using UnityEngine.UI;
 
 public class FireMan : MonoBehaviour
 {
@@ -54,6 +55,9 @@ public class FireMan : MonoBehaviour
     public int gridToPush = 2;
     private bool _pushedByExtinguisher;
     private bool _doneExtinguisherPush;
+    
+    // ** cooldown bar
+    [SerializeField] private Slider cooldownBar;
 
     // Start is called before the first frame update
     void Start()
@@ -70,6 +74,8 @@ public class FireMan : MonoBehaviour
         _hideable = GetComponent<Hideable>();
         _forbiddenLayers = GameManager.Instance.forbiddenLayers;
         _waterPushedDirection = Vector3.zero;
+        cooldownBar.maxValue = GameManager.MolotovCooldownTime;
+        cooldownBar.value = GameManager.MolotovCooldownTime;
     }
 
     private void Update()
@@ -127,6 +133,7 @@ public class FireMan : MonoBehaviour
         }
 
         _cooldownToMolotov = Mathf.Max(_cooldownToMolotov - Time.deltaTime, 0f);
+        cooldownBar.value = _cooldownToMolotov;
     }
 
 

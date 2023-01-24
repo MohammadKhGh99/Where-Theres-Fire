@@ -110,7 +110,7 @@ public class GameManager : Singleton<GameManager>
     // [SerializeField] private static GameObject waterBulletsParent;
 
     // **** "Molotov" pool and functions ****
-    public const float MolotovCooldownTime = 0f;
+    public const float MolotovCooldownTime = 1f;
 
     public ObjectPool<Molotov> MolotovPool =
         new(CreateMolotov, GetMolotov, ReturnMolotov, DestroyMolotov, false, 5, 7);
