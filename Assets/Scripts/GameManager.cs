@@ -34,7 +34,8 @@ public class GameManager : Singleton<GameManager>
     private Image _imageStartGame;
     private Image _imageExtinguisherWon;
     private Image _imageFireWon;
-    private Image _imageHowToPlay;
+    private Image _imageHowToPlay1;
+    private Image _imageHowToPlay2;
 
     // *** game important flags ***
     public static bool IsGameRunning;    // the game is running or not
@@ -100,9 +101,10 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private AudioSource waterHoseSound;
     
     // *** Buttons
-    private GameObject _startButton;
-    private GameObject _howToPlayButton;
-    private GameObject _exitButton;
+    private Button _startButton;
+    private Button _howToPlayButton;
+    private Image _howToPlayImage;
+    private Button _exitButton;
     public bool start, howToPlay, exit;
 
     // [SerializeField] private static GameObject waterBulletsParent;
@@ -339,12 +341,15 @@ public class GameManager : Singleton<GameManager>
         
         _imageExtinguisherWon = startGameCanvas.transform.GetChild(1).GetComponent<Image>();
         _imageFireWon = startGameCanvas.transform.GetChild(2).GetComponent<Image>();
-        _imageHowToPlay = startGameCanvas.transform.GetChild(3).GetComponent<Image>();
+        _imageHowToPlay1 = startGameCanvas.transform.GetChild(3).GetComponent<Image>();
+        _imageHowToPlay2 = startGameCanvas.transform.GetChild(4).GetComponent<Image>();
         
         // Getting the buttons on start game screen
-        _startButton = _imageStartGame.transform.GetChild(0).gameObject;
-        _howToPlayButton = _imageStartGame.transform.GetChild(1).gameObject;
-        _exitButton = _imageStartGame.transform.GetChild(2).gameObject;
+        _startButton = _imageStartGame.transform.GetChild(0).gameObject.GetComponent<Button>();
+        _howToPlayButton = _imageStartGame.transform.GetChild(1).gameObject.GetComponent<Button>();
+        _exitButton = _imageStartGame.transform.GetChild(2).gameObject.GetComponent<Button>();
+
+        _howToPlayImage = _howToPlayButton.GetComponent<Image>();
 
         if (!_imageStartGame.gameObject.activeInHierarchy)
             _imageStartGame.gameObject.SetActive(true);
@@ -385,14 +390,46 @@ public class GameManager : Singleton<GameManager>
             IsGameRunning = true;
         }
 
-        if (howToPlay) // || (IsGameRunning && Input.GetKey(KeyCode.P)))
+        // if we clicked the how to play button
+        if (howToPlay)
         {
-            if (_imageStartGame.gameObject.activeInHierarchy)
-                StartCoroutine(FadeOut(_imageStartGame));
-            StartCoroutine(FadeIn(_imageHowToPlay));
-            IsGameRunning = false;
-        }
+            // first how to play screen appears
+            if (!_imageHowToPlay1.gameObject.activeInHierarchy && !_imageHowToPlay2.gameObject.activeInHierarchy)
+            {
+                if (_imageStartGame.gameObject.activeInHierarchy)
+                {
+                    StartCoroutine(FadeOut(_imageStartGame));
+                    _howToPlayImage.color = _howToPlayButton.colors.normalColor;
+                    _howToPlayButton.interactable = true;
+                }
 
+                StartCoroutine(FadeIn(_imageHowToPlay1));
+                IsGameRunning = false;
+            }
+
+            // second how to play screen appears
+            if (_imageHowToPlay1.gameObject.activeInHierarchy && !_imageHowToPlay2.gameObject.activeInHierarchy 
+                                                              && Input.GetKey(KeyCode.Space))
+            {
+                StartCoroutine(FadeOut(_imageHowToPlay1));
+                StartCoroutine(FadeIn(_imageHowToPlay2));
+            }
+
+            // the start screen appears again to choose what the user wants
+            if (!_imageHowToPlay1.gameObject.activeInHierarchy && _imageHowToPlay2.gameObject.activeInHierarchy 
+                                                               && Input.GetKey(KeyCode.Space))
+            {
+                StartCoroutine(FadeOut(_imageHowToPlay2));
+                StartCoroutine(FadeIn(_imageStartGame));
+                for (int i = 0; i < _imageStartGame.transform.childCount; i++)
+                {
+                    _imageStartGame.transform.GetChild(i).gameObject.SetActive(true);
+                }
+
+                howToPlay = false;
+            }
+        }
+        
         // check which player won
         if (!IsGameOver && IsGameRunning)
         {
@@ -446,7 +483,7 @@ public class GameManager : Singleton<GameManager>
     {
         Color c = image.color;
 
-        for (float i = 0.25f; i >= 0; i -= Time.deltaTime)
+        for (float i = 0.5f; i >= 0; i -= Time.deltaTime)
         {
             image.color = new Color(c.r, c.g, c.b, i * 4);
             yield return null;
@@ -459,7 +496,7 @@ public class GameManager : Singleton<GameManager>
     {
         Color c = spriteRenderer.color;
 
-        for (float i = 0.25f; i >= 0; i -= Time.deltaTime)
+        for (float i = 0.5f; i >= 0; i -= Time.deltaTime)
         {
             spriteRenderer.color = new Color(c.r, c.g, c.b, i * 4);
             yield return null;
@@ -472,7 +509,7 @@ public class GameManager : Singleton<GameManager>
     {
         Color c = text.color;
 
-        for (float i = 0.25f; i >= 0; i -= Time.deltaTime)
+        for (float i = 0.5f; i >= 0; i -= Time.deltaTime)
         {
             text.color = new Color(c.r, c.g, c.b, i * 4);
             yield return null;
@@ -485,7 +522,7 @@ public class GameManager : Singleton<GameManager>
     {
         text.enabled = true;
         Color c = text.color;
-        for (float i = 0; i <= 0.25f; i += Time.deltaTime)
+        for (float i = 0; i <= 0.5f; i += Time.deltaTime)
         {
             text.color = new Color(c.r, c.g, c.b, i * 4);
             yield return null;
@@ -498,7 +535,7 @@ public class GameManager : Singleton<GameManager>
     {
         image.gameObject.SetActive(true);
         Color c = image.color;
-        for (float i = 0; i <= 0.25f; i += Time.deltaTime)
+        for (float i = 0; i <= 0.5f; i += Time.deltaTime)
         {
             image.color = new Color(c.r, c.g, c.b, i * 4);
             yield return null;
@@ -511,7 +548,7 @@ public class GameManager : Singleton<GameManager>
     {
         spriteRenderer.enabled = true;
         Color c = spriteRenderer.color;
-        for (float i = 0; i <= 0.25f; i += Time.deltaTime)
+        for (float i = 0; i <= 0.5f; i += Time.deltaTime)
         {
             spriteRenderer.color = new Color(c.r, c.g, c.b, i * 4);
             yield return null;
@@ -543,9 +580,9 @@ public class GameManager : Singleton<GameManager>
 
     public void HideButtons()
     {
-        _startButton.SetActive(false);
-        _howToPlayButton.SetActive(false);
-        _exitButton.SetActive(false);
+        _startButton.gameObject.SetActive(false);
+        _howToPlayButton.gameObject.SetActive(false);
+        _exitButton.gameObject.SetActive(false);
         // Destroy(_startButton);
         // Destroy(_howToPlayButton);
         // Destroy(_exitButton);
@@ -553,8 +590,8 @@ public class GameManager : Singleton<GameManager>
 
     private void UnHideButtons()
     {
-        _startButton.SetActive(true);
-        _howToPlayButton.SetActive(true);
-        _exitButton.SetActive(true);
+        _startButton.gameObject.SetActive(true);
+        _howToPlayButton.gameObject.SetActive(true);
+        _exitButton.gameObject.SetActive(true);
     }
 }
