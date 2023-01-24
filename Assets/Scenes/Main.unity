@@ -130,6 +130,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (8)
@@ -1193,6 +1197,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: cooldownToBurn
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: initialChanceOfInflammation
+      value: 65
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (12)
@@ -1345,8 +1361,8 @@ Transform:
   m_GameObject: {fileID: 298348377}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.4, y: 0.4, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 2.5, y: 2, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1682657993}
   m_RootOrder: 0
@@ -1372,7 +1388,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 76bfaab398c1d4acd802eb28a31b1659, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1397,7 +1413,7 @@ ParticleSystemRenderer:
   m_MeshDistribution: 0
   m_SortMode: 0
   m_MinParticleSize: 0
-  m_MaxParticleSize: 0.1
+  m_MaxParticleSize: 0.01
   m_CameraVelocityScale: 0
   m_VelocityScale: 0
   m_LengthScale: 2
@@ -1405,7 +1421,7 @@ ParticleSystemRenderer:
   m_NormalDirection: 1
   m_ShadowBias: 0
   m_RenderAlignment: 2
-  m_Pivot: {x: 0, y: -0.22, z: 0}
+  m_Pivot: {x: 0, y: 0, z: 0}
   m_Flip: {x: 0, y: 0, z: 0}
   m_UseCustomVertexStreams: 0
   m_EnableGPUInstancing: 1
@@ -1431,8 +1447,8 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 298348377}
   serializedVersion: 8
-  lengthInSec: 0.05
-  simulationSpeed: 1.1
+  lengthInSec: 10
+  simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
   ringBufferMode: 0
@@ -1442,7 +1458,7 @@ ParticleSystem:
   prewarm: 0
   playOnAwake: 0
   useUnscaledTime: 0
-  autoRandomSeed: 0
+  autoRandomSeed: 1
   startDelay:
     serializedVersion: 2
     minMaxState: 0
@@ -1506,7 +1522,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.4
+      scalar: 0.2
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -1559,7 +1575,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 16.04
+      scalar: 8
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -1616,9 +1632,9 @@ ParticleSystem:
       maxColor: {r: 0.2509804, g: 0.76862746, b: 0.94509804, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.9009434, g: 0.996608, b: 1, a: 1}
-        key1: {r: 0.50743145, g: 0.57224435, b: 0.5943396, a: 1}
-        key2: {r: 0.41304737, g: 0.81899023, b: 0.9622642, a: 1}
+        key0: {r: 0.64705884, g: 0.89019614, b: 0.9725491, a: 1}
+        key1: {r: 0.2509804, g: 0.76862746, b: 0.94509804, a: 1}
+        key2: {r: 0, g: 0, b: 0, a: 1}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
@@ -1626,7 +1642,7 @@ ParticleSystem:
         key7: {r: 0, g: 0, b: 0, a: 0}
         ctime0: 0
         ctime1: 41634
-        ctime2: 61873
+        ctime2: 0
         ctime3: 0
         ctime4: 0
         ctime5: 0
@@ -1641,7 +1657,7 @@ ParticleSystem:
         atime6: 0
         atime7: 0
         m_Mode: 0
-        m_NumColorKeys: 3
+        m_NumColorKeys: 2
         m_NumAlphaKeys: 2
       minGradient:
         serializedVersion: 2
@@ -1675,8 +1691,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.4
-      minScalar: 0.4
+      scalar: 0.8
+      minScalar: 0.1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1991,10 +2007,10 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 73
+    maxNumParticles: 10000
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
-    rotation3D: 1
+    rotation3D: 0
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0
@@ -2051,14 +2067,14 @@ ParticleSystem:
   ShapeModule:
     serializedVersion: 6
     enabled: 1
-    type: 4
-    angle: 69.7
+    type: 5
+    angle: 50
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
-    m_Rotation: {x: 0, y: -83.7, z: 0}
+    m_Rotation: {x: 0, y: -90, z: 0}
     m_Scale: {x: 0, y: 0.02, z: 0.2}
     placementMode: 0
     m_MeshMaterialIndex: 0
@@ -2134,11 +2150,11 @@ ParticleSystem:
     m_TextureColorAffectsParticles: 1
     m_TextureAlphaAffectsParticles: 1
     m_TextureBilinearFiltering: 0
-    randomDirectionAmount: 0
+    randomDirectionAmount: 0.35
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 19.1
+      value: 3
       mode: 0
       spread: 0
       speed:
@@ -2195,7 +2211,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
     arc:
-      value: 55.35
+      value: 360
       mode: 0
       spread: 0
       speed:
@@ -2753,7 +2769,7 @@ ParticleSystem:
         m_NumAlphaKeys: 2
   UVModule:
     serializedVersion: 2
-    enabled: 1
+    enabled: 0
     mode: 0
     timeMode: 0
     fps: 30
@@ -2864,7 +2880,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     speedRange: {x: 0, y: 1}
-    tilesX: 4
+    tilesX: 1
     tilesY: 1
     animationType: 0
     rowIndex: 0
@@ -2872,7 +2888,7 @@ ParticleSystem:
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 21300000, guid: 41e4982deea234ed9b66035c05959f67, type: 3}
+    - sprite: {fileID: 0}
     flipU: 0
     flipV: 0
   VelocityModule:
@@ -6137,6 +6153,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (14)
@@ -6199,6 +6219,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (6)
@@ -6402,7 +6426,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &426113772
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6691,6 +6715,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (15)
@@ -7124,7 +7152,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 60e3e72efc466b14db07283e39577c3e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7891af8f0669c1545aff62584937ee85, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7352,6 +7380,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (17)
@@ -7484,6 +7516,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (7)
@@ -9416,7 +9452,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: ratioOfRadiusBySize
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
@@ -9537,6 +9573,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (3)
@@ -9599,6 +9639,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (23)
@@ -9661,6 +9705,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (2)
@@ -9723,6 +9771,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (19)
@@ -9785,6 +9837,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (1)
@@ -10022,6 +10078,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (16)
@@ -10371,6 +10431,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (5)
@@ -10772,6 +10836,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (10)
@@ -10834,6 +10902,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (11)
@@ -11067,6 +11139,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (13)
@@ -11676,6 +11752,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (21)
@@ -14562,7 +14642,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -83.7}
+  m_AnchoredPosition: {x: -0.5, y: -79.33336}
   m_SizeDelta: {x: 86.520004, y: -68.67999}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1665183767
@@ -14577,7 +14657,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 41f63c9e230cf4c6e9534bdff434f923, type: 2}
+  m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0.8313726, b: 0.6392157, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -14610,6 +14690,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (24)
@@ -14948,6 +15032,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (25)
@@ -15138,6 +15226,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (4)
@@ -15457,6 +15549,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (20)
@@ -15519,6 +15615,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (18)
@@ -15581,6 +15681,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (9)
@@ -15778,6 +15882,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 907887515}
     m_Modifications:
+    - target: {fileID: 2006814998899121739, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2150563583362347693, guid: 9bb16af019a15bf4baf16f2169643785, type: 3}
       propertyPath: m_Name
       value: Tree (22)
@@ -16532,11 +16640,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1419755224313545827, guid: 4210deef29a254741b9078f7214e9d9b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.93
+      value: 10.73
       objectReference: {fileID: 0}
     - target: {fileID: 1419755224313545827, guid: 4210deef29a254741b9078f7214e9d9b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.02
+      value: 5.78
       objectReference: {fileID: 0}
     - target: {fileID: 1419755224313545827, guid: 4210deef29a254741b9078f7214e9d9b, type: 3}
       propertyPath: m_LocalPosition.z
