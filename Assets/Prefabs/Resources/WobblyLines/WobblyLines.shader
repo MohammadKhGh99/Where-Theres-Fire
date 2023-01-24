@@ -1,4 +1,4 @@
-﻿Shader "Unlit/WobblyLines"
+Shader "Unlit/WobblyLines"
 {
     Properties
     {
