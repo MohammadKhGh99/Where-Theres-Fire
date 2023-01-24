@@ -50,6 +50,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b49deeda5af010f43bb4af64194430c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  horseSpeed: 7
 --- !u!114 &9171444338605865561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,14 +65,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   numOfPoints: 0
   isHouse: 0
+  isHorseHEEEE: 1
   isFireSource: 0
-  initialTimeUntilBurnOut: 0
-  initialChanceOfInflammation: 0
-  extinguishingSpeed: 0
+  initialTimeUntilBurnOut: 1000
+  initialChanceOfInflammation: 100
+  extinguishingSpeed: 1000
   increaseChancePercentage: 5
-  ratioOfRadiusBySize: 4
-  cooldownToBurn: 3
-  timeBetweenAddingNewFire: 5
+  ratioOfRadiusBySize: 1
+  cooldownToBurn: 1
+  timeBetweenAddingNewFire: 2
 --- !u!212 &7624404545942682682
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -168,7 +170,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4088577201017638335}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -194,7 +196,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.05796337, y: 0.0817101}
+  m_Offset: {x: -0.05796337, y: 0.17577851}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -205,5 +207,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.5603771, y: 3.062324}
+  m_Size: {x: 2.5603771, y: 3.6267354}
   m_EdgeRadius: 0

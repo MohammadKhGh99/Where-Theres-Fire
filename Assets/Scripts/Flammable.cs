@@ -13,6 +13,7 @@ public class Flammable : MonoBehaviour
     // points on item
     [SerializeField] private int numOfPoints;
     [SerializeField] private bool isHouse;
+    [SerializeField] private bool isHorseHEEEE;
 
     // initializing variables
     [SerializeField] private bool isFireSource;
@@ -99,10 +100,16 @@ public class Flammable : MonoBehaviour
             _currentChanceOfInflammation = 0;
             _timeUntilBurnOut = Mathf.Infinity;
             _currentHealth = Mathf.Infinity;
+
+        }
+        else if (isHorseHEEEE)
+        {
+            _currentChanceOfInflammation = initialChanceOfInflammation;
+            _timeUntilBurnOut = initialTimeUntilBurnOut;
+            _currentHealth = initialTimeUntilBurnOut;
         }
         else
         {
-            _bounds = _spriteRenderer.bounds;
             InitializeHealthBar();
             InitializePointsText();
 
@@ -185,12 +192,11 @@ public class Flammable : MonoBehaviour
 
             return;
         }
-
-
+        
         ChangingSpriteColorBecauseOfFireOrWater();
 
         // burn something around you
-        if (_passedTimeForCooldown >= cooldownToBurn)
+        if (_passedTimeForCooldown >= cooldownToBurn && !isHorseHEEEE)
         {
             _passedTimeForCooldown = 0f;
             int chanceFromBurnTime;
@@ -206,6 +212,8 @@ public class Flammable : MonoBehaviour
             // we can now try to burn something around us
             if (_inOrder)
             {
+                var toDelete = false;
+                float distanceKeyToDelete = -1;
                 foreach (var (distance, otherFlameScript) in
                          _objectsAroundUsSorted) // todo make sure we go from negative (small) to positive (big)
                 {
@@ -214,9 +222,22 @@ public class Flammable : MonoBehaviour
                     // we want this, try to burn it!, else move to another one.. (distance < _maxDistanceFromOrigin)
                     var chanceFromDistance = (int)((1 - distance / _maxDistanceFromOrigin) * 100);
 
-                    otherFlameScript.TryToBurn(chanceFromDistance,
+                    var isBurnt = otherFlameScript.TryToBurn(chanceFromDistance,
                         chanceFromBurnTime); // true if it burned, false if not
+
+                    if (isBurnt && otherFlameScript.isHorseHEEEE)
+                    {
+                        toDelete = true;
+                        distanceKeyToDelete = distance;
+                    }
                 }
+
+                if (toDelete)
+                {
+                    _objectsAroundUsSorted.Remove(distanceKeyToDelete);
+                }
+                
+                
             }
             else
             {
@@ -229,8 +250,7 @@ public class Flammable : MonoBehaviour
                 }
             }
         }
-
-
+        
         _passedTimeForCooldown += Time.deltaTime;
 
         if (_gettingExtinguished)
@@ -239,9 +259,8 @@ public class Flammable : MonoBehaviour
         }
         else
         {
-            _currentHealth -=
-                Time.deltaTime; // we decrease the health only if we are on fire without being extinguished
-            if (!isFireSource)
+            _currentHealth -= Time.deltaTime; // we decrease the health only if we are on fire without being extinguished
+            if (!isFireSource && !isHorseHEEEE)
             {
                 _healthBarObj.value = _currentHealth;
                 if (!_isImageVisible)
@@ -258,6 +277,10 @@ public class Flammable : MonoBehaviour
         {
             if (_currentTimerToAddReleaseFire >= _addFireTime)
             {
+                if (isHorseHEEEE)
+                {
+                    print("");
+                }
                 // add a new fire object to image
                 _releaseFireTime = _addFireTime;
                 _addFireTime += timeBetweenAddingNewFire;
@@ -265,6 +288,10 @@ public class Flammable : MonoBehaviour
             }
             else if (_currentTimerToAddReleaseFire < _releaseFireTime)
             {
+                if (isHorseHEEEE)
+                {
+                    print("");
+                }
                 // remove a fire object from image
                 _addFireTime = _releaseFireTime;
                 _releaseFireTime -= timeBetweenAddingNewFire;
@@ -298,7 +325,7 @@ public class Flammable : MonoBehaviour
     private void ChangingSpriteColorBecauseOfFireOrWater()
     {
         _spriteRenderer.color = Color.Lerp(_spriteRenderer.color, Color.black, Time.deltaTime / _timeUntilBurnOut);
-        if (isFireSource) return;
+        if (isFireSource || isHorseHEEEE) return;
         if (CurrentStatus.Equals(Status.OnFire))
             _healthBarImage.color = Color.Lerp(_healthBarImage.color, Color.red, Time.deltaTime / _timeUntilBurnOut);
     }
@@ -311,6 +338,10 @@ public class Flammable : MonoBehaviour
         if (isFireSource)
             return false;
 
+        if (isHorseHEEEE)
+        {
+            print("");
+        }
         var realChance = (chanceFromDistance * 1 + _currentChanceOfInflammation * 2 + chanceFromBurnTime * 4) / 7.0f;
         if (Random.Range(0, 100) <= realChance)
         {
@@ -332,7 +363,10 @@ public class Flammable : MonoBehaviour
             _objectsAroundUsSorted.Clear();     // make sure they are empty :3
             GetFlammableObjectsAroundUs();
         }
-
+        if (isHorseHEEEE)
+        {
+            print("");
+        }
         CurrentStatus = Status.OnFire;
     }
 
@@ -343,7 +377,10 @@ public class Flammable : MonoBehaviour
 
     private void GettingExtinguished()
     {
-    
+        if (isHorseHEEEE)
+        {
+            print("");
+        }
         _timeUntilBurnOut += Time.deltaTime * extinguishingSpeed;
         _currentTimerToAddReleaseFire -= Time.deltaTime * extinguishingSpeed;
         if (!(_timeUntilBurnOut >= initialTimeUntilBurnOut)) return;
@@ -351,26 +388,27 @@ public class Flammable : MonoBehaviour
         if (GameManager.Instance.GetBurningSound().isPlaying)
             GameManager.Instance.GetBurningSound().Stop();
         
-        initialTimeUntilBurnOut = _timeUntilBurnOut;
         CurrentStatus = Status.NotOnFire;
-        if (isFireSource)
-        {
-            // _objectsAroundUsSorted.Clear();
-        }
-
-        else
+        if (!isFireSource)
         {
             // release all fires
-            foreach (var fire in _firesOnImage)
+
+            _currentTimerToAddReleaseFire = 0f;
+            _addFireTime = _currentTimerToAddReleaseFire + 2*Time.deltaTime;
+            _releaseFireTime = -timeBetweenAddingNewFire;
+            
+            foreach (var fireInHash in _firesOnImage)
             {
-                GameManager.Instance.FireObjectPool.Release(fire);
+                GameManager.Instance.FireObjectPool.Release(fireInHash);
             }
+            _firesOnImage.Clear();
         }
     }
 
     private void AddFireOnObject()
     {
         var fireObject = GameManager.Instance.FireObjectPool.Get();
+        fireObject.transform.SetParent(_t);
         _firesOnImage.Add(fireObject);
         Vector3 randomPoint;
 
@@ -378,14 +416,15 @@ public class Flammable : MonoBehaviour
         {
             randomPoint = new Vector3(Random.Range(_bounds.min.x, _bounds.max.x),
                 Random.Range(_bounds.min.y, _bounds.max.y), 0);
+            randomPoint = _t.InverseTransformPoint(randomPoint);
         }
         else
         {
             randomPoint =
-                (Vector2) _bounds.center + Random.insideUnitCircle * Mathf.Min(_bounds.extents.x, _bounds.extents.y);
+                Random.insideUnitCircle * Mathf.Min(_bounds.extents.x, _bounds.extents.y);
         }
 
-        fireObject.transform.position = randomPoint;
+        fireObject.transform.localPosition = randomPoint;
     }
 
     private void GetFlammableObjectsAroundUs()
@@ -401,7 +440,7 @@ public class Flammable : MonoBehaviour
             // Flammable res;
             if (!col.gameObject.TryGetComponent(out Flammable res)) continue;
             if (res.Equals(this) || res.isFireSource) continue;
-
+            if(!isFireSource && res.isHorseHEEEE) continue;
             _objectsAroundUs.Add(res);
 
             // sort by distance of colliders (MAYBE DELETE IT LATER)

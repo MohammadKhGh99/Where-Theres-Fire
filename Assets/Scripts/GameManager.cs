@@ -306,6 +306,7 @@ public class GameManager : Singleton<GameManager>
 
     private static void OnReleaseFireObject(FireObject fireObject)
     {
+        fireObject.transform.SetParent(null);
         fireObject.FakeRelease();
     }
 
