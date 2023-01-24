@@ -63,10 +63,11 @@ public class Flammable : MonoBehaviour
 
     // ** points on burn out **
     private TextMeshProUGUI _points;
+
     // private float _pointsTravelY = 3;
     private float _targetPointsX = -20f;
     private float _targetPointsY = -6.5f;
-    
+
     // *** Smoke ***
     private ParticleSystem _smoke;
 
@@ -100,7 +101,6 @@ public class Flammable : MonoBehaviour
             _currentChanceOfInflammation = 0;
             _timeUntilBurnOut = Mathf.Infinity;
             _currentHealth = Mathf.Infinity;
-
         }
         else if (isHorseHEEEE)
         {
@@ -118,10 +118,10 @@ public class Flammable : MonoBehaviour
             _currentHealth = initialTimeUntilBurnOut;
 
             GetFlammableObjectsAroundUs();
-            
-            
+
+
             // *** Smoke Initializing ***
-            
+
             var temp = Instantiate(Resources.Load("Smoke"), _t.position, Quaternion.identity, _t) as GameObject;
             if (temp == null) throw new NullReferenceException("There is no Smoke Prefabs!");
             _smoke = temp.GetComponent<ParticleSystem>();
@@ -144,36 +144,35 @@ public class Flammable : MonoBehaviour
         // point system move to burning bar
         if (!_points.IsUnityNull() && _points.enabled)
         {
-            var temp = _points.transform.position; 
+            var temp = _points.transform.position;
             if (temp.x > _targetPointsX && temp.y > _targetPointsY)
             {
                 // _points.transform.position = Vector3.MoveTowards(temp,  GameManager.Instance.burnedPointsFireToMoveTowards.position , 0.2f);
-                _points.transform.position = Vector3.MoveTowards(temp,  _targetPointsY * Vector3.up + 
-                _targetPointsX * Vector3.right, 0.2f);
+                _points.transform.position = Vector3.MoveTowards(temp, _targetPointsY * Vector3.up +
+                                                                       _targetPointsX * Vector3.right, 0.2f);
             }
             else
             {
                 StartCoroutine(GameManager.Instance.FadeOut(_points));
             }
         }
-        
+
         if (!CurrentStatus.Equals(Status.OnFire))
         {
-            
             if (!_smoke.IsUnityNull() && _smoke.isPlaying && !isFireSource)
                 _smoke.Stop();
             return;
         }
-        
+
         if (!GameManager.Instance.GetBurningSound().isPlaying)
             GameManager.Instance.GetBurningSound().Play();
-        
+
         // all the things under this line means they are on FIRE!!
         // remember this!!
         if (!_smoke.IsUnityNull() && _smoke.isStopped && !isFireSource)
             _smoke.Play();
-        
-        
+
+
         _timeUntilBurnOut -= Time.deltaTime;
         _currentTimerToAddReleaseFire += Time.deltaTime;
 
@@ -192,7 +191,7 @@ public class Flammable : MonoBehaviour
 
             return;
         }
-        
+
         ChangingSpriteColorBecauseOfFireOrWater();
 
         // burn something around you
@@ -236,8 +235,6 @@ public class Flammable : MonoBehaviour
                 {
                     _objectsAroundUsSorted.Remove(distanceKeyToDelete);
                 }
-                
-                
             }
             else
             {
@@ -250,7 +247,7 @@ public class Flammable : MonoBehaviour
                 }
             }
         }
-        
+
         _passedTimeForCooldown += Time.deltaTime;
 
         if (_gettingExtinguished)
@@ -259,7 +256,8 @@ public class Flammable : MonoBehaviour
         }
         else
         {
-            _currentHealth -= Time.deltaTime; // we decrease the health only if we are on fire without being extinguished
+            _currentHealth -=
+                Time.deltaTime; // we decrease the health only if we are on fire without being extinguished
             if (!isFireSource && !isHorseHEEEE)
             {
                 _healthBarObj.value = _currentHealth;
@@ -277,7 +275,6 @@ public class Flammable : MonoBehaviour
         {
             if (_currentTimerToAddReleaseFire >= _addFireTime)
             {
-
                 // add a new fire object to image
                 _releaseFireTime = _addFireTime;
                 _addFireTime += timeBetweenAddingNewFire;
@@ -285,7 +282,6 @@ public class Flammable : MonoBehaviour
             }
             else if (_currentTimerToAddReleaseFire < _releaseFireTime)
             {
-
                 // remove a fire object from image
                 _addFireTime = _releaseFireTime;
                 _releaseFireTime -= timeBetweenAddingNewFire;
@@ -304,7 +300,7 @@ public class Flammable : MonoBehaviour
         _spriteRenderer.color = Color.black;
         MakeImageInvisibleOrVisible(_healthBarImage, false);
         MakeImageInvisibleOrVisible(_healthBarBorder, false);
-        
+
         // points
         GameManager.Instance.numBurnedPoints += numOfPoints;
         GameManager.Instance.UpdateCurBurnedPoints();
@@ -331,7 +327,7 @@ public class Flammable : MonoBehaviour
         // return true if it got burned, false if not.
         if (isFireSource)
             return false;
-        
+
         var realChance = (chanceFromDistance * 1 + _currentChanceOfInflammation * 2 + chanceFromBurnTime * 4) / 7.0f;
         if (Random.Range(0, 100) <= realChance)
         {
@@ -339,6 +335,7 @@ public class Flammable : MonoBehaviour
             SetSelfOnFire();
             return true;
         }
+
         _currentChanceOfInflammation = Mathf.Min(increaseChancePercentage + _currentChanceOfInflammation, 100);
         return false;
     }
@@ -350,9 +347,10 @@ public class Flammable : MonoBehaviour
         // todo things to make this object on fire, maybe call something from real code? idk
         if (isFireSource)
         {
-            _objectsAroundUsSorted.Clear();     // make sure they are empty :3
+            _objectsAroundUsSorted.Clear(); // make sure they are empty :3
             GetFlammableObjectsAroundUs();
         }
+
         CurrentStatus = Status.OnFire;
     }
 
@@ -363,27 +361,27 @@ public class Flammable : MonoBehaviour
 
     private void GettingExtinguished()
     {
-
         _timeUntilBurnOut += Time.deltaTime * extinguishingSpeed;
         _currentTimerToAddReleaseFire -= Time.deltaTime * extinguishingSpeed;
         if (!(_timeUntilBurnOut >= initialTimeUntilBurnOut)) return;
         // we watered the object
         if (GameManager.Instance.GetBurningSound().isPlaying)
             GameManager.Instance.GetBurningSound().Stop();
-        
+
         CurrentStatus = Status.NotOnFire;
         if (!isFireSource)
         {
             // release all fires
 
             _currentTimerToAddReleaseFire = 0f;
-            _addFireTime = _currentTimerToAddReleaseFire + 2*Time.deltaTime;
+            _addFireTime = _currentTimerToAddReleaseFire + 2 * Time.deltaTime;
             _releaseFireTime = -timeBetweenAddingNewFire;
-            
+
             foreach (var fireInHash in _firesOnImage)
             {
                 GameManager.Instance.FireObjectPool.Release(fireInHash);
             }
+
             _firesOnImage.Clear();
         }
     }
@@ -423,7 +421,7 @@ public class Flammable : MonoBehaviour
             // Flammable res;
             if (!col.gameObject.TryGetComponent(out Flammable res)) continue;
             if (res.Equals(this) || res.isFireSource) continue;
-            if(!isFireSource && res.isHorseHEEEE) continue;
+            if (!isFireSource && res.isHorseHEEEE) continue;
             _objectsAroundUs.Add(res);
 
             // sort by distance of colliders (MAYBE DELETE IT LATER)
@@ -434,10 +432,11 @@ public class Flammable : MonoBehaviour
             {
                 distance += 0.01f;
             }
+
             _objectsAroundUsSorted.Add(distance, res);
         }
     }
-    
+
     private void InitializePointsText()
     {
         var pointsPos = _bounds.center + Vector3.up * _bounds.extents.y + 2 * Vector3.right;
@@ -491,5 +490,4 @@ public class Flammable : MonoBehaviour
         objectSize += 2 * objectSize / ratioOfRadiusBySize;
         return objectSize;
     }
-
 }

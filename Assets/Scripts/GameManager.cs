@@ -99,6 +99,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private AudioSource burningSound;
     [SerializeField] private AudioSource molotovSound;
     [SerializeField] private AudioSource waterHoseSound;
+    [SerializeField] private AudioSource horseSound;
     
     // *** Buttons
     private Button _startButton;
@@ -576,6 +577,11 @@ public class GameManager : Singleton<GameManager>
     public AudioSource GetMolotovSound()
     {
         return molotovSound;
+    }
+
+    public AudioSource GetHorseSound()
+    {
+        return horseSound;
     }
 
     public void HideButtons()
