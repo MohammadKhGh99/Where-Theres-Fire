@@ -76,7 +76,7 @@ public class FireMolotov : MonoBehaviour
         }
 
         _steam = Instantiate(Resources.Load("Steam")) as GameObject;
-        _steam.SetActive(false);
+        // _steam.SetActive(false);
         
         _t.localScale = _startScale;
         _elapsedTime = 0f;
@@ -117,6 +117,6 @@ public class FireMolotov : MonoBehaviour
     {
         _steam.SetActive(true);
         yield return new WaitForSeconds(1);
-        _steam.SetActive(false);
+        // _steam.SetActive(false);
     }
 }
