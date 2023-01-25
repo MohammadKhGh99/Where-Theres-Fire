@@ -35,6 +35,8 @@ public class WaterBullet : MonoBehaviour
     private bool _hasInitialized;
     private bool _hasPositioned;
     public GameManager.WaterBulletStatus currentStatus;
+    
+    
 
 
     //dropping water on tiles
@@ -49,6 +51,7 @@ public class WaterBullet : MonoBehaviour
             _t = GetComponent<Transform>();
             _hasInitialized = true;
         }
+        
         gameObject.SetActive(true);
         _currentSizeX = InitialSizeX;
         _finalSizeX = bulletDistance;

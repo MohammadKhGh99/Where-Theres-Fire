@@ -107,6 +107,10 @@ public class GameManager : Singleton<GameManager>
     private Image _howToPlayImage;
     private Button _exitButton;
     public bool start, howToPlay, exit;
+    
+    // ** camera
+    [SerializeField] private Camera mainCamera;
+    // [SerializeField] private static GameObject bulletParent;
 
     // [SerializeField] private static GameObject waterBulletsParent;
 
@@ -389,6 +393,8 @@ public class GameManager : Singleton<GameManager>
         {
             StartCoroutine(FadeOut(_imageStartGame));
             IsGameRunning = true;
+            mainCamera.orthographicSize = 13f;
+            start = false;
         }
 
         // if we clicked the how to play button
@@ -438,6 +444,7 @@ public class GameManager : Singleton<GameManager>
             if (_currentSeconds <= 0 && numBurnedPoints < maxBurnedPoints)
             {
                 // StartCoroutine(FadeOut(_imageStartGame));
+                mainCamera.orthographicSize = 20.2f;
                 StartCoroutine(FadeIn(_imageExtinguisherWon));
                 IsGameRunning = false;
                 IsGameOver = true;
@@ -448,6 +455,7 @@ public class GameManager : Singleton<GameManager>
             if (numBurnedPoints >= maxBurnedPoints)
             {
                 // StartCoroutine(FadeOut(_imageStartGame));
+                mainCamera.orthographicSize = 20.2f;
                 StartCoroutine(FadeIn(_imageFireWon));
                 IsGameRunning = false;
                 IsGameOver = true;
