@@ -54,12 +54,12 @@
      <Compile Include="Assets\Scripts\Hideable.cs" />
      <Compile Include="Assets\Scripts\Molotov.cs" />
      <Compile Include="Assets\Scripts\WaterGun.cs" />
+     <Compile Include="Assets\Scripts\Steam.cs" />
      <Compile Include="Assets\Scripts\FireMolotov.cs" />
      <Compile Include="Assets\Scripts\Extinguisher.cs" />
      <Compile Include="Assets\Scripts\WaterBullet.cs" />
      <Compile Include="Assets\Scripts\FireMan.cs" />
      <Compile Include="Assets\Scripts\Movement.cs" />
-     <Compile Include="Assets\Scripts\Steam.cs" />
      <Folder Include="Assets" />
      <None Include="Assets\WobblyLines\ClassicNoise2D.hlsl" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

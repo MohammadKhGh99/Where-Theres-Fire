@@ -26,8 +26,11 @@ public class Horse : MonoBehaviour
 
     void Update()
     {
-        if (_t.position.x is <= -23 or >= 23 && GameManager.Instance.GetHorseSound().isPlaying)
+        if (_t.position.x is <= -25 or >= 25 && GameManager.Instance.GetHorseSound().isPlaying)
+        {
             GameManager.Instance.GetHorseSound().Stop();
+            Destroy(gameObject);
+        }
         if (_flammable.CurrentStatus == Flammable.Status.OnFire)
         {
             if (!GameManager.Instance.GetHorseSound().isPlaying)

@@ -35,9 +35,6 @@ public class WaterBullet : MonoBehaviour
     private bool _hasInitialized;
     private bool _hasPositioned;
     public GameManager.WaterBulletStatus currentStatus;
-    
-    
-
 
     //dropping water on tiles
     private static float _timer;

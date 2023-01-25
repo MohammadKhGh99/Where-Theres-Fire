@@ -74,6 +74,7 @@ public class FireMan : MonoBehaviour
         _lookAtDirection = Vector2.zero;
         _throwDirection = Vector2.zero;
         _currentGridPos = MovingTileMap.WorldToCell(_t.position);
+        print(MovingTileMap.CellToWorld(_currentGridPos));
         _animator = GetComponent<Animator>();
         // _animator.speed = 0.5f;
         _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -278,6 +279,15 @@ public class FireMan : MonoBehaviour
         {
             if (!currentlyJumping)
             {
+                // var curPos = _t.position;
+                // var temp = Vector3Int.CeilToInt(curPos);
+                // if ((Math.Abs((int)temp.x) % 2 != 0 || Math.Abs((int)temp.y) % 2 != 0) && _doneExtinguisherPush)
+                // {
+                //     var newX = Math.Abs((int)temp.x) % 2 != 0 ? Mathf.FloorToInt(curPos.x) : curPos.x;
+                //     var newY = Math.Abs((int)temp.y) % 2 != 0 ? Mathf.FloorToInt(curPos.y) : curPos.y;
+                //     _t.position = new Vector3(newX, newY, 0);
+                // }
+                
                 var _ourPos = MovingTileMap.WorldToCell(_t.position);
                 if (!_ourPos.Equals(_currentGridPos))
                 {
@@ -302,7 +312,7 @@ public class FireMan : MonoBehaviour
         {
             _currentGridPos = MovingTileMap.WorldToCell(nextPos);
         }
-        _t.position = MovingTileMap.CellToWorld(_currentGridPos);
+        // _t.position = MovingTileMap.CellToWorld(_currentGridPos);
         
         
         _lookAtDirection = direction;
@@ -318,10 +328,14 @@ public class FireMan : MonoBehaviour
 
         if (!_hit)
         {
+            // print(_hit.collider);
             _currentGridPos += Vector3Int.RoundToInt(direction);
+            // print(_currentGridPos);
             nextPos = MovingTileMap.CellToWorld(_currentGridPos);
+            // print(nextPos);
             currentlyJumping = true;
-            StartCoroutine(LerpRigidbody(_t.position, nextPos, Time.time));
+            var curPos = _t.position;
+            StartCoroutine(LerpRigidbody(curPos, Vector3Int.RoundToInt(curPos) + 2 * Vector3Int.RoundToInt(direction), Time.time));
         }
         
     }

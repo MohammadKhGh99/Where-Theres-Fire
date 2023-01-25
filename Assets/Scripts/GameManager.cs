@@ -100,6 +100,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField] private AudioSource molotovSound;
     [SerializeField] private AudioSource waterHoseSound;
     [SerializeField] private AudioSource horseSound;
+    [SerializeField] private AudioSource clockTickingSound;
     
     // *** Buttons
     private Button _startButton;
@@ -448,6 +449,7 @@ public class GameManager : Singleton<GameManager>
                 StartCoroutine(FadeIn(_imageExtinguisherWon));
                 IsGameRunning = false;
                 IsGameOver = true;
+                DisableSounds();
                 return;
             }
 
@@ -459,6 +461,7 @@ public class GameManager : Singleton<GameManager>
                 StartCoroutine(FadeIn(_imageFireWon));
                 IsGameRunning = false;
                 IsGameOver = true;
+                DisableSounds();
             }
         }
     }
@@ -475,7 +478,10 @@ public class GameManager : Singleton<GameManager>
         var seconds = (int)_currentSeconds % 60;
         
         if (((minutes == 1 && seconds == 0) || (minutes == 0)) && !timerText.color.Equals(Color.red))
+        {
             timerText.color = Color.red;
+            clockTickingSound.Play();
+        }
 
         if (minutes < 1 && seconds is <= 59 and > 0 && _pulsingTimer >= 0.5f)
         {
@@ -607,5 +613,19 @@ public class GameManager : Singleton<GameManager>
         _startButton.gameObject.SetActive(true);
         _howToPlayButton.gameObject.SetActive(true);
         _exitButton.gameObject.SetActive(true);
+    }
+
+    private void DisableSounds()
+    {
+        if (horseSound.isPlaying)
+            horseSound.Stop();
+        if (clockTickingSound.isPlaying)
+            clockTickingSound.Stop();
+        if (burningSound.isPlaying)
+            burningSound.Stop();
+        if (molotovSound.isPlaying)
+            molotovSound.Stop();
+        if (waterHoseSound.isPlaying)
+            waterHoseSound.Stop();
     }
 }
