@@ -260,7 +260,6 @@ public class Extinguisher : MonoBehaviour
     {
         if (col.gameObject.name.Equals("FireMan"))
         {
-            // print("HEllpasd");
             var fireman = col.gameObject.GetComponent<FireMan>(); 
             fireman.GetHideable().ShowOrHide(reShow: true);
             fireman.SetPushed(true);

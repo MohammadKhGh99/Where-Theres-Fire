@@ -9,6 +9,8 @@ using UnityEngine.UI;
 
 public class FireMan : MonoBehaviour
 {
+    [SerializeField] private Tilemap MovingTileMap; 
+    
     // Game manager
     private Transform _t;
     private Rigidbody2D _rb;
@@ -48,7 +50,7 @@ public class FireMan : MonoBehaviour
     private Hideable _hideable;
 
     //**don't move to these objects
-    private LayerMask _forbiddenLayers;
+    [SerializeField] private LayerMask _forbiddenLayers;
     
     // *** fireman pushed
     private Vector3 _waterPushedDirection;
@@ -59,6 +61,11 @@ public class FireMan : MonoBehaviour
     // ** cooldown bar
     [SerializeField] private Slider cooldownBar;
 
+    // dumb
+    private bool reachedNextPos;
+    private bool currentlyJumping;
+    private Vector3 nextPos;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -66,13 +73,12 @@ public class FireMan : MonoBehaviour
         _t = GetComponent<Transform>();
         _lookAtDirection = Vector2.zero;
         _throwDirection = Vector2.zero;
-        _currentGridPos = Vector3Int.RoundToInt(_t.position);
+        _currentGridPos = MovingTileMap.WorldToCell(_t.position);
         _animator = GetComponent<Animator>();
         // _animator.speed = 0.5f;
         _spriteRenderer = GetComponent<SpriteRenderer>();
         // _spriteRenderer.flipX = !_spriteRenderer.flipX;
         _hideable = GetComponent<Hideable>();
-        _forbiddenLayers = GameManager.Instance.forbiddenLayers;
         _waterPushedDirection = Vector3.zero;
         cooldownBar.maxValue = GameManager.MolotovCooldownTime;
         cooldownBar.value = GameManager.MolotovCooldownTime;
@@ -93,7 +99,7 @@ public class FireMan : MonoBehaviour
         if (!moveByGrid)
             SnappingMovement();
         else
-            GridMovement();
+            GridMovement2();
 
         // *** shooting ability ***
         if (Input.GetKeyDown(Fire))
@@ -221,7 +227,7 @@ public class FireMan : MonoBehaviour
             _lookAtDirection = Vector3.zero;
             if (_pushedByExtinguisher)
             {
-                _currentGridPos = Vector3Int.RoundToInt(_t.position);
+                _currentGridPos = MovingTileMap.WorldToCell(_t.position);
                 _pushedByExtinguisher = false;
             }
         }
@@ -231,7 +237,96 @@ public class FireMan : MonoBehaviour
         _animator.SetInteger("XSpeed", (int)_lookAtDirection.x);
         _animator.SetInteger("YSpeed", (int)_lookAtDirection.y);
     }
+    private void GridMovement2()
+    {
+        // if (!reachedNextPos && nextPos.Equals(MovingTileMap.CellToWorld(_currentGridPos)))
+        // {
+        //     reachedNextPos = true;
+        // }
+        
+        if (gridToPush == 0)
+        {
+            _waterPushedDirection = Vector3.zero;
+            gridToPush = 2;
+        }
+        if (!_waterPushedDirection.Equals(Vector3.zero))
+            gridToPush--;
+        
+        // Check input and move in the corresponding direction
+
+        if (Input.GetKeyDown(Up) || _waterPushedDirection.Equals(Vector3.up))
+        {
+            if (!currentlyJumping)
+                CheckMovement(Vector3.up, Vector2.up, false);
+        }
+        else if (Input.GetKeyDown(Down) || _waterPushedDirection.Equals(Vector3.down))
+        {
+            if (!currentlyJumping)
+                CheckMovement(Vector3.down, Vector2.down, false);
+        }
+        else if (Input.GetKeyDown(Right) || _waterPushedDirection.Equals(Vector3.right))
+        {
+            if (!currentlyJumping)
+                CheckMovement(Vector3.right, Vector2.right, false);
+        }
+        else if (Input.GetKeyDown(Left) || _waterPushedDirection.Equals(Vector3.left))
+        {
+            if (!currentlyJumping)
+                CheckMovement(Vector3.left, Vector2.left, true);
+        }
+        else
+        {
+            if (!currentlyJumping)
+            {
+                var _ourPos = MovingTileMap.WorldToCell(_t.position);
+                if (!_ourPos.Equals(_currentGridPos))
+                {
+                    _currentGridPos = _ourPos;
+                }
+            }
+
+            _rb.velocity = Vector2.zero;
+            _lookAtDirection = Vector3.zero;
+
+        }
+        
+        if (!_waterPushedDirection.Equals(Vector3.zero)) return;
+
+        _animator.SetInteger("XSpeed", (int)_lookAtDirection.x);
+        _animator.SetInteger("YSpeed", (int)_lookAtDirection.y);
+    }
     
+    void CheckMovement(Vector3 direction, Vector2 throwDirection, bool flipX)
+    {
+        if (currentlyJumping)
+        {
+            _currentGridPos = MovingTileMap.WorldToCell(nextPos);
+        }
+        _t.position = MovingTileMap.CellToWorld(_currentGridPos);
+        
+        
+        _lookAtDirection = direction;
+        _throwDirection = throwDirection;
+
+        var distance = 1.5f;
+        var radius = 0.75f;
+
+        _hit = Physics2D.CircleCast(_t.position, radius, _lookAtDirection, distance, layerMask: _forbiddenLayers);
+
+        if (_spriteRenderer.flipX != flipX)
+            _spriteRenderer.flipX = flipX;
+
+        if (!_hit)
+        {
+            _currentGridPos += Vector3Int.RoundToInt(direction);
+            nextPos = MovingTileMap.CellToWorld(_currentGridPos);
+            currentlyJumping = true;
+            StartCoroutine(LerpRigidbody(_t.position, nextPos, Time.time));
+        }
+        
+    }
+
+
     IEnumerator LerpRigidbody(Vector3 startPos, Vector3 endPos, float timeStartedLerping)
     {
         while (true)
@@ -243,6 +338,7 @@ public class FireMan : MonoBehaviour
  
             if (percentageComplete >= 1f)
             {
+                currentlyJumping = false;
                 break;
             }
  
@@ -269,7 +365,8 @@ public class FireMan : MonoBehaviour
 
         // todo this need to be more general (THIS IS WAY WRONG)
         Vector3Int gridPosition = GameManager.Instance.WaterFireTilemap.WorldToCell(molotovDropPos);
-        BoundsInt bounds = new BoundsInt(gridPosition, new Vector3Int(2, 2, 1));
+        // BoundsInt bounds = new BoundsInt(gridPosition, new Vector3Int(2, 2, 1));
+        BoundsInt bounds = new BoundsInt(gridPosition - new Vector3Int(1, 1, 0), new Vector3Int(3, 3, 1));
         var tiles = GameManager.Instance.WaterFireTilemap.GetTilesBlock(bounds);
         int i = 0;
         foreach (var tile in tiles)
