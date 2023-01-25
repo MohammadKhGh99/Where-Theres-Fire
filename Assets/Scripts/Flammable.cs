@@ -121,7 +121,8 @@ public class Flammable : MonoBehaviour
 
 
             // *** Smoke Initializing ***
-
+            
+            // var smokePos = _bounds.center - Vector3.up * (_bounds.extents.y);
             var temp = Instantiate(Resources.Load("Smoke"), _t.position, Quaternion.identity, _t) as GameObject;
             if (temp == null) throw new NullReferenceException("There is no Smoke Prefabs!");
             _smoke = temp.GetComponent<ParticleSystem>();

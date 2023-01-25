@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 
 public class FireMolotov : MonoBehaviour
@@ -12,6 +14,10 @@ public class FireMolotov : MonoBehaviour
     private Flammable _flammable;
 
     private float _elapsedTime;
+    
+    // ** steam
+    private GameObject _steam;
+    private Animator _steamAnimator;
 
     // status
     private Status _currentStatus;
@@ -20,7 +26,7 @@ public class FireMolotov : MonoBehaviour
     
     // flag to not initialize things again and again after pooling
     private bool _hasInitialized;
-    
+
     private void Update()
     {
         switch (_currentStatus)
@@ -46,6 +52,7 @@ public class FireMolotov : MonoBehaviour
             }
             case Status.Extinguish:
             {
+                
                 _flammable.CurrentStatus = Flammable.Status.NotOnFire;
                 _elapsedTime += Time.deltaTime;
                 var t = Mathf.Clamp01(_elapsedTime / timeToReduce);
@@ -68,6 +75,9 @@ public class FireMolotov : MonoBehaviour
             _flammable = GetComponent<Flammable>();
         }
 
+        _steam = Instantiate(Resources.Load("Steam")) as GameObject;
+        _steam.SetActive(false);
+        
         _t.localScale = _startScale;
         _elapsedTime = 0f;
         _currentStatus = Status.Pause;
@@ -75,6 +85,10 @@ public class FireMolotov : MonoBehaviour
         _t.position = _dummyLocation;
         gameObject.SetActive(true);
         _hasInitialized = true;
+
+        
+        // _steamAnimator = _steam.GetComponent<Animator>();
+        // _steamAnimator.enabled = false;
     }
 
     public void FakeRelease()
@@ -89,11 +103,20 @@ public class FireMolotov : MonoBehaviour
     {
         _t.position = molotovDropPos;
         _currentStatus = Status.Burn;
-        
+        _steam.transform.position = molotovDropPos - Vector3.up;
     }
 
     public void Extinguish()
     {
         _currentStatus = Status.Extinguish;
+        StartCoroutine(ShowSteam());
+        // _steamAnimator.enabled = true;
+    }
+
+    private IEnumerator ShowSteam()
+    {
+        _steam.SetActive(true);
+        yield return new WaitForSeconds(1);
+        _steam.SetActive(false);
     }
 }

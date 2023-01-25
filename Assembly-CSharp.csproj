@@ -59,6 +59,7 @@
      <Compile Include="Assets\Scripts\WaterBullet.cs" />
      <Compile Include="Assets\Scripts\FireMan.cs" />
      <Compile Include="Assets\Scripts\Movement.cs" />
+     <Compile Include="Assets\Scripts\NewBehaviourScript.cs" />
      <Folder Include="Assets" />
      <None Include="Assets\WobblyLines\ClassicNoise2D.hlsl" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
