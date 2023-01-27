@@ -95,7 +95,7 @@ public class Molotov : MonoBehaviour
         {
             // calculate time until we reach the actual time to reach target
             var throwProgress = _throwPassedTime / timeToReachTarget;
-            _throwPassedTime += Time.fixedDeltaTime;
+            _throwPassedTime += Time.deltaTime;
             if (throwProgress >= 1)
             {
                 // we reached target!
