@@ -101,12 +101,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   numOfPoints: 5
   isHouse: 1
+  isHorseHEEEE: 0
   isFireSource: 0
   initialTimeUntilBurnOut: 10
   initialChanceOfInflammation: 60
   extinguishingSpeed: 15
   increaseChancePercentage: 5
-  ratioOfRadiusBySize: 4
+  ratioOfRadiusBySize: 2
   cooldownToBurn: 1
   timeBetweenAddingNewFire: 5
 --- !u!61 &5151519252988378217
@@ -122,10 +123,10 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.5}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.3}
+    pivot: {x: 0.5, y: 0.35}
     oldSize: {x: 3.125, y: 3.5}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
@@ -133,7 +134,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.8, y: 3}
+  m_Size: {x: 2.8, y: 2}
   m_EdgeRadius: 0
 --- !u!50 &5803500054692650197
 Rigidbody2D:

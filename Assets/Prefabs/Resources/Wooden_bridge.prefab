@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 1053550408622079809}
   - component: {fileID: 5113401914770673787}
   - component: {fileID: 7666980755774071962}
-  - component: {fileID: 5384019784842630866}
   - component: {fileID: 3256959339148621259}
-  m_Layer: 0
+  - component: {fileID: 5551376035003064937}
+  - component: {fileID: 8250198051683383953}
+  m_Layer: 14
   m_Name: Wooden_bridge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,7 +101,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -1.0143185}
+  m_Offset: {x: 0, y: -0.07146102}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -111,33 +112,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 5.0625, y: 0.22136307}
-  m_EdgeRadius: 0
---- !u!61 &5384019784842630866
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1924115018056037883}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.95363283}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5.0625, y: 2.25}
-    newSize: {x: 5.0625, y: 2.25}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 5.0625, y: 0.34273434}
+  m_Size: {x: 4, y: 1.857078}
   m_EdgeRadius: 0
 --- !u!50 &3256959339148621259
 Rigidbody2D:
@@ -160,3 +135,38 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 7
+--- !u!114 &5551376035003064937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1924115018056037883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c0a497be0f18bf4f830e3540e589d50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  numOfPoints: 0
+  isHouse: 0
+  isHorseHEEEE: 0
+  isFireSource: 0
+  initialTimeUntilBurnOut: 3
+  initialChanceOfInflammation: 100
+  extinguishingSpeed: 100
+  increaseChancePercentage: 5
+  ratioOfRadiusBySize: 2
+  cooldownToBurn: 4
+  timeBetweenAddingNewFire: 1
+--- !u!114 &8250198051683383953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1924115018056037883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea6d04c21ea9b4c498355d2a5b035378, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

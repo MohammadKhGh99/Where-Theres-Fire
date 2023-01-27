@@ -74,7 +74,7 @@ public class FireMan : MonoBehaviour
         _lookAtDirection = Vector2.zero;
         _throwDirection = Vector2.zero;
         _currentGridPos = MovingTileMap.WorldToCell(_t.position);
-        print(MovingTileMap.CellToWorld(_currentGridPos));
+        // print(MovingTileMap.CellToWorld(_currentGridPos));
         _animator = GetComponent<Animator>();
         // _animator.speed = 0.5f;
         _spriteRenderer = GetComponent<SpriteRenderer>();
