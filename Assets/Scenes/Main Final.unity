@@ -1266,6 +1266,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 644262775}
     m_Modifications:
+    - target: {fileID: -8737571849734237810, guid: 99baca0c0b6de3c4881d08509f1835dc, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 339029448283884258, guid: 99baca0c0b6de3c4881d08509f1835dc, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -12849,6 +12853,10 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 6357857112825398320, guid: 43f3cfa2be37f3d48a2618bde0dbd8f9, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6635553860130220527, guid: 43f3cfa2be37f3d48a2618bde0dbd8f9, type: 3}
       propertyPath: m_Name
       value: UpperPark
@@ -13200,6 +13208,10 @@ PrefabInstance:
     - target: {fileID: 4673294455993066258, guid: 60275dabfeb4a92409f87e11c0e5b696, type: 3}
       propertyPath: numOfPoints
       value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4673294455993066258, guid: 60275dabfeb4a92409f87e11c0e5b696, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4673294455993066258, guid: 60275dabfeb4a92409f87e11c0e5b696, type: 3}
       propertyPath: initialTimeUntilBurnOut
@@ -21579,6 +21591,10 @@ PrefabInstance:
       propertyPath: m_SpriteTilingProperty.oldSize.y
       value: 5.6875
       objectReference: {fileID: 0}
+    - target: {fileID: 6357857112825398320, guid: 43f3cfa2be37f3d48a2618bde0dbd8f9, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6635553860130220527, guid: 43f3cfa2be37f3d48a2618bde0dbd8f9, type: 3}
       propertyPath: m_Name
       value: LowerPark
@@ -21927,6 +21943,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 644262775}
     m_Modifications:
+    - target: {fileID: -8737571849734237810, guid: 0851146426a385a47923d15507ae661d, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 339029448283884258, guid: 0851146426a385a47923d15507ae661d, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -23481,7 +23501,7 @@ MonoBehaviour:
   initialChanceOfInflammation: 60
   extinguishingSpeed: 15
   increaseChancePercentage: 5
-  ratioOfRadiusBySize: 4
+  ratioOfRadiusBySize: 2
   cooldownToBurn: 1
   timeBetweenAddingNewFire: 5
 --- !u!61 &1231196950
@@ -23701,11 +23721,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4673294455993066258, guid: 60275dabfeb4a92409f87e11c0e5b696, type: 3}
       propertyPath: numOfPoints
-      value: 7
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4673294455993066258, guid: 60275dabfeb4a92409f87e11c0e5b696, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4673294455993066258, guid: 60275dabfeb4a92409f87e11c0e5b696, type: 3}
       propertyPath: initialTimeUntilBurnOut
-      value: 14
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 5151519252988378217, guid: 60275dabfeb4a92409f87e11c0e5b696, type: 3}
       propertyPath: m_Size.x
@@ -35067,6 +35091,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 644262775}
     m_Modifications:
+    - target: {fileID: -8737571849734237810, guid: 0851146426a385a47923d15507ae661d, type: 3}
+      propertyPath: ratioOfRadiusBySize
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 339029448283884258, guid: 0851146426a385a47923d15507ae661d, type: 3}
       propertyPath: m_RootOrder
       value: 1

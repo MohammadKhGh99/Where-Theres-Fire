@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   molotovTravelDistance: 5
-  timeToReachTarget: 1
+  timeToReachTarget: 0.5
   throwingAngel: 35
   scalingUpRatio: 0.35
 --- !u!1 &5501425989872653996

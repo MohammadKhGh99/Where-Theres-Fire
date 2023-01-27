@@ -107,7 +107,7 @@ MonoBehaviour:
   initialChanceOfInflammation: 60
   extinguishingSpeed: 15
   increaseChancePercentage: 5
-  ratioOfRadiusBySize: 4
+  ratioOfRadiusBySize: 2
   cooldownToBurn: 1
   timeBetweenAddingNewFire: 5
 --- !u!61 &5151519252988378217
