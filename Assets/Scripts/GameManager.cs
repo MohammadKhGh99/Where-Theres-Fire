@@ -394,7 +394,7 @@ public class GameManager : Singleton<GameManager>
         {
             StartCoroutine(FadeOut(_imageStartGame));
             IsGameRunning = true;
-            mainCamera.orthographicSize = 13f;
+            // mainCamera.orthographicSize = 13f;
             start = false;
         }
 
@@ -445,7 +445,7 @@ public class GameManager : Singleton<GameManager>
             if (_currentSeconds <= 0 && numBurnedPoints < maxBurnedPoints)
             {
                 // StartCoroutine(FadeOut(_imageStartGame));
-                mainCamera.orthographicSize = 20.2f;
+                // mainCamera.orthographicSize = 20.2f;
                 StartCoroutine(FadeIn(_imageExtinguisherWon));
                 IsGameRunning = false;
                 IsGameOver = true;
@@ -457,7 +457,7 @@ public class GameManager : Singleton<GameManager>
             if (numBurnedPoints >= maxBurnedPoints)
             {
                 // StartCoroutine(FadeOut(_imageStartGame));
-                mainCamera.orthographicSize = 20.2f;
+                // mainCamera.orthographicSize = 20.2f;
                 StartCoroutine(FadeIn(_imageFireWon));
                 IsGameRunning = false;
                 IsGameOver = true;
