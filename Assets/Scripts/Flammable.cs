@@ -81,6 +81,8 @@ public class Flammable : MonoBehaviour
 
     public Status CurrentStatus { get; set; }
 
+    private GameObject _ghosts1, _ghosts2;
+
     private void Start()
     {
         _t = GetComponent<Transform>();
@@ -138,6 +140,12 @@ public class Flammable : MonoBehaviour
 
         // *** experimental testing ***
         _inOrder = true;
+        
+        if (_t.name.Equals("GraveYard"))
+        {
+            _ghosts1 = _t.GetChild(0).gameObject;
+            _ghosts2 = _t.GetChild(1).gameObject;
+        }
     }
 
     private void Update()
@@ -165,6 +173,12 @@ public class Flammable : MonoBehaviour
             return;
         }
 
+        if (_t.name.Equals("GraveYard") && !_ghosts1.activeInHierarchy && !_ghosts2.activeInHierarchy)
+        {
+            _ghosts1.SetActive(true);
+            _ghosts2.SetActive(true);
+        }
+        
         if (!GameManager.Instance.GetBurningSound().isPlaying)
             GameManager.Instance.GetBurningSound().Play();
 
@@ -257,8 +271,7 @@ public class Flammable : MonoBehaviour
         }
         else
         {
-            _currentHealth -=
-                Time.deltaTime; // we decrease the health only if we are on fire without being extinguished
+            _currentHealth -= Time.deltaTime; // we decrease the health only if we are on fire without being extinguished
             if (!isFireSource && !isHorseHEEEE)
             {
                 _healthBarObj.value = _currentHealth;
@@ -298,6 +311,12 @@ public class Flammable : MonoBehaviour
 
     private void BurnedOutEffectAndPoints()
     {
+        if (_t.name.Equals("GraveYard"))
+        {
+            _ghosts1.SetActive(false);
+            _ghosts2.SetActive(false);
+        }
+    
         _spriteRenderer.color = Color.black;
         MakeImageInvisibleOrVisible(_healthBarImage, false);
         MakeImageInvisibleOrVisible(_healthBarBorder, false);
