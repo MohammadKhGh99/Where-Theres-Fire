@@ -62,13 +62,14 @@ public class Extinguisher : MonoBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _lookAtDirection = Vector2.left;
         _startPosition = _t.position;
-        _moveDirection = _startPosition;
+        _moveDirection = Vector2.zero;
         _throwDirection = Vector2.left;
         _prevWaterSplashPos = _startPosition + 0.2f * Vector3.up + 0.2f * Vector3.right;
     }
 
     private void Update()
     {
+        
         // don't move when the game is not started yet!!!
         if (!GameManager.IsGameRunning)
             return;
@@ -197,13 +198,16 @@ public class Extinguisher : MonoBehaviour
 
             // stop enlarging the waterStream - shoot it 
         }
+        
     }
 
     // Update is called once per frame
     private void FixedUpdate()
     {
+        
         // _rb.MovePosition(_rb.position + _moveDirection * (35.0f * Time.fixedDeltaTime));
         _rb.velocity = _moveDirection.normalized * (movingSpeed * Time.fixedDeltaTime);
+        
     }
 
     // private void RotatingAndPositioningWaterStream()
